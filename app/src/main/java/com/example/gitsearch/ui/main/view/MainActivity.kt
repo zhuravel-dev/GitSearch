@@ -1,38 +1,37 @@
 package com.example.gitsearch.ui.main.view
 
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
-import com.example.gitsearch.data.api.ApiHelperImpl
-import com.example.gitsearch.data.api.RetrofitBuilder
 import com.example.gitsearch.data.model.User
 import com.example.gitsearch.ui.main.adapter.MainAdapter
 import com.example.gitsearch.ui.main.intent.MainIntent
 import com.example.gitsearch.ui.main.viewmodel.MainViewModel
 import com.example.gitsearch.ui.main.viewstate.MainState
-import com.example.gitsearch.util.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mainViewModel: MainViewModel
     private var adapter = MainAdapter(arrayListOf())
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupUI()
-        setupViewModel()
         observeViewModel()
         setupClicks()
     }
@@ -60,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setupViewModel() {
+   /* private fun setupViewModel() {
         mainViewModel = ViewModelProviders.of(
             this,
             ViewModelFactory(
@@ -68,8 +67,8 @@ class MainActivity : AppCompatActivity() {
                     RetrofitBuilder.apiService
                 )
             )
-        ).get(MainViewModel::class.java)
-    }
+        )[MainViewModel::class.java]
+    }*/
 
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -98,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun renderList(users: List<User>) {
         recyclerView.visibility = View.VISIBLE
         users.let { listOfUsers -> listOfUsers.let { adapter.addData(it) } }
