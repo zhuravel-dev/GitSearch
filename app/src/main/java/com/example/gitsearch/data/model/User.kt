@@ -1,4 +1,4 @@
-package com.example.gitsearch.data.model
+/*package com.example.gitsearch.data.model
 
 import com.squareup.moshi.Json
 
@@ -11,4 +11,4 @@ data class User(
     val email: String = "",
     @Json(name = "avatar")
     val avatar: String = ""
-)
+)*/

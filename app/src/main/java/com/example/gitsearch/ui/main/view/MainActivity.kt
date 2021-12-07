@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
-import com.example.gitsearch.data.model.User
+import com.example.gitsearch.data.model.Items
 import com.example.gitsearch.ui.main.adapter.MainAdapter
 import com.example.gitsearch.ui.main.intent.MainIntent
 import com.example.gitsearch.ui.main.viewmodel.MainViewModel
@@ -58,18 +58,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
-
-   /* private fun setupViewModel() {
-        mainViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                ApiHelperImpl(
-                    RetrofitBuilder.apiService
-                )
-            )
-        )[MainViewModel::class.java]
-    }*/
-
     private fun observeViewModel() {
         lifecycleScope.launch {
             mainViewModel.state.collect {
@@ -82,10 +70,10 @@ class MainActivity : AppCompatActivity() {
                         progressBar.visibility = View.VISIBLE
                     }
 
-                    is MainState.Users -> {
+                    is MainState.Repository -> {
                         progressBar.visibility = View.GONE
                         buttonFetchUser.visibility = View.GONE
-                        renderList(it.user)
+                        renderList(it.repo)
                     }
                     is MainState.Error -> {
                         progressBar.visibility = View.GONE
@@ -98,9 +86,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun renderList(users: List<User>) {
+    private fun renderList(repo: List<Items>) {
         recyclerView.visibility = View.VISIBLE
-        users.let { listOfUsers -> listOfUsers.let { adapter.addData(it) } }
+        repo.let { listOfRepository -> listOfRepository.let { adapter.addData(it) } }
         adapter.notifyDataSetChanged()
     }
 }

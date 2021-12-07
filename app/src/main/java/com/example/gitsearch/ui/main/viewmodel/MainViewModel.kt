@@ -42,7 +42,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
         viewModelScope.launch {
             _state.value = MainState.Loading
             _state.value = try {
-                MainState.Users(repository.getUsers())
+                MainState.Repository(repository.getRepo())
             } catch (e: Exception) {
                 MainState.Error(e.localizedMessage)
             }

@@ -1,9 +1,9 @@
 package com.example.gitsearch.domain.repository
 
-import com.example.gitsearch.data.model.User
+import com.example.gitsearch.data.model.Items
 
 interface MainRepository {
 
-    suspend fun getUsers() : List<User>
+    suspend fun getRepo() : List<Items>
 
 }

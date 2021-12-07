@@ -16,7 +16,7 @@ open class NetworkModule {
     @Provides
     @Singleton
     fun provideAPI() : ApiService {
-        val BASE_URL = "https://5e510330f2c0d300147c034c.mockapi.io/"
+        val BASE_URL = "https://api.github.com/"
          return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())

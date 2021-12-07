@@ -1,9 +1,9 @@
 package com.example.gitsearch.data.api
 
-import com.example.gitsearch.data.model.User
+import com.example.gitsearch.data.model.Items
 import retrofit2.http.GET
 
 interface ApiService {
     @GET("users")
-    suspend fun getUsers(): List<User>
+    suspend fun getRepositories(): List<Items>
 }
