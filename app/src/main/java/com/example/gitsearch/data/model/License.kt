@@ -1,13 +1,11 @@
 package com.example.gitsearch.data.model
 
-import com.google.gson.annotations.SerializedName
-
+import com.squareup.moshi.Json
 
 data class License (
-
-	@SerializedName("key") val key : String,
-	@SerializedName("name") val name : String,
-	@SerializedName("spdx_id") val spdx_id : String,
-	@SerializedName("url") val url : String,
-	@SerializedName("node_id") val node_id : String
+	@Json(name = "key") val key : String,
+	@Json(name = "name") val name : String,
+	@Json(name = "spdx_id") val spdx_id : String,
+	@Json(name = "url") val url : String,
+	@Json(name = "node_id") val node_id : String
 )

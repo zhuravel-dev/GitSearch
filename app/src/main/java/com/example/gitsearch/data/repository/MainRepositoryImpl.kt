@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 data class MainRepositoryImpl @Inject constructor(private val apiService: ApiService): MainRepository {
 
-    override suspend fun getRepo() = apiService.getRepositories()
+    override suspend fun getRepo() = apiService.getRepositories().items
 
 }

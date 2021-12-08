@@ -9,14 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gitsearch.R
-import com.example.gitsearch.data.model.Items
+import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.databinding.ActivityMainBinding
 import com.example.gitsearch.ui.main.adapter.MainAdapter
+import com.example.gitsearch.ui.main.extensions.viewBinding
 import com.example.gitsearch.ui.main.intent.MainIntent
 import com.example.gitsearch.ui.main.viewmodel.MainViewModel
 import com.example.gitsearch.ui.main.viewstate.MainState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -27,26 +27,26 @@ class MainActivity : AppCompatActivity() {
 
     private var adapter = MainAdapter(arrayListOf())
     private val mainViewModel: MainViewModel by viewModels()
+    private val viewBinding by viewBinding(ActivityMainBinding::inflate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(viewBinding.root)
         setupUI()
         observeViewModel()
         setupClicks()
     }
 
     private fun setupClicks() {
-        buttonFetchUser.setOnClickListener {
+        viewBinding.buttonFetchUser.setOnClickListener {
             lifecycleScope.launch {
                 mainViewModel.userIntent.send(MainIntent.FetchUser)
             }
         }
     }
 
-
-    private fun setupUI() {
-        recyclerView.layoutManager = LinearLayoutManager(this)
+    private fun setupUI()  = viewBinding.run {
+        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView.run {
             addItemDecoration(
                 DividerItemDecoration(
@@ -58,18 +58,15 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
-    private fun observeViewModel() {
+    private fun observeViewModel() = viewBinding.run {
         lifecycleScope.launch {
             mainViewModel.state.collect {
                 when (it) {
-                    is MainState.Idle -> {
-
-                    }
+                    is MainState.Idle -> {}
                     is MainState.Loading -> {
                         buttonFetchUser.visibility = View.GONE
                         progressBar.visibility = View.VISIBLE
                     }
-
                     is MainState.Repository -> {
                         progressBar.visibility = View.GONE
                         buttonFetchUser.visibility = View.GONE
@@ -86,8 +83,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun renderList(repo: List<Items>) {
-        recyclerView.visibility = View.VISIBLE
+    private fun renderList(repo: List<Item>) {
+        viewBinding.recyclerView.visibility = View.VISIBLE
         repo.let { listOfRepository -> listOfRepository.let { adapter.addData(it) } }
         adapter.notifyDataSetChanged()
     }
