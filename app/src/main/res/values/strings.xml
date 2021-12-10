@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GitSearch</string>
     <string name="fetch_user">Fetch User</string>
+    <string name="symbol">&#9734;</string>
 </resources>

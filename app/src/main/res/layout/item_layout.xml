@@ -4,38 +4,78 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingStart="8dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvOwnerName"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="OwnerName" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvRepositoryName"
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvOwnerName"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="MyRepo" />
+        tools:text="RepoName" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvRepositoryDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tvRepositoryName"
-        app:layout_constraintTop_toBottomOf="@+id/tvRepositoryName"
         android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvRepositoryName"
         tools:text="MyDescription" />
 
     <TextView
-        android:id="@+id/tvProgramLanguage"
+        android:id="@+id/tvTags"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintStart_toStartOf="@+id/tvRepositoryName"
-        app:layout_constraintTop_toBottomOf="@id/tvRepositoryDescription"
+        android:maxLines="1"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Language"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvRepositoryDescription"
+        tools:text="Tags" />
+
+    <TextView
+        android:id="@+id/tvStarCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/tvProgramLanguage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTags"
+        tools:text="StarsCount" />
+
+    <TextView
+        android:id="@+id/tvProgramLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        app:layout_constraintEnd_toStartOf="@id/tvUpdatedAt"
+        app:layout_constraintStart_toEndOf="@id/tvStarCount"
+        app:layout_constraintTop_toBottomOf="@id/tvTags"
+        tools:text="Language" />
+
+    <TextView
+        android:id="@+id/tvUpdatedAt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvProgramLanguage"
+        app:layout_constraintTop_toBottomOf="@id/tvTags"
+        tools:text="Updated at" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
