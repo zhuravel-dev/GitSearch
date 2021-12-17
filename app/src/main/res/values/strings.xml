@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">GitSearch</string>
-    <string name="fetch_user">Fetch User</string>
     <string name="symbol">&#9734;</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.main.extensions
+package com.example.gitsearch.ui.extensions
 
 import android.view.LayoutInflater
 import android.view.View

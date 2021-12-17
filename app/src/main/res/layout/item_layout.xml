@@ -5,10 +5,10 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="8dp"
-    android:paddingTop="8dp"
-    android:paddingEnd="8dp"
-    android:paddingBottom="8dp">
+    android:paddingStart="@dimen/normal"
+    android:paddingTop="@dimen/normal"
+    android:paddingEnd="@dimen/normal"
+    android:paddingBottom="@dimen/normal">
 
     <TextView
         android:id="@+id/tvOwnerName"
@@ -62,7 +62,7 @@
         android:id="@+id/tvProgramLanguage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="@dimen/big"
         app:layout_constraintEnd_toStartOf="@id/tvUpdatedAt"
         app:layout_constraintStart_toEndOf="@id/tvStarCount"
         app:layout_constraintTop_toBottomOf="@id/tvTags"
@@ -72,7 +72,7 @@
         android:id="@+id/tvUpdatedAt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="@dimen/big"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvProgramLanguage"
         app:layout_constraintTop_toBottomOf="@id/tvTags"

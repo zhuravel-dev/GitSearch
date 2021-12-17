@@ -1,10 +1,9 @@
-package com.example.gitsearch.ui.main
+package com.example.gitsearch.ui.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.gitsearch.ui.main.view.MainActivity
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -18,6 +17,5 @@ class SplashScreenActivity : AppCompatActivity() {
         startActivity(i)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
-
     }
 }
