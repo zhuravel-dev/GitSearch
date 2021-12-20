@@ -24,14 +24,15 @@ class FirstFragmentViewModel @Inject constructor(
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
             is FirstFragmentIntent.FetchGitList -> fetchList()
+            is FirstFragmentIntent.SearchGitList -> fetchList(event.query)
         }
     }
 
-    private fun fetchList() {
+    private fun fetchList(query: String = "") {
         viewModelScope.launch {
             _state.value = FirstFragmentState.Loading
             _state.value = try {
-                FirstFragmentState.DataLoaded(repository.getRepo())
+                FirstFragmentState.DataLoaded(repository.getRepo(query))
             } catch (e: Exception) {
                 FirstFragmentState.Error(e.localizedMessage)
             }

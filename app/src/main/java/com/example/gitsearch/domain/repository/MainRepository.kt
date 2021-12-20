@@ -4,6 +4,6 @@ import com.example.gitsearch.data.model.Item
 
 interface MainRepository {
 
-    suspend fun getRepo() : List<Item>
+    suspend fun getRepo(query: String) : List<Item>
 
 }

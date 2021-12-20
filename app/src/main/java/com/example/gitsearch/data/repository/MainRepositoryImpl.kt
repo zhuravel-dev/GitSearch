@@ -4,8 +4,8 @@ import com.example.gitsearch.data.api.ApiService
 import com.example.gitsearch.domain.repository.MainRepository
 import javax.inject.Inject
 
-data class MainRepositoryImpl @Inject constructor(private val apiService: ApiService): MainRepository {
+data class MainRepositoryImpl @Inject constructor(private val apiService: ApiService) :
+    MainRepository {
 
-    override suspend fun getRepo() = apiService.getRepositories().items
-
+    override suspend fun getRepo(query: String) = apiService.getRepositories().items
 }
