@@ -31,7 +31,7 @@ class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFrag
             val updatedDate = repository.updated_at
             val parsedDate = LocalDateTime.parse(updatedDate, DateTimeFormatter.ISO_DATE_TIME)
             val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            itemViewBinding.tvUpdatedAt.text = "Updated on $formattedDate"
+            itemViewBinding.tvUpdatedAt.text = "Updated $formattedDate"
         }
     }
 
@@ -50,5 +50,4 @@ class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFrag
     }
 
     override fun getItemCount(): Int = repositoryList.size
-
 }

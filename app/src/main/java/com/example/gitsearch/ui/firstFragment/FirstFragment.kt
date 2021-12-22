@@ -89,10 +89,10 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         recyclerAdapter.notifyDataSetChanged()
     }
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
+    override fun onQueryTextSubmit(q: String): Boolean {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(query.orEmpty()))
+                firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q))
             }
         }
         return true

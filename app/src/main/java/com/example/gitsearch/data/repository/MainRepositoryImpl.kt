@@ -7,5 +7,5 @@ import javax.inject.Inject
 data class MainRepositoryImpl @Inject constructor(private val apiService: ApiService) :
     MainRepository {
 
-    override suspend fun getRepo(query: String) = apiService.getRepositories().items
+    override suspend fun getRepo(q: String) = apiService.getRepositories(q).items
 }

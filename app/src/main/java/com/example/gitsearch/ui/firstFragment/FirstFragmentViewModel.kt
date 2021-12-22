@@ -20,19 +20,18 @@ class FirstFragmentViewModel @Inject constructor(
     val state: StateFlow<FirstFragmentState>
         get() = _state
 
-
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
-            is FirstFragmentIntent.FetchGitList -> fetchList()
-            is FirstFragmentIntent.SearchGitList -> fetchList(event.query)
+           // is FirstFragmentIntent.FetchGitList -> fetchList()
+            is FirstFragmentIntent.SearchGitList -> fetchList(event.q)
         }
     }
 
-    private fun fetchList(query: String = "") {
+    private fun fetchList(q: String) {
         viewModelScope.launch {
             _state.value = FirstFragmentState.Loading
             _state.value = try {
-                FirstFragmentState.DataLoaded(repository.getRepo(query))
+                FirstFragmentState.DataLoaded(repository.getRepo(q))
             } catch (e: Exception) {
                 FirstFragmentState.Error(e.localizedMessage)
             }
