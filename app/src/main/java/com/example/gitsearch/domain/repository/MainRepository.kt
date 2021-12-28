@@ -5,5 +5,6 @@ import com.example.gitsearch.data.model.Item
 interface MainRepository {
 
     suspend fun getRepo(q: String) : List<Item>
-
+    fun setSelectedId(id : Int)
+    fun getDetailInfo() : Item?
 }

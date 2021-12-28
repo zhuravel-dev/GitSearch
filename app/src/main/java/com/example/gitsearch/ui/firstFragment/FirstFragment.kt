@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
@@ -16,10 +17,10 @@ import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.databinding.FragmentFirstBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.search.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -28,6 +29,15 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
     private val viewBinding by viewBinding(FragmentFirstBinding::bind)
     private val recyclerAdapter by lazy { FirstFragmentAdapter() }
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
+
+    private fun initAdapter() {
+        recyclerAdapter.onItemClick = {
+            firstFragmentViewModel.onIntent(FirstFragmentIntent.SetSelectedRepositoryId(it.id))
+            findNavController().navigate(R.id.actionFragmentFirst_to_fragmentDetail)
+        }
+        Timber.i("In fun init adapter")
+        viewBinding.recyclerView.adapter = recyclerAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +53,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         super.onViewCreated(view, savedInstanceState)
         setupUI()
         observeViewModel()
+        initAdapter()
     }
 
     private fun setupUI() = viewBinding.run {
@@ -56,15 +67,16 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
             )
         }
         recyclerView.adapter = recyclerAdapter
-        toolbar.toolbar.setNavigationOnClickListener {
+        toolbar.customToolbar.setNavigationOnClickListener {
             System.exit(0)
         }
         toolbar.searchView.setOnQueryTextListener(this@FirstFragment)
+        toolbar.searchView.queryHint = getString(R.string.hint_search)
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            firstFragmentViewModel.state.collect {
+            firstFragmentViewModel.stateFirst.collect {
                 when (it) {
                     is FirstFragmentState.Idle -> {}
                     is FirstFragmentState.Loading -> {

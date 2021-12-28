@@ -8,19 +8,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.databinding.ItemLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
+import com.squareup.picasso.Picasso
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-
+@SuppressLint("SetTextI18n")
+@RequiresApi(Build.VERSION_CODES.O)
 class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFragmentViewHolder>() {
 
     private val repositoryList: ArrayList<Item> = arrayListOf()
+    var onItemClick: ((Item) -> Unit)? = null
 
-    class FirstFragmentViewHolder(private val itemViewBinding: ItemLayoutBinding) :
+    inner class FirstFragmentViewHolder(private val itemViewBinding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(itemViewBinding.root) {
-        @SuppressLint("SetTextI18n")
-        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(repository: Item) {
+            itemView.setOnClickListener {
+                repository.let { onItemClick?.invoke(repository) }
+                Timber.i("onClick is working!")
+            }
+            Picasso.get().load(repository.owner.avatar_url).into(itemViewBinding.ivUserAvatar)
             itemViewBinding.tvOwnerName.text = repository.owner.login.plus("/")
             itemViewBinding.tvRepositoryName.text = repository.name
             itemViewBinding.tvRepositoryDescription.text = repository.description
@@ -43,6 +50,7 @@ class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFrag
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: FirstFragmentViewHolder, position: Int) {
         holder.bind(repositoryList[position])
+
     }
 
     fun addData(list: List<Item>) {

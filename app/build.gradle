@@ -89,4 +89,10 @@ dependencies {
     // define any required OkHttp artifacts without version
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
+
+    // Picasso for loading images
+    implementation "com.squareup.picasso:picasso:2.71828"
+
+    // Timber
+    implementation "com.jakewharton.timber:timber:4.7.1"
 }

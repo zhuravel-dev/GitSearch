@@ -16,25 +16,27 @@ class FirstFragmentViewModel @Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
-    val state: StateFlow<FirstFragmentState>
-        get() = _state
+    private val _stateFirst = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
+    val stateFirst: StateFlow<FirstFragmentState>
+        get() = _stateFirst
 
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
-           // is FirstFragmentIntent.FetchGitList -> fetchList()
             is FirstFragmentIntent.SearchGitList -> fetchList(event.q)
+            is FirstFragmentIntent.SetSelectedRepositoryId -> setSelectedRepositoryId(event.id)
         }
     }
 
     private fun fetchList(q: String) {
         viewModelScope.launch {
-            _state.value = FirstFragmentState.Loading
-            _state.value = try {
+            _stateFirst.value = FirstFragmentState.Loading
+            _stateFirst.value = try {
                 FirstFragmentState.DataLoaded(repository.getRepo(q))
             } catch (e: Exception) {
                 FirstFragmentState.Error(e.localizedMessage)
             }
         }
     }
+
+    private fun setSelectedRepositoryId(id: Int) = repository.setSelectedId(id)
 }

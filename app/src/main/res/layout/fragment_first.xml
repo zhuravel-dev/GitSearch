@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/normal"
+    android:background="@color/background"
     tools:context=".ui.firstFragment.FirstFragment">
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/search" />
+        layout="@layout/toolbar_with_search" />
 
     <ProgressBar
         android:id="@+id/progressBar"
