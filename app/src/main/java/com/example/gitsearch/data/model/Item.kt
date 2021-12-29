@@ -73,7 +73,6 @@ data class Item (
 	@Json(name= "archived") val archived : Boolean,
 	@Json(name= "disabled") val disabled : Boolean,
 	@Json(name= "open_issues_count") val open_issues_count : Int,
-	@Json(name= "license") val license : License,
 	@Json(name= "allow_forking") val allow_forking : Boolean,
 	@Json(name= "is_template") val is_template : Boolean,
 	@Json(name= "topics") val topics : List<String>,

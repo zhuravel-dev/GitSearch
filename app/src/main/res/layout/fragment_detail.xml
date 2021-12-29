@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        app:layout_constraintDimensionRatio="W, 0.75:1"
+        app:layout_constraintDimensionRatio="W, 1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
@@ -34,7 +34,9 @@
         android:id="@+id/layoutForDetailList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/big"
         android:layout_marginTop="@dimen/big"
+        android:layout_marginEnd="@dimen/big"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,33 +44,47 @@
 
         <TextView
             android:id="@+id/tvUserLogin"
+            style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal" />
+            android:layout_marginTop="@dimen/normal"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20" />
 
         <TextView
             android:id="@+id/tvNameOfRepository"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal" />
+            android:layout_marginTop="@dimen/normal"
+            android:textSize="@dimen/text_size_18"/>
 
         <TextView
             android:id="@+id/tvRepositoryDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal" />
+            android:layout_marginTop="@dimen/normal"
+            android:textSize="@dimen/text_size_16"/>
 
         <TextView
             android:id="@+id/tvProgramingLanguages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal" />
+            android:layout_marginTop="@dimen/normal"
+            android:textSize="@dimen/text_size_16"/>
 
         <TextView
             android:id="@+id/tvTopics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal" />
+            android:layout_marginTop="@dimen/normal"
+            android:textSize="@dimen/text_size_16"/>
+
+        <TextView
+            android:id="@+id/tvWatchers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/normal"
+            android:textSize="@dimen/text_size_16"/>
 
     </LinearLayout>
 

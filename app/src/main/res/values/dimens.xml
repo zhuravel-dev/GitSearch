@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    margins:
     <dimen name="small">4dp</dimen>
     <dimen name="normal">8dp</dimen>
     <dimen name="medium">10dp</dimen>
     <dimen name="big">14dp</dimen>
+
+    text size:
+    <dimen name="text_size_20">20sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
 
 </resources>

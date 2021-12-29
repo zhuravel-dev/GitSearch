@@ -1,5 +1,6 @@
 package com.example.gitsearch.ui.detailFragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -10,9 +11,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.gitsearch.R
 import com.example.gitsearch.data.model.Item
-import com.example.gitsearch.data.model.RepositoryDetailModel
 import com.example.gitsearch.databinding.FragmentDetailBinding
 import com.example.gitsearch.ui.extensions.viewBinding
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -57,7 +58,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                     }
                     is DetailFragmentState.DataLoaded -> {
                         viewBinding.progressBar.visibility = View.GONE
-                        //getInformation(it.info)
+                        getDetailInformation(it.info)
                     }
                     is DetailFragmentState.Error -> {
                         viewBinding.progressBar.visibility = View.GONE
@@ -67,4 +68,15 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun getDetailInformation(repository: Item?) = viewBinding.run {
+        Picasso.get().load(repository?.owner?.avatar_url).into(ivUserAvatarDetailScreen)
+        tvUserLogin.text = repository?.owner?.login
+        tvNameOfRepository.text = repository?.name
+        tvRepositoryDescription.text = repository?.description
+        tvProgramingLanguages.text = repository?.language
+        tvTopics.text =
+            repository?.topics.toString().substring(1, repository?.topics.toString().length - 1)
+        tvWatchers.text = "${repository?.watchers_count.toString()} watchers"
+    }
 }

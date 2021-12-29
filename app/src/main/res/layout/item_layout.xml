@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/normal"
                 android:maxLines="1"
-                android:textSize="20sp"
+                android:textSize="@dimen/text_size_20"
                 app:layout_constraintStart_toEndOf="@id/ivUserAvatar"
                 app:layout_constraintTop_toTopOf="@id/ivUserAvatar"
                 tools:text="OwnerName/" />
@@ -51,7 +51,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:textSize="20sp"
+                android:textSize="@dimen/text_size_20"
                 app:layout_constraintStart_toEndOf="@id/tvOwnerName"
                 app:layout_constraintTop_toTopOf="@id/ivUserAvatar"
                 tools:text="RepoName" />
