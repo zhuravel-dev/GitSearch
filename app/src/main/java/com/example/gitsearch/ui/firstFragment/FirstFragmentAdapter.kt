@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.databinding.ItemLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -53,7 +55,7 @@ class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFrag
 
     }
 
-    fun addData(list: List<Item>) {
+    fun addData(list: Flow<PagingData<Item>>) {
         repositoryList.addAll(list)
     }
 

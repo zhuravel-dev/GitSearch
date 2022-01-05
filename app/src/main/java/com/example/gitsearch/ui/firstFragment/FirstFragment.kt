@@ -10,6 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
@@ -18,6 +20,7 @@ import com.example.gitsearch.databinding.FragmentFirstBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -78,15 +81,20 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         lifecycleScope.launch {
             firstFragmentViewModel.stateFirst.collect {
                 when (it) {
-                    is FirstFragmentState.Idle -> {}
+                    is FirstFragmentState.Idle -> {
+                        viewBinding.tvWelcomeText.visibility = View.VISIBLE
+                    }
                     is FirstFragmentState.Loading -> {
+                        viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.VISIBLE
                     }
                     is FirstFragmentState.DataLoaded -> {
+                        viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.GONE
                         renderList(it.repo)
                     }
                     is FirstFragmentState.Error -> {
+                        viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.GONE
                     }
                 }
@@ -95,7 +103,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun renderList(repos: List<Item>) {
+    private fun renderList(repos: Flow<PagingData<Item>>) {
         viewBinding.recyclerView.visibility = View.VISIBLE
         repos.let { listOfRepository -> listOfRepository.let { recyclerAdapter.addData(it) } }
         recyclerAdapter.notifyDataSetChanged()

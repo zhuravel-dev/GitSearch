@@ -58,7 +58,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                     }
                     is DetailFragmentState.DataLoaded -> {
                         viewBinding.progressBar.visibility = View.GONE
-                        getDetailInformation(it.info)
+                        showDetailInformation(it.info)
                     }
                     is DetailFragmentState.Error -> {
                         viewBinding.progressBar.visibility = View.GONE
@@ -69,10 +69,10 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun getDetailInformation(repository: Item?) = viewBinding.run {
+    private fun showDetailInformation(repository: Item?) = viewBinding.run {
         Picasso.get().load(repository?.owner?.avatar_url).into(ivUserAvatarDetailScreen)
         tvUserLogin.text = repository?.owner?.login
-        tvNameOfRepository.text = repository?.name
+        tvNameOfRepository.text = "${repository?.name} repository"
         tvRepositoryDescription.text = repository?.description
         tvProgramingLanguages.text = repository?.language
         tvTopics.text =
