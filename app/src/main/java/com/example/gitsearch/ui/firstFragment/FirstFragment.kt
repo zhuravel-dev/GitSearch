@@ -78,15 +78,20 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         lifecycleScope.launch {
             firstFragmentViewModel.stateFirst.collect {
                 when (it) {
-                    is FirstFragmentState.Idle -> {}
+                    is FirstFragmentState.Idle -> {
+                        viewBinding.tvWelcomeText.visibility = View.VISIBLE
+                    }
                     is FirstFragmentState.Loading -> {
+                        viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.VISIBLE
                     }
                     is FirstFragmentState.DataLoaded -> {
+                        viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.GONE
                         renderList(it.repo)
                     }
                     is FirstFragmentState.Error -> {
+                        viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.GONE
                     }
                 }

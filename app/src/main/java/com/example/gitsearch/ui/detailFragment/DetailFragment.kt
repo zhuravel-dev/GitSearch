@@ -72,7 +72,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private fun getDetailInformation(repository: Item?) = viewBinding.run {
         Picasso.get().load(repository?.owner?.avatar_url).into(ivUserAvatarDetailScreen)
         tvUserLogin.text = repository?.owner?.login
-        tvNameOfRepository.text = repository?.name
+        tvNameOfRepository.text = "${repository?.name} repository"
         tvRepositoryDescription.text = repository?.description
         tvProgramingLanguages.text = repository?.language
         tvTopics.text =
