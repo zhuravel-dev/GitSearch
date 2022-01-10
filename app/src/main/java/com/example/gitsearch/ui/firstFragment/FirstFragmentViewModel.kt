@@ -2,13 +2,9 @@ package com.example.gitsearch.ui.firstFragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,17 +17,14 @@ class FirstFragmentViewModel @Inject constructor(
     private val q: String
 ) : ViewModel() {
 
-
-    private var currentResult: Flow<PagingData<Item>>? = null
+    /*private var currentResult: Flow<PagingData<Item>>? = null
 
     private fun searchRepos(): Flow<PagingData<Item>> {
         val newResult: Flow<PagingData<Item>> =
             repository.getRepo(q).cachedIn(viewModelScope)
         currentResult = newResult
         return newResult
-    }
-
-
+    }*/
 
     private val _stateFirst = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
     val stateFirst: StateFlow<FirstFragmentState>
@@ -39,12 +32,12 @@ class FirstFragmentViewModel @Inject constructor(
 
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
-            is FirstFragmentIntent.SearchGitList -> searchRepos()//fetchList(event.q)
+            is FirstFragmentIntent.SearchGitList -> searchList(event.q)
             is FirstFragmentIntent.SetSelectedRepositoryId -> setSelectedRepositoryId(event.id)
         }
     }
 
-    private fun fetchList(q: String) {
+    private fun searchList(q: String) {
         viewModelScope.launch {
             _stateFirst.value = FirstFragmentState.Loading
             _stateFirst.value = try {

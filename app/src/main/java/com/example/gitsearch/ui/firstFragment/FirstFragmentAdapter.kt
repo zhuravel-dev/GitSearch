@@ -1,3 +1,4 @@
+/*
 package com.example.gitsearch.ui.firstFragment
 
 import android.annotation.SuppressLint
@@ -60,4 +61,4 @@ class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFrag
     }
 
     override fun getItemCount(): Int = repositoryList.size
-}
+}*/

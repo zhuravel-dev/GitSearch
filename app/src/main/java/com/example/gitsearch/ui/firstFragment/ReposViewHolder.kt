@@ -1,8 +1,8 @@
+/*
 package com.example.gitsearch.ui.firstFragment
 
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
@@ -46,4 +46,4 @@ class RepoViewHolder(private val itemViewBinding: ItemLayoutBinding) :
             return RepoViewHolder(view)
         }
     }
-}
+}*/

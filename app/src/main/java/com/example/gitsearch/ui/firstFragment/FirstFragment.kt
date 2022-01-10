@@ -1,6 +1,5 @@
 package com.example.gitsearch.ui.firstFragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
@@ -10,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -30,7 +29,9 @@ import timber.log.Timber
 class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextListener {
 
     private val viewBinding by viewBinding(FragmentFirstBinding::bind)
-    private val recyclerAdapter by lazy { FirstFragmentAdapter() }
+   // private val recyclerAdapter by lazy { FirstFragmentAdapter() }
+   private val recyclerAdapter by lazy { ReposAdapter(this) }
+
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
 
     private fun initAdapter() {
@@ -42,15 +43,15 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         viewBinding.recyclerView.adapter = recyclerAdapter
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                firstFragmentViewModel.onIntent(FirstFragmentIntent.FetchGitList)
+                firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q))
             }
         }
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,7 +92,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
                     is FirstFragmentState.DataLoaded -> {
                         viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.GONE
-                        renderList(it.repo)
+                        //renderList()
                     }
                     is FirstFragmentState.Error -> {
                         viewBinding.tvWelcomeText.visibility = View.GONE
@@ -102,12 +103,16 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun renderList(repos: Flow<PagingData<Item>>) {
+    private fun renderList(pagingData: PagingData<Item>) {
+        viewBinding.recyclerView.visibility = View.VISIBLE
+        recyclerAdapter.submitData(lifecycle, pagingData)
+    }
+
+   /* private fun renderList(repos: Flow<PagingData<Item>>) {
         viewBinding.recyclerView.visibility = View.VISIBLE
         repos.let { listOfRepository -> listOfRepository.let { recyclerAdapter.addData(it) } }
         recyclerAdapter.notifyDataSetChanged()
-    }
+    }*/
 
     override fun onQueryTextSubmit(q: String): Boolean {
         lifecycleScope.launch {
