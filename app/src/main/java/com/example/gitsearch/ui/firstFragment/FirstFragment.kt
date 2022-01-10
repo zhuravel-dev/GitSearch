@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gitsearch.R
 import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.databinding.FragmentFirstBinding
@@ -29,6 +30,9 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
     private val viewBinding by viewBinding(FragmentFirstBinding::bind)
     private val recyclerAdapter by lazy { FirstFragmentAdapter() }
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
+    //private var after: String? = null
+    private var offset: String? = null
+    private var lastFetchedPosition: Int = 0
 
     private fun initAdapter() {
         recyclerAdapter.onItemClick = {
@@ -37,9 +41,35 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         }
         Timber.i("In fun init adapter")
         viewBinding.recyclerView.adapter = recyclerAdapter
+
+        viewBinding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val manager = recyclerView.layoutManager as? LinearLayoutManager
+                val lastPosition = manager?.findLastCompletelyVisibleItemPosition()?:0
+                val lastPlusOne = lastPosition + 1
+                if(lastPlusOne%DEFAULT_PAGE_SIZE == 0 && lastPlusOne > lastFetchedPosition) {
+                    firstFragmentViewModel.onIntent(FirstFragmentIntent.FetchGitList)
+                   //firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList)
+                    lastFetchedPosition = lastPlusOne
+                }
+            }
+        })
+
+        /*viewBinding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!viewBinding.recyclerView.canScrollVertically(1)) {
+                    Toast.makeText(context, "working", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })*/
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
@@ -47,7 +77,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
                 firstFragmentViewModel.onIntent(FirstFragmentIntent.FetchGitList)
             }
         }
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -109,11 +139,15 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
     override fun onQueryTextSubmit(q: String): Boolean {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q))
+                firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q, 1, 30))
             }
         }
         return true
     }
 
     override fun onQueryTextChange(newText: String?): Boolean = false
+
+    companion object {
+        const val DEFAULT_PAGE_SIZE = 30
+    }
 }

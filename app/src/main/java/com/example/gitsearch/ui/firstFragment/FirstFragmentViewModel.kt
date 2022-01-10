@@ -22,12 +22,12 @@ class FirstFragmentViewModel @Inject constructor(
 
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
-            is FirstFragmentIntent.SearchGitList -> fetchList(event.q)
+            is FirstFragmentIntent.SearchGitList -> searchList(event.q)
             is FirstFragmentIntent.SetSelectedRepositoryId -> setSelectedRepositoryId(event.id)
         }
     }
 
-    private fun fetchList(q: String) {
+    private fun searchList(q: String) {
         viewModelScope.launch {
             _stateFirst.value = FirstFragmentState.Loading
             _stateFirst.value = try {

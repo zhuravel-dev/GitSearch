@@ -11,7 +11,7 @@ data class MainRepositoryImpl @Inject constructor(private val apiService: ApiSer
     private val cachedItems = ArrayList<Item>()
     private var selectedModel: Item? = null
 
-    override suspend fun getRepo(q: String) = apiService.getRepositories(q).items.also {
+    override suspend fun getRepo(q: String) = apiService.getRepositories(q, 1, 30).items.also {
         cachedItems.clear()
         cachedItems.addAll(it)
     }

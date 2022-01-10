@@ -57,5 +57,10 @@ class FirstFragmentAdapter : RecyclerView.Adapter<FirstFragmentAdapter.FirstFrag
         repositoryList.addAll(list)
     }
 
+    fun clearList() {
+        repositoryList.clear()
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = repositoryList.size
 }
