@@ -8,7 +8,7 @@ sealed class FirstFragmentState {
 
     object Idle : FirstFragmentState()
     object Loading : FirstFragmentState()
-    data class DataLoaded(val repo: Flow<PagingData<Item>>) : FirstFragmentState()
+    data class DataLoaded(val data: PagingData<Item>) : FirstFragmentState()
     data class Error(val error: String?) : FirstFragmentState()
 
 }

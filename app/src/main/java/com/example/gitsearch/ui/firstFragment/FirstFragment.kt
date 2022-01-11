@@ -29,8 +29,9 @@ import timber.log.Timber
 class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextListener {
 
     private val viewBinding by viewBinding(FragmentFirstBinding::bind)
-   // private val recyclerAdapter by lazy { FirstFragmentAdapter() }
-   private val recyclerAdapter by lazy { ReposAdapter(this) }
+
+    // private val recyclerAdapter by lazy { FirstFragmentAdapter() }
+    private val recyclerAdapter by lazy { ReposAdapter(this) }
 
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
 
@@ -92,7 +93,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
                     is FirstFragmentState.DataLoaded -> {
                         viewBinding.tvWelcomeText.visibility = View.GONE
                         viewBinding.progressBar.visibility = View.GONE
-                        //renderList()
+                        renderList()
                     }
                     is FirstFragmentState.Error -> {
                         viewBinding.tvWelcomeText.visibility = View.GONE
@@ -105,14 +106,15 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
 
     private fun renderList(pagingData: PagingData<Item>) {
         viewBinding.recyclerView.visibility = View.VISIBLE
+       // (recyclerAdapter::submitData)
         recyclerAdapter.submitData(lifecycle, pagingData)
     }
 
-   /* private fun renderList(repos: Flow<PagingData<Item>>) {
-        viewBinding.recyclerView.visibility = View.VISIBLE
-        repos.let { listOfRepository -> listOfRepository.let { recyclerAdapter.addData(it) } }
-        recyclerAdapter.notifyDataSetChanged()
-    }*/
+    /* private fun renderList(repos: Flow<PagingData<Item>>) {
+         viewBinding.recyclerView.visibility = View.VISIBLE
+         repos.let { listOfRepository -> listOfRepository.let { recyclerAdapter.addData(it) } }
+         recyclerAdapter.notifyDataSetChanged()
+     }*/
 
     override fun onQueryTextSubmit(q: String): Boolean {
         lifecycleScope.launch {

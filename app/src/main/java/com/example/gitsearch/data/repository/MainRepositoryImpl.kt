@@ -3,6 +3,7 @@ package com.example.gitsearch.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.gitsearch.data.GithubPagingSource
 import com.example.gitsearch.data.NETWORK_PAGE_SIZE
 import com.example.gitsearch.data.api.ApiService
@@ -22,8 +23,7 @@ data class MainRepositoryImpl @Inject constructor(private val apiService: ApiSer
         cachedItems.addAll(it)
     }*/
 
-    //suspend?
-    override fun getRepo(q: String): Flow<PagingData<Item>> {
+    override suspend fun getRepo(q: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
