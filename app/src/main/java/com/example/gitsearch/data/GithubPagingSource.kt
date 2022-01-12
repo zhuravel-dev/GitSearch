@@ -7,8 +7,6 @@ import com.example.gitsearch.data.model.Item
 import retrofit2.HttpException
 import java.io.IOException
 
-const val NETWORK_PAGE_SIZE = 20
-
 class GithubPagingSource(
     private val apiService: ApiService,
     private val query: String

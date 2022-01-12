@@ -15,22 +15,12 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class FirstFragmentViewModel @Inject constructor(
-    private val repository: MainRepository,
-    private val q: String
+    private val repository: MainRepository
 ) : ViewModel() {
 
-    /*private var currentResult: Flow<PagingData<Item>>? = null
-
-    private fun searchRepos(): Flow<PagingData<Item>> {
-        val newResult: Flow<PagingData<Item>> =
-            repository.getRepo(q).cachedIn(viewModelScope)
-        currentResult = newResult
-        return newResult
-    }*/
-
-    private val _stateFirst = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
-    val stateFirst: StateFlow<FirstFragmentState>
-        get() = _stateFirst
+    private val _state = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
+    val state: StateFlow<FirstFragmentState>
+        get() = _state
 
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
@@ -41,14 +31,9 @@ class FirstFragmentViewModel @Inject constructor(
 
     private fun searchList(q: String) {
         viewModelScope.launch {
-            _stateFirst.value = FirstFragmentState.Loading
-
+            _state.value = FirstFragmentState.Loading
             repository.getRepo(q).cachedIn(viewModelScope).collectLatest {
-                _stateFirst.value = try {
-                    FirstFragmentState.DataLoaded(it)
-                } catch (e: Exception) {
-                    FirstFragmentState.Error(e.localizedMessage)
-                }
+                _state.value = FirstFragmentState.DataLoaded(it)
             }
         }
     }

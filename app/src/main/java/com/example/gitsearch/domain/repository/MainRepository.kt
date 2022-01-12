@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
 
-    suspend fun getRepo(q: String) : Flow<PagingData<Item>> //List<Item>
+    suspend fun getRepo(q: String) : Flow<PagingData<Item>>
     fun setSelectedId(id : Int)
     fun getDetailInfo() : Item?
 }
