@@ -2,7 +2,6 @@ package com.example.gitsearch.ui.firstFragment
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,12 +22,11 @@ import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextListener {
+class FirstFragment : Fragment(R.layout.fragment_first) {
 
     private val viewBinding by viewBinding(FragmentFirstBinding::bind)
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
-    var searchAdapter: ArrayAdapter<*>? = null
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
@@ -51,8 +49,8 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         recyclerView.run {
             addItemDecoration(
                 DividerItemDecoration(
-                    recyclerView.context,
-                    (recyclerView.layoutManager as LinearLayoutManager).orientation
+                    recyclerView.context, (recyclerView.layoutManager as LinearLayoutManager)
+                        .orientation
                 )
             )
         }
@@ -60,7 +58,18 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         toolbar.customToolbar.setNavigationOnClickListener {
             System.exit(0)
         }
-        toolbar.searchView.setOnQueryTextListener(this@FirstFragment)
+        toolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(q: String): Boolean {
+                lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q))
+                    }
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(q: String?): Boolean = true
+        })
     }
 
     private fun observeViewModel() {
@@ -87,19 +96,5 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
                 }
             }
         }
-    }
-
-    override fun onQueryTextSubmit(q: String): Boolean {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q))
-            }
-        }
-        return true
-    }
-
-    override fun onQueryTextChange(newText: String): Boolean {
-        searchAdapter?.filter?.filter(newText)
-        return true
     }
 }
