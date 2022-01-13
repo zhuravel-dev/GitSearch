@@ -2,6 +2,7 @@ package com.example.gitsearch.ui.firstFragment
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,10 +26,9 @@ import timber.log.Timber
 class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextListener {
 
     private val viewBinding by viewBinding(FragmentFirstBinding::bind)
-
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
-
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
+    var searchAdapter: ArrayAdapter<*>? = null
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
@@ -61,7 +61,6 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
             System.exit(0)
         }
         toolbar.searchView.setOnQueryTextListener(this@FirstFragment)
-        toolbar.searchView.queryHint = getString(R.string.hint_search)
     }
 
     private fun observeViewModel() {
@@ -99,5 +98,8 @@ class FirstFragment : Fragment(R.layout.fragment_first), SearchView.OnQueryTextL
         return true
     }
 
-    override fun onQueryTextChange(newText: String?): Boolean = false
+    override fun onQueryTextChange(newText: String): Boolean {
+        searchAdapter?.filter?.filter(newText)
+        return true
+    }
 }

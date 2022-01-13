@@ -31,7 +31,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetInfo)
+                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetDetailInfo)
             }
         }
     }

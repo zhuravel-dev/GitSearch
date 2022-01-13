@@ -28,6 +28,11 @@ data class MainRepositoryImpl @Inject constructor(private val apiService: ApiSer
         ).flow
     }
 
+    override suspend fun getRepoForDetailScreen() = apiService.getDetailRepositories().also {
+        cachedItems.clear()
+        cachedItems.addAll(listOf(it))
+    }
+
     override fun setSelectedId(id: Int) {
         selectedModel = cachedItems.find { it.id == id }
     }

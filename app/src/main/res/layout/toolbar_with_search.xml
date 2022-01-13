@@ -19,7 +19,8 @@
             android:animateLayoutChanges="true"
             android:iconifiedByDefault="true"
             android:imeOptions="actionSearch"
-            android:inputType="text" />
+            android:inputType="text"
+            app:queryHint="@string/hint_search" />
     </androidx.appcompat.widget.Toolbar>
 
 </com.google.android.material.appbar.AppBarLayout>

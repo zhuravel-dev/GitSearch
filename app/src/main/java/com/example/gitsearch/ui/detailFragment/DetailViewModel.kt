@@ -22,7 +22,7 @@ class DetailViewModel @Inject constructor(
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetInfo -> getDetailInfo()
+            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo()
         }
     }
 
