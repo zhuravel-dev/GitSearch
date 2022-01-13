@@ -2,11 +2,13 @@ package com.example.gitsearch.ui.firstFragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,9 +18,9 @@ class FirstFragmentViewModel @Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _stateFirst = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
-    val stateFirst: StateFlow<FirstFragmentState>
-        get() = _stateFirst
+    private val _state = MutableStateFlow<FirstFragmentState>(FirstFragmentState.Idle)
+    val state: StateFlow<FirstFragmentState>
+        get() = _state
 
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
@@ -29,11 +31,9 @@ class FirstFragmentViewModel @Inject constructor(
 
     private fun searchList(q: String) {
         viewModelScope.launch {
-            _stateFirst.value = FirstFragmentState.Loading
-            _stateFirst.value = try {
-                FirstFragmentState.DataLoaded(repository.getRepo(q))
-            } catch (e: Exception) {
-                FirstFragmentState.Error(e.localizedMessage)
+            _state.value = FirstFragmentState.Loading
+            repository.getRepo(q).cachedIn(viewModelScope).collectLatest {
+                _state.value = FirstFragmentState.DataLoaded(it)
             }
         }
     }
