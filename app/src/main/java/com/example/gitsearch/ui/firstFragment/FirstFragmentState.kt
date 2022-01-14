@@ -1,7 +1,7 @@
 package com.example.gitsearch.ui.firstFragment
 
 import androidx.paging.PagingData
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.remote.model.Item
 
 sealed class FirstFragmentState {
 

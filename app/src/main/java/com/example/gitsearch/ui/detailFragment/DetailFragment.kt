@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.gitsearch.R
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.databinding.FragmentDetailBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import com.squareup.picasso.Picasso

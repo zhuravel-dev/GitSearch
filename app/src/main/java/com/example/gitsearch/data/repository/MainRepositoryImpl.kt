@@ -3,9 +3,9 @@ package com.example.gitsearch.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.gitsearch.data.GithubPagingSource
-import com.example.gitsearch.data.api.ApiService
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.local.paging3.GithubPagingSource
+import com.example.gitsearch.data.remote.api.ApiService
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.domain.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

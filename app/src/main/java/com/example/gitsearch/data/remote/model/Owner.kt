@@ -1,4 +1,4 @@
-package com.example.gitsearch.data.model
+package com.example.gitsearch.data.remote.model
 
 import com.squareup.moshi.Json
 

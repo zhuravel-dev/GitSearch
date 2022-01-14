@@ -1,6 +1,6 @@
 package com.example.gitsearch.ui.detailFragment
 
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.remote.model.Item
 
 sealed class DetailFragmentState {
 

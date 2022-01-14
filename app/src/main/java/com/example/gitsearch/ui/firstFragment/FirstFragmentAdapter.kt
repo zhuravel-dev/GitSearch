@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.databinding.ItemLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
