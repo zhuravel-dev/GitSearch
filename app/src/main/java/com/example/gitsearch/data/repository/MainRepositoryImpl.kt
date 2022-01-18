@@ -10,7 +10,7 @@ import com.example.gitsearch.domain.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-const val NETWORK_PAGE_SIZE = 10
+const val NETWORK_PAGE_SIZE = 5
 
 data class MainRepositoryImpl @Inject constructor(private val apiService: ApiService) :
     MainRepository {

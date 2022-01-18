@@ -3,12 +3,14 @@ package com.example.gitsearch.ui.firstFragment
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
@@ -18,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -33,8 +34,16 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             firstFragmentViewModel.onIntent(FirstFragmentIntent.SetSelectedRepositoryId(it.id))
             findNavController().navigate(R.id.actionFragmentFirst_to_fragmentDetail)
         }
-        Timber.i("In fun init adapter")
-        viewBinding.recyclerView.adapter = pagingAdapter
+        viewBinding.recyclerView.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
+            header = FirstFragmentLoaderStateAdapter(),
+            footer = FirstFragmentLoaderStateAdapter()
+        )
+        pagingAdapter.addLoadStateListener { state ->
+            with(viewBinding) {
+                recyclerView.isVisible = state.refresh != LoadState.Loading
+                progressBar.isVisible = state.refresh == LoadState.Loading
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,9 +64,9 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             )
         }
         recyclerView.adapter = pagingAdapter
-        toolbar.customToolbar.setNavigationOnClickListener {
-            System.exit(0)
-        }
+
+        toolbar.customToolbar.setNavigationOnClickListener { System.exit(0) }
+
         toolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
                 lifecycleScope.launch {
@@ -67,7 +76,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 }
                 return true
             }
-
             override fun onQueryTextChange(q: String?): Boolean = true
         })
     }
