@@ -12,7 +12,6 @@ import com.example.gitsearch.databinding.ItemLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -26,20 +25,19 @@ class FirstFragmentAdapter :
         RecyclerView.ViewHolder(itemViewBinding.root) {
         @SuppressLint("SetTextI18n")
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(repository: Item) {
+        fun bind(data: Item) {
             itemView.setOnClickListener {
-                repository.let { onItemClick?.invoke(repository) }
-                Timber.i("onClick is working!")
+                data.let { onItemClick?.invoke(data) }
             }
-            Picasso.get().load(repository.owner.avatar_url).into(itemViewBinding.ivUserAvatar)
-            itemViewBinding.tvOwnerName.text = repository.owner.login.plus("/")
-            itemViewBinding.tvRepositoryName.text = repository.name
-            itemViewBinding.tvRepositoryDescription.text = repository.description
-            itemViewBinding.tvProgramLanguage.text = repository.language
+            Picasso.get().load(data.owner.avatar_url).into(itemViewBinding.ivUserAvatar)
+            itemViewBinding.tvOwnerName.text = data.owner.login.plus("/")
+            itemViewBinding.tvRepositoryName.text = data.name
+            itemViewBinding.tvRepositoryDescription.text = data.description
+            itemViewBinding.tvProgramLanguage.text = data.language
             itemViewBinding.tvTags.text =
-                repository.topics.toString().substring(1, repository.topics.toString().length - 1);
-            itemViewBinding.tvStarCount.text = "\u2606 ${repository.stargazers_count}"
-            val updatedDate = repository.updated_at
+                data.topics.toString().substring(1, data.topics.toString().length - 1);
+            itemViewBinding.tvStarCount.text = "\u2606 ${data.stargazers_count}"
+            val updatedDate = data.updated_at
             val parsedDate = LocalDateTime.parse(updatedDate, DateTimeFormatter.ISO_DATE_TIME)
             val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             itemViewBinding.tvUpdatedAt.text = "Updated $formattedDate"

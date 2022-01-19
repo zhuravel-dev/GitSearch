@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.gitsearch.R
 import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.databinding.FragmentDetailBinding
@@ -25,13 +26,15 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private val viewBinding by viewBinding(FragmentDetailBinding::bind)
     private val detailFragmentViewModel: DetailViewModel by viewModels()
+    private val args: DetailFragmentArgs by navArgs()
+    private val catchId by lazy { args.userId }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetDetailInfo)
+              detailFragmentViewModel.onIntent(DetailFragmentIntent.GetDetailInfo(catchId))
             }
         }
     }
@@ -58,7 +61,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                     }
                     is DetailFragmentState.DataLoaded -> {
                         viewBinding.progressBar.visibility = View.GONE
-                        showDetailInformation(it.info)
+                        showDetailInformation(it.detailData)
                     }
                     is DetailFragmentState.Error -> {
                         viewBinding.progressBar.visibility = View.GONE
@@ -69,14 +72,14 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showDetailInformation(repository: Item?) = viewBinding.run {
-        Picasso.get().load(repository?.owner?.avatar_url).into(ivUserAvatarDetailScreen)
-        tvUserLogin.text = repository?.owner?.login
-        tvNameOfRepository.text = "${repository?.name} repository"
-        tvRepositoryDescription.text = repository?.description
-        tvProgramingLanguages.text = repository?.language
+    private fun showDetailInformation(data: Item?) = viewBinding.run {
+        Picasso.get().load(data?.owner?.avatar_url).into(ivUserAvatarDetailScreen)
+        tvUserLogin.text = data?.owner?.login
+        tvNameOfRepository.text = "${data?.name} repository"
+        tvRepositoryDescription.text = data?.description
+        tvProgramingLanguages.text = data?.language
         tvTopics.text =
-            repository?.topics.toString().substring(1, repository?.topics.toString().length - 1)
-        tvWatchers.text = "${repository?.watchers_count.toString()} watchers"
+            data?.topics.toString().substring(1, data?.topics.toString().length - 1)
+        tvWatchers.text = "${data?.watchers_count.toString()} watchers"
     }
 }

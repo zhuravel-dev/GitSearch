@@ -22,19 +22,19 @@ class DetailViewModel @Inject constructor(
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo()
+            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.id)
         }
     }
 
-    private fun getDetailInfo() {
+    private fun getDetailInfo(id : Int) {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             _state.value = try {
-                val detailModel = repository.getDetailInfo()
-                DetailFragmentState.DataLoaded(detailModel)
+                DetailFragmentState.DataLoaded(repository.getDetailInfo(id))
             } catch (e: Exception) {
                 DetailFragmentState.Error(e.localizedMessage)
             }
         }
     }
+
 }

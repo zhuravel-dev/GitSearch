@@ -2,5 +2,5 @@ package com.example.gitsearch.ui.detailFragment
 
 sealed class DetailFragmentIntent {
 
-    object GetDetailInfo : DetailFragmentIntent()
+    data class GetDetailInfo(val id : Int) : DetailFragmentIntent()
 }

@@ -10,7 +10,7 @@ import com.example.gitsearch.domain.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-const val NETWORK_PAGE_SIZE = 5
+const val NETWORK_PAGE_SIZE = 10
 
 data class MainRepositoryImpl @Inject constructor(private val apiService: ApiService) :
     MainRepository {
@@ -28,14 +28,10 @@ data class MainRepositoryImpl @Inject constructor(private val apiService: ApiSer
         ).flow
     }
 
-    override suspend fun getRepoForDetailScreen() = apiService.getDetailRepositories().also {
-        cachedItems.clear()
-        cachedItems.addAll(listOf(it))
-    }
-
     override fun setSelectedId(id: Int) {
         selectedModel = cachedItems.find { it.id == id }
     }
 
-    override fun getDetailInfo(): Item? = selectedModel
+    override fun getDetailInfo(id : Int): Item? = selectedModel
+
 }

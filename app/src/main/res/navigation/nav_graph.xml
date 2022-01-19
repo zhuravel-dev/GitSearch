@@ -13,7 +13,12 @@
 
         <action
             android:id="@+id/actionFragmentFirst_to_fragmentDetail"
-            app:destination="@+id/fragmentDetail" />
+            app:destination="@+id/fragmentDetail" >
+            <argument
+                android:name="userId"
+                app:argType="integer" />
+
+        </action>
 
     </fragment>
 
@@ -21,6 +26,10 @@
         android:id="@+id/fragmentDetail"
         android:name="com.example.gitsearch.ui.detailFragment.DetailFragment"
         android:label="DetailFragment"
-        tools:layout="@layout/fragment_detail" />
+        tools:layout="@layout/fragment_detail" >
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

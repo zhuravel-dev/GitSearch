@@ -63,7 +63,7 @@ internal class FragmentViewBindingDelegate<T : ViewBinding>(
 }
 
 // usage
-// private val binding: LayoutSampleViewBinding by viewBinding(LayoutSampleViewBinding::inflate)
+// private val binding: dLayoutSampleViewBining by viewBinding(LayoutSampleViewBinding::inflate)
 internal fun <T : ViewBinding> View.viewBinding(
     viewBindingFactory: (LayoutInflater, ViewGroup, Boolean) -> T
 ) = CustomViewBindingDelegate(this, viewBindingFactory)

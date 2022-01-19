@@ -22,7 +22,7 @@ interface ApiService {
     ): Item
 
     companion object {
-        const val DEFAULT_PAGE_SIZE = 5
-        const val MAX_PAGE_SIZE = 5
+        const val DEFAULT_PAGE_SIZE = 10
+        const val MAX_PAGE_SIZE = 10
     }
 }
