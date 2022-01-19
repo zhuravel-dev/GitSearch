@@ -8,5 +8,5 @@ interface MainRepository {
 
     suspend fun getRepo(q: String) : Flow<PagingData<Item>>
     fun setSelectedId(id : Int)
-    fun getDetailInfo(id : Int) : Item?
+    fun getDetailInfo(detailData: Item) : Item
 }

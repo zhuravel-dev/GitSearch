@@ -32,6 +32,8 @@ data class MainRepositoryImpl @Inject constructor(private val apiService: ApiSer
         selectedModel = cachedItems.find { it.id == id }
     }
 
-    override fun getDetailInfo(id : Int): Item? = selectedModel
+    override fun getDetailInfo(detailData: Item): Item {
+        return detailData
+    }
 
 }

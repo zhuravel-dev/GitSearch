@@ -32,7 +32,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
             firstFragmentViewModel.onIntent(FirstFragmentIntent.SetSelectedRepositoryId(it.id))
-            findNavController().navigate(FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id))
+            findNavController().navigate(FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it))
         }
         viewBinding.recyclerView.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
             header = FirstFragmentLoaderStateAdapter(),
@@ -48,11 +48,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
-
-
         setupUI()
         observeViewModel()
         initAdapter()

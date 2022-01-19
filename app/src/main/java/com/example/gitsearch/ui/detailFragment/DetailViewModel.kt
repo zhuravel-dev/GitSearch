@@ -2,6 +2,7 @@ package com.example.gitsearch.ui.detailFragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gitsearch.data.model.Item
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,15 +23,15 @@ class DetailViewModel @Inject constructor(
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.id)
+            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.model)
         }
     }
 
-    private fun getDetailInfo(id : Int) {
+    private fun getDetailInfo(detailData: Item) {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             _state.value = try {
-                DetailFragmentState.DataLoaded(repository.getDetailInfo(id))
+                DetailFragmentState.DataLoaded(requireNotNull(repository.getDetailInfo(detailData)))
             } catch (e: Exception) {
                 DetailFragmentState.Error(e.localizedMessage)
             }

@@ -1,7 +1,10 @@
 package com.example.gitsearch.data.model
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Owner (
 	@Json(name = "login") val login : String,
 	@Json(name = "id") val id : Int,
@@ -21,4 +24,4 @@ data class Owner (
 	@Json(name = "received_events_url") val received_events_url : String,
 	@Json(name = "type") val type : String,
 	@Json(name = "site_admin") val site_admin : Boolean
-)
+) : Parcelable
