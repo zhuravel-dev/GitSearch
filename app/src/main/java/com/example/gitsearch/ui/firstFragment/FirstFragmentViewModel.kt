@@ -2,6 +2,7 @@ package com.example.gitsearch.ui.firstFragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,9 +13,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class FirstFragmentViewModel @Inject constructor(
+class FirstFragmentViewModel @ExperimentalPagingApi
+@Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
@@ -22,6 +25,7 @@ class FirstFragmentViewModel @Inject constructor(
     val state: StateFlow<FirstFragmentState>
         get() = _state
 
+    @ExperimentalPagingApi
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
             is FirstFragmentIntent.SearchGitList -> searchList(event.q)
@@ -29,14 +33,16 @@ class FirstFragmentViewModel @Inject constructor(
         }
     }
 
+    @ExperimentalPagingApi
     private fun searchList(q: String) {
         viewModelScope.launch {
             _state.value = FirstFragmentState.Loading
-            repository.getRepo(q).cachedIn(viewModelScope).collectLatest {
+            repository.getRepoFromNetwork(q).cachedIn(viewModelScope).collectLatest {
                 _state.value = FirstFragmentState.DataLoaded(it)
             }
         }
     }
 
+    @ExperimentalPagingApi
     private fun setSelectedRepositoryId(id: Int) = repository.setSelectedId(id)
 }

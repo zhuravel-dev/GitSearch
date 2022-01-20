@@ -2,6 +2,7 @@ package com.example.gitsearch.ui.detailFragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DetailViewModel @Inject constructor(
+class DetailViewModel @ExperimentalPagingApi
+@Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
@@ -20,12 +22,14 @@ class DetailViewModel @Inject constructor(
     val state: StateFlow<DetailFragmentState>
         get() = _state
 
+    @ExperimentalPagingApi
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
             is DetailFragmentIntent.GetDetailInfo -> getDetailInfo()
         }
     }
 
+    @ExperimentalPagingApi
     private fun getDetailInfo() {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading

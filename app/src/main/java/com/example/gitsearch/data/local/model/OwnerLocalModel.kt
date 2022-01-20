@@ -1,10 +1,11 @@
 package com.example.gitsearch.data.local.model
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+@Entity(tableName = "Owner")
 data class OwnerLocalModel(
-    @PrimaryKey
-    val id: Int,
+    @PrimaryKey val id: Int,
     val login: String,
     val node_id: String,
     val avatar_url: String,
