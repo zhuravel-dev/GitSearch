@@ -37,7 +37,7 @@ class FirstFragmentViewModel @ExperimentalPagingApi
     private fun searchList(q: String) {
         viewModelScope.launch {
             _state.value = FirstFragmentState.Loading
-            repository.getRepoFromNetwork(q).cachedIn(viewModelScope).collectLatest {
+            repository.getDataFromMediator().cachedIn(viewModelScope).collectLatest {
                 _state.value = FirstFragmentState.DataLoaded(it)
             }
         }

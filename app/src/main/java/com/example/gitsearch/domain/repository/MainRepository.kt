@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 @ExperimentalPagingApi
 interface MainRepository {
 
-    suspend fun getRepoFromNetwork(q: String) : Flow<PagingData<Item>>
-    fun getRepoFromDB(q: String) : Flow<PagingData<Item>>
-    fun getRepoFromMediator (q: String): Flow<PagingData<Item>>
+    suspend fun getDataFromNetwork(q: String) : Flow<PagingData<Item>>
+    fun getDataFromDB() : Flow<PagingData<Item>>
+    fun getDataFromMediator (): Flow<PagingData<Item>>
     fun setSelectedId(id : Int)
     fun getDetailInfo() : Item?
 }

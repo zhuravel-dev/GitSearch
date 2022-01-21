@@ -5,12 +5,13 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.example.gitsearch.data.local.db.DataDB
+import com.example.gitsearch.data.local.db.RemoteKey
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.remote.api.ApiService
-import com.example.gitsearch.data.local.db.DataDB
 import com.example.gitsearch.data.remote.model.Item
-import retrofit2.HttpException
 import okio.IOException
+import retrofit2.HttpException
 
 const val STARTING_PAGE_INDEX = 1
 
@@ -18,7 +19,7 @@ const val STARTING_PAGE_INDEX = 1
 class PagingRemoteMediator(
     private val api: ApiService,
     private val dataBase: DataDB
-) : RemoteMediator<Int, Item>() {
+) : RemoteMediator<Int, ItemLocalModel>() {
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -36,21 +37,22 @@ class PagingRemoteMediator(
                 pageKeyData as Int
             }
         }
+
         try {
             val response = api.getRepositories(page = page, pageSize = state.config.pageSize)
             val isEndOfList = response.items.isEmpty()
             dataBase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    dataBase.dataDao().deleteAll()
-                   // dataBase.getKeysDao().deleteAll()
+                    dataBase.getDataDao().deleteAll()
+                    dataBase.getKeysDao().deleteAll()
                 }
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (isEndOfList) null else page + 1
-               /* val keys = response.map {
+                val keys = response.items.map {
                     RemoteKey(it.id, prevKey = prevKey, nextKey = nextKey)
-                }*/
-              //  dataBase.getKeysDao().insertAll(keys)
-                dataBase.dataDao().insertData(response)
+                }
+                dataBase.getKeysDao().insertAll(keys)
+                dataBase.getDataDao().insertData(response)
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (exception: IOException) {
@@ -60,7 +62,10 @@ class PagingRemoteMediator(
         }
     }
 
-   /* private suspend fun getKeyPageData(loadType: LoadType, state: PagingState<Int, Cat>): Any {
+    private suspend fun getKeyPageData(
+        loadType: LoadType,
+        state: PagingState<Int, ItemLocalModel>
+    ): Any {
         return when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
@@ -79,5 +84,27 @@ class PagingRemoteMediator(
                 prevKey
             }
         }
-    }*/
+    }
+
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, ItemLocalModel>): RemoteKey? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.id?.let { repoId ->
+                dataBase.getKeysDao().getRemoteKeysUserId(repoId)
+            }
+        }
+    }
+
+    private suspend fun getLastRemoteKey(state: PagingState<Int, ItemLocalModel>): RemoteKey? {
+        return state.pages
+            .lastOrNull { it.data.isNotEmpty() }
+            ?.data?.lastOrNull()
+            ?.let { user -> dataBase.getKeysDao().getRemoteKeysUserId(user.id) }
+    }
+
+    private suspend fun getFirstRemoteKey(state: PagingState<Int, ItemLocalModel>): RemoteKey? {
+        return state.pages
+            .firstOrNull { it.data.isNotEmpty() }
+            ?.data?.firstOrNull()
+            ?.let { user -> dataBase.getKeysDao().getRemoteKeysUserId(user.id) }
+    }
 }

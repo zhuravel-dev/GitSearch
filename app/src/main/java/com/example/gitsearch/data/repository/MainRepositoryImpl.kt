@@ -24,8 +24,7 @@ data class MainRepositoryImpl @Inject constructor(
     private val cachedItems = ArrayList<Item>()
     private var selectedModel: Item? = null
 
-
-    override suspend fun getRepoFromNetwork(q: String): Flow<PagingData<Item>> {
+    override suspend fun getDataFromNetwork(q: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
@@ -35,9 +34,8 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
-
-    override fun getRepoFromDB (q: String): Flow<PagingData<Item>> {
-        val pagingSourceFactory = { database.dataDao().getData() }
+    override fun getDataFromDB (): Flow<PagingData<Item>> {
+        val pagingSourceFactory = { database.getDataDao().getData() }
 
         return Pager(
             config = PagingConfig(
@@ -48,23 +46,21 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
-
-    override fun getRepoFromMediator (q: String): Flow<PagingData<Item>> {
-        val pagingSourceFactory = { database.dataDao().getData() }
+    override fun getDataFromMediator (): Flow<PagingData<Item>> {
+        val pagingSourceFactory = { database.getDataDao().getData() }
 
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            remoteMediator = PagingRemoteMediator(
+            remoteMediator = PagingRemoteMediator (
                 apiService,
                 database
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
     }
-
 
     override fun setSelectedId(id: Int) {
         selectedModel = cachedItems.find { it.id == id }
