@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gitsearch.data.remote.model.Item
+import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.databinding.ItemLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
@@ -18,21 +18,21 @@ import java.time.format.DateTimeFormatter
 
 @ExperimentalCoroutinesApi
 class FirstFragmentAdapter :
-    PagingDataAdapter<Item, RecyclerView.ViewHolder>(ArticleDiffItemCallback) {
+    PagingDataAdapter<ItemLocalModel, RecyclerView.ViewHolder>(ArticleDiffItemCallback) {
 
-    var onItemClick: ((Item) -> Unit)? = null
+    var onItemClick: ((ItemLocalModel) -> Unit)? = null
 
     inner class RepoViewHolder(private val itemViewBinding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(itemViewBinding.root) {
         @SuppressLint("SetTextI18n")
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(repository: Item) {
+        fun bind(repository: ItemLocalModel) {
             itemView.setOnClickListener {
                 repository.let { onItemClick?.invoke(repository) }
                 Timber.i("onClick is working!")
             }
-            Picasso.get().load(repository.owner.avatar_url).into(itemViewBinding.ivUserAvatar)
-            itemViewBinding.tvOwnerName.text = repository.owner.login.plus("/")
+            Picasso.get().load(repository.owner?.avatar_url).into(itemViewBinding.ivUserAvatar)
+            itemViewBinding.tvOwnerName.text = repository.owner?.login.plus("/")
             itemViewBinding.tvRepositoryName.text = repository.name
             itemViewBinding.tvRepositoryDescription.text = repository.description
             itemViewBinding.tvProgramLanguage.text = repository.language
@@ -59,13 +59,13 @@ class FirstFragmentAdapter :
     }
 }
 
-private object ArticleDiffItemCallback : DiffUtil.ItemCallback<Item>() {
+private object ArticleDiffItemCallback : DiffUtil.ItemCallback<ItemLocalModel>() {
 
-    override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
+    override fun areItemsTheSame(oldItem: ItemLocalModel, newItem: ItemLocalModel): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+    override fun areContentsTheSame(oldItem: ItemLocalModel, newItem: ItemLocalModel): Boolean {
         return oldItem.name == newItem.name && oldItem.url == newItem.url
     }
 }

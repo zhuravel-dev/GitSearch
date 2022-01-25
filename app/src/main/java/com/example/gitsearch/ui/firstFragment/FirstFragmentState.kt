@@ -1,13 +1,13 @@
 package com.example.gitsearch.ui.firstFragment
 
 import androidx.paging.PagingData
-import com.example.gitsearch.data.remote.model.Item
+import com.example.gitsearch.data.local.model.ItemLocalModel
 
 sealed class FirstFragmentState {
 
     object Idle : FirstFragmentState()
     object Loading : FirstFragmentState()
-    data class DataLoaded(val data: PagingData<Item>) : FirstFragmentState()
+    data class DataLoaded(val data: PagingData<ItemLocalModel>) : FirstFragmentState()
     data class Error(val error: String?) : FirstFragmentState()
 
 }

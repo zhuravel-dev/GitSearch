@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FirstFragment : Fragment(R.layout.fragment_first) {
@@ -30,7 +32,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
-            firstFragmentViewModel.onIntent(FirstFragmentIntent.SetSelectedRepositoryId(it.id))
+            firstFragmentViewModel.onIntent(FirstFragmentIntent.SetSelectedRepositoryId(it.id ?: 0))
             findNavController().navigate(R.id.actionFragmentFirst_to_fragmentDetail)
         }
         Timber.i("In fun init adapter")

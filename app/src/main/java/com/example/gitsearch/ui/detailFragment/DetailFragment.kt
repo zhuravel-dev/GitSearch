@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.R
 import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.databinding.FragmentDetailBinding
@@ -19,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class DetailFragment : Fragment(R.layout.fragment_detail) {

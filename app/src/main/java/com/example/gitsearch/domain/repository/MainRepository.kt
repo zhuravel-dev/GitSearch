@@ -2,6 +2,7 @@ package com.example.gitsearch.domain.repository
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
+import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.remote.model.Item
 import kotlinx.coroutines.flow.Flow
 
@@ -9,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface MainRepository {
 
     suspend fun getDataFromNetwork(q: String) : Flow<PagingData<Item>>
-    fun getDataFromDB() : Flow<PagingData<Item>>
-    fun getDataFromMediator (): Flow<PagingData<Item>>
+    //fun getDataFromDB() : Flow<PagingData<ItemLocalModel>>
+    fun getDataFromMediator (q: String): Flow<PagingData<ItemLocalModel>>
     fun setSelectedId(id : Int)
     fun getDetailInfo() : Item?
 }

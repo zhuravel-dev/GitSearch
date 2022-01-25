@@ -1,16 +1,15 @@
 package com.example.gitsearch.data.repository
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import com.example.gitsearch.data.local.db.DataDB
+import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.local.paging3.GithubPagingSource
 import com.example.gitsearch.data.local.paging3.PagingRemoteMediator
 import com.example.gitsearch.data.remote.api.ApiService
 import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.domain.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 const val NETWORK_PAGE_SIZE = 10
@@ -34,19 +33,7 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getDataFromDB (): Flow<PagingData<Item>> {
-        val pagingSourceFactory = { database.getDataDao().getData() }
-
-        return Pager(
-            config = PagingConfig(
-                pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = pagingSourceFactory
-        ).flow
-    }
-
-    override fun getDataFromMediator (): Flow<PagingData<Item>> {
+    override fun getDataFromMediator (q: String): Flow<PagingData<ItemLocalModel>> {
         val pagingSourceFactory = { database.getDataDao().getData() }
 
         return Pager(
@@ -55,11 +42,18 @@ data class MainRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             remoteMediator = PagingRemoteMediator (
+                q,
                 apiService,
                 database
             ),
             pagingSourceFactory = pagingSourceFactory
-        ).flow
+        ).flow.map {
+            it.map {
+                it.apply {
+                    owner = database.getDataDao().getOwner(ownerId).firstOrNull()
+                }
+            }
+        }
     }
 
     override fun setSelectedId(id: Int) {

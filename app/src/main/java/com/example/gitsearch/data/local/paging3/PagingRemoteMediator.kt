@@ -8,8 +8,8 @@ import androidx.room.withTransaction
 import com.example.gitsearch.data.local.db.DataDB
 import com.example.gitsearch.data.local.db.RemoteKey
 import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.local.model.OwnerLocalModel
 import com.example.gitsearch.data.remote.api.ApiService
-import com.example.gitsearch.data.remote.model.Item
 import okio.IOException
 import retrofit2.HttpException
 
@@ -17,6 +17,7 @@ const val STARTING_PAGE_INDEX = 1
 
 @ExperimentalPagingApi
 class PagingRemoteMediator(
+    private val query: String,
     private val api: ApiService,
     private val dataBase: DataDB
 ) : RemoteMediator<Int, ItemLocalModel>() {
@@ -33,13 +34,11 @@ class PagingRemoteMediator(
             is MediatorResult.Success -> {
                 return pageKeyData
             }
-            else -> {
-                pageKeyData as Int
-            }
+            else -> pageKeyData as Int
         }
 
         try {
-            val response = api.getRepositories(page = page, pageSize = state.config.pageSize)
+            val response = api.getRepositories(query = query, page = page, pageSize = state.config.pageSize)
             val isEndOfList = response.items.isEmpty()
             dataBase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -49,10 +48,34 @@ class PagingRemoteMediator(
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (isEndOfList) null else page + 1
                 val keys = response.items.map {
-                    RemoteKey(it.id, prevKey = prevKey, nextKey = nextKey)
+                    RemoteKey(it.id ?: 0, prevKey = prevKey, nextKey = nextKey)
                 }
                 dataBase.getKeysDao().insertAll(keys)
-                dataBase.getDataDao().insertData(response)
+                dataBase.getDataDao().let { dao ->
+                    dao.insertData(response.items.map {
+                        it.owner?.run {
+                            dao.insertOwner(OwnerLocalModel(
+                                id,
+                                login,
+                                avatar_url
+                            ))
+                        }
+                        it.run {
+                            ItemLocalModel(
+                                id,
+                                name,
+                                ownerId = owner?.id ?: 0,
+                                description,
+                                url,
+                                updated_at,
+                                stargazers_count,
+                                language,
+                                topics,
+                                watchers
+                            )
+                        }
+                    })
+                }
             }
             return MediatorResult.Success(endOfPaginationReached = isEndOfList)
         } catch (exception: IOException) {
@@ -98,13 +121,13 @@ class PagingRemoteMediator(
         return state.pages
             .lastOrNull { it.data.isNotEmpty() }
             ?.data?.lastOrNull()
-            ?.let { user -> dataBase.getKeysDao().getRemoteKeysUserId(user.id) }
+            ?.let { user -> dataBase.getKeysDao().getRemoteKeysUserId(user.id ?: 0) }
     }
 
     private suspend fun getFirstRemoteKey(state: PagingState<Int, ItemLocalModel>): RemoteKey? {
         return state.pages
             .firstOrNull { it.data.isNotEmpty() }
             ?.data?.firstOrNull()
-            ?.let { user -> dataBase.getKeysDao().getRemoteKeysUserId(user.id) }
+            ?.let { user -> dataBase.getKeysDao().getRemoteKeysUserId(user.id ?: 0) }
     }
 }

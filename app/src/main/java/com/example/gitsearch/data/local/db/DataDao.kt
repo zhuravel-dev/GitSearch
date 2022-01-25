@@ -5,18 +5,24 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.gitsearch.data.remote.model.Item
-import com.example.gitsearch.data.remote.model.ItemsResponse
+import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.local.model.OwnerLocalModel
 
 @Dao
 interface DataDao {
 
-    @Query("SELECT * FROM users_info")
-    fun getData(): PagingSource<Int, Item>
+    @Query("SELECT * FROM items")
+    fun getData(): PagingSource<Int, ItemLocalModel>
+
+    @Query("SELECT * FROM owner WHERE id=:id")
+    suspend fun getOwner(id: Int?): List<OwnerLocalModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertData(data: ItemsResponse)
+    suspend fun insertData(data: List<ItemLocalModel>)
 
-    @Query("DELETE FROM users_info")
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOwner(data: OwnerLocalModel)
+
+    @Query("DELETE FROM items")
     suspend fun deleteAll()
 }
