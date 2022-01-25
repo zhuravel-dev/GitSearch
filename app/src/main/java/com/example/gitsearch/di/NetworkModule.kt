@@ -1,6 +1,6 @@
 package com.example.gitsearch.di
 
-import com.example.gitsearch.data.api.ApiService
+import com.example.gitsearch.data.remote.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

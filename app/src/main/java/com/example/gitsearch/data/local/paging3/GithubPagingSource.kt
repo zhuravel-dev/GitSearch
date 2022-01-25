@@ -1,12 +1,14 @@
-package com.example.gitsearch.data
+package com.example.gitsearch.data.local.paging3
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.gitsearch.data.api.ApiService
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.remote.api.ApiService
+import com.example.gitsearch.data.remote.model.Item
 import retrofit2.HttpException
 import java.io.IOException
 
+@ExperimentalPagingApi
 class GithubPagingSource(
     private val apiService: ApiService,
     private val query: String

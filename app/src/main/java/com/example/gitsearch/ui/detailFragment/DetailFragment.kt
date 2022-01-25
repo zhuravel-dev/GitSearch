@@ -1,5 +1,6 @@
 package com.example.gitsearch.ui.detailFragment
 
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
@@ -10,8 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.R
-import com.example.gitsearch.data.model.Item
+import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.databinding.FragmentDetailBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import com.squareup.picasso.Picasso
@@ -20,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class DetailFragment : Fragment(R.layout.fragment_detail) {
@@ -34,7 +38,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-              detailFragmentViewModel.onIntent(DetailFragmentIntent.GetDetailInfo(requireNotNull(catchModel)))
+                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetDetailInfo(requireNotNull(catchModel)))
             }
         }
     }
@@ -72,14 +76,14 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showDetailInformation(detailData: Item) = viewBinding.run {
-        Picasso.get().load(detailData.owner.avatar_url).into(ivUserAvatarDetailScreen)
-        tvUserLogin.text = detailData.owner.login
+    private fun showDetailInformation(detailData: ItemLocalModel) = viewBinding.run {
+        Picasso.get().load(detailData.owner?.avatar_url).into(ivUserAvatarDetailScreen)
+        tvUserLogin.text = detailData.owner?.login
         tvNameOfRepository.text = "${detailData.name} repository"
         tvRepositoryDescription.text = detailData.description
         tvProgramingLanguages.text = detailData.language
         tvTopics.text =
             detailData.topics.toString().substring(1, detailData.topics.toString().length - 1)
-        tvWatchers.text = "${detailData.watchers_count.toString()} watchers"
+        tvWatchers.text = "${detailData.watchers.toString()} watchers"
     }
 }

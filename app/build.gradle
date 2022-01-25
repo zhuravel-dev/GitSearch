@@ -57,7 +57,7 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.4.0"
 
     implementation "androidx.fragment:fragment-ktx:1.4.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 
     //Retrofit
@@ -97,7 +97,13 @@ dependencies {
     implementation "com.jakewharton.timber:timber:4.7.1"
 
     // Paging3
-    /*def pagingVersion = "3.0.0"
-    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"*/
     implementation "androidx.paging:paging-runtime-ktx:3.1.0"
+
+    // Room
+    implementation "androidx.room:room-ktx:2.4.0"
+    kapt "androidx.room:room-compiler:2.4.0"
+    implementation "androidx.room:room-paging:2.4.0"
+
+    // Gson for converter at roomDB
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

@@ -2,7 +2,9 @@ package com.example.gitsearch.ui.detailFragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gitsearch.data.model.Item
+import androidx.paging.ExperimentalPagingApi
+import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,9 +13,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DetailViewModel @Inject constructor(
+class DetailViewModel
+@Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
@@ -27,7 +31,7 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun getDetailInfo(detailData: Item) {
+    private fun getDetailInfo(detailData: ItemLocalModel) {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             _state.value = try {
