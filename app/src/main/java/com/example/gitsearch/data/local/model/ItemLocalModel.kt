@@ -9,7 +9,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(tableName = "items")
 data class ItemLocalModel(
-    @PrimaryKey var id: Int? = 0,
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
     var name: String? = null,
     var ownerId: Int? = null,
     var description: String? = null,

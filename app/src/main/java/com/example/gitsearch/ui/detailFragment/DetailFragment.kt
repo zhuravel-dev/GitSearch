@@ -14,7 +14,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.R
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.databinding.FragmentDetailBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import com.squareup.picasso.Picasso

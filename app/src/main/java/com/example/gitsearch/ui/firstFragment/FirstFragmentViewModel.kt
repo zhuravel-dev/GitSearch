@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class FirstFragmentViewModel @ExperimentalPagingApi
@@ -29,7 +28,6 @@ class FirstFragmentViewModel @ExperimentalPagingApi
     fun onIntent(event: FirstFragmentIntent) {
         when (event) {
             is FirstFragmentIntent.SearchGitList -> searchList(event.q)
-            is FirstFragmentIntent.SetSelectedRepositoryId -> setSelectedRepositoryId(event.id)
         }
     }
 
@@ -42,7 +40,4 @@ class FirstFragmentViewModel @ExperimentalPagingApi
             }
         }
     }
-
-    @ExperimentalPagingApi
-    private fun setSelectedRepositoryId(id: Int) = repository.setSelectedId(id)
 }

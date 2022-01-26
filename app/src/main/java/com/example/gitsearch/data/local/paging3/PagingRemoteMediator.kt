@@ -48,7 +48,7 @@ class PagingRemoteMediator(
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (isEndOfList) null else page + 1
                 val keys = response.items.map {
-                    RemoteKey(it.id ?: 0, prevKey = prevKey, nextKey = nextKey)
+                    RemoteKey(it.id, prevKey = prevKey, nextKey = nextKey)
                 }
                 dataBase.getKeysDao().insertAll(keys)
                 dataBase.getDataDao().let { dao ->

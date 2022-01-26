@@ -20,9 +20,6 @@ data class MainRepositoryImpl @Inject constructor(
     private val database: DataDB
 ) : MainRepository {
 
-    private val cachedItems = ArrayList<Item>()
-    private var selectedModel: Item? = null
-
     override suspend fun getDataFromNetwork(q: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
@@ -54,10 +51,6 @@ data class MainRepositoryImpl @Inject constructor(
                 }
             }
         }
-    }
-
-    override fun setSelectedId(id: Int) {
-        selectedModel = cachedItems.find { it.id == id }
     }
 
     override fun getDetailInfo(detailData: ItemLocalModel): ItemLocalModel {

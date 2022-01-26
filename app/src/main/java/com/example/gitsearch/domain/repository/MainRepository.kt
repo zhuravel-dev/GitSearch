@@ -11,6 +11,5 @@ interface MainRepository {
 
     suspend fun getDataFromNetwork(q: String) : Flow<PagingData<Item>>
     fun getDataFromMediator (q: String): Flow<PagingData<ItemLocalModel>>
-    fun setSelectedId(id : Int)
     fun getDetailInfo(detailData: ItemLocalModel) : ItemLocalModel
 }

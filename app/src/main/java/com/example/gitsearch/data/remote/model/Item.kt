@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 data class ItemsResponse (@Json(name= "items") val items : List<Item> )
 
 data class Item (
-	@Json(name= "id") val id : Int? = null,
+	@Json(name= "id") val id : Int,
 	@Json(name= "name") val name : String? = null,
 	@Json(name= "owner") val owner : Owner? = null,
 	@Json(name= "description") val description : String? = null,

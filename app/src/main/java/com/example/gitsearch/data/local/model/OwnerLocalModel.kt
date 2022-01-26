@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "owner")
 data class OwnerLocalModel(
-    @PrimaryKey var id: Int? = 0,
+    @PrimaryKey(autoGenerate = true)
+    var id: Int,
     var login: String? = null,
     var avatar_url: String? = null,
     var url: String? = null,
