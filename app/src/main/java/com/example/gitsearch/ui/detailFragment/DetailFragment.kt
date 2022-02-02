@@ -1,6 +1,5 @@
 package com.example.gitsearch.ui.detailFragment
 
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
@@ -30,14 +29,15 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private val viewBinding by viewBinding(FragmentDetailBinding::bind)
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
-    private val catchModel by lazy { args.model }
+    private val catchId by lazy { args.myId }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetDetailInfo(requireNotNull(catchModel)))
+                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetModelById(catchId))
             }
         }
     }
@@ -76,13 +76,13 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     @SuppressLint("SetTextI18n")
     private fun showDetailInformation(detailData: ItemLocalModel) = viewBinding.run {
-        Picasso.get().load(detailData.owner?.avatar_url).into(ivUserAvatarDetailScreen)
-        tvUserLogin.text = detailData.owner?.login
-        tvNameOfRepository.text = "${detailData.name} repository"
-        tvRepositoryDescription.text = detailData.description
-        tvProgramingLanguages.text = detailData.language
-        tvTopics.text =
-            detailData.topics.toString().substring(1, detailData.topics.toString().length - 1)
-        tvWatchers.text = "${detailData.watchers.toString()} watchers"
+            Picasso.get().load(detailData.owner?.avatar_url).into(ivUserAvatarDetailScreen)
+            tvUserLogin.text = detailData.owner?.login
+            tvNameOfRepository.text = "${detailData.name} repository"
+            tvRepositoryDescription.text = detailData.description
+            tvProgramingLanguages.text = detailData.language
+            tvTopics.text =
+                detailData.topics.toString().substring(1, detailData.topics.toString().length - 1)
+            tvWatchers.text = "${detailData.watchers.toString()} watchers"
     }
 }

@@ -15,7 +15,10 @@ interface DataDao {
     fun getData(): PagingSource<Int, ItemLocalModel>
 
     @Query("SELECT * FROM owner WHERE id=:id")
-    suspend fun getOwner(id: Int?): List<OwnerLocalModel>
+    suspend fun getOwnerById(id: Int?): List<OwnerLocalModel>
+
+    @Query("SELECT * FROM items WHERE id=:id")
+    suspend fun getItemById(id: Int?): ItemLocalModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(data: List<ItemLocalModel>)

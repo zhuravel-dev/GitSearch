@@ -12,8 +12,10 @@ import com.example.gitsearch.databinding.ItemLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @ExperimentalCoroutinesApi
 class FirstFragmentAdapter :
@@ -23,8 +25,7 @@ class FirstFragmentAdapter :
 
     inner class RepoViewHolder(private val itemViewBinding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(itemViewBinding.root) {
-        @SuppressLint("SetTextI18n")
-        @RequiresApi(Build.VERSION_CODES.O)
+        @SuppressLint("SetTextI18n", "SimpleDateFormat")
         fun bind(data: ItemLocalModel) {
             itemView.setOnClickListener {
                 data.let { onItemClick?.invoke(data) }
@@ -38,9 +39,15 @@ class FirstFragmentAdapter :
                 data.topics.toString().substring(1, data.topics.toString().length - 1);
             itemViewBinding.tvStarCount.text = "\u2606 ${data.stargazers_count}"
             val updatedDate = data.updated_at
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val parsedDate = LocalDateTime.parse(updatedDate, DateTimeFormatter.ISO_DATE_TIME)
-            val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            itemViewBinding.tvUpdatedAt.text = "Updated $formattedDate"
+                val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                itemViewBinding.tvUpdatedAt.text = "Updated $formattedDate"
+            } else {
+                val SDFormat = SimpleDateFormat("dd.MM.yyyy")
+                val formattingDate = SDFormat.format(Date())
+                itemViewBinding.tvUpdatedAt.text = "Updated $formattingDate"
+            }
         }
     }
 

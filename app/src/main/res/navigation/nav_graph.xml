@@ -15,8 +15,8 @@
             android:id="@+id/actionFragmentFirst_to_fragmentDetail"
             app:destination="@+id/fragmentDetail">
             <argument
-                android:name="model"
-                app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
+                android:name="myId"
+                app:argType="integer" />
 
         </action>
 
@@ -28,8 +28,8 @@
         android:label="DetailFragment"
         tools:layout="@layout/fragment_detail">
         <argument
-            android:name="model"
-            app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
+            android:name="myId"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

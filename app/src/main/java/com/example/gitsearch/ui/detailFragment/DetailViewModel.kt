@@ -26,7 +26,8 @@ class DetailViewModel
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.model)
+            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.detailData)
+            is DetailFragmentIntent.GetModelById -> getModelById(event.id)
         }
     }
 
@@ -34,11 +35,21 @@ class DetailViewModel
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             _state.value = try {
-                DetailFragmentState.DataLoaded(requireNotNull(repository.getDetailInfo(detailData)))
+                DetailFragmentState.DataLoaded(repository.getDetailInfo(detailData))
             } catch (e: Exception) {
                 DetailFragmentState.Error(e.localizedMessage)
             }
         }
     }
 
+    private fun getModelById(id: Int){
+        viewModelScope.launch {
+            _state.value = DetailFragmentState.Loading
+            _state.value = try {
+                DetailFragmentState.DataLoaded(repository.getModelById(id))
+            } catch (e: Exception) {
+                DetailFragmentState.Error(e.localizedMessage)
+            }
+        }
+    }
 }

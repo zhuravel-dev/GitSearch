@@ -2,6 +2,7 @@ package com.example.gitsearch.data.repository
 
 import androidx.paging.*
 import com.example.gitsearch.data.local.db.DataDB
+import com.example.gitsearch.data.local.db.DataDao
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.local.paging3.GithubPagingSource
 import com.example.gitsearch.data.local.paging3.PagingRemoteMediator
@@ -17,10 +18,11 @@ const val NETWORK_PAGE_SIZE = 10
 @ExperimentalPagingApi
 data class MainRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val database: DataDB
+    private val database: DataDB,
+    private val dao: DataDao
 ) : MainRepository {
 
-    override suspend fun getDataFromNetwork(q: String): Flow<PagingData<Item>> {
+    override suspend fun getDataFromNetwork(q: String) : Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
@@ -30,7 +32,7 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getDataFromMediator (q: String): Flow<PagingData<ItemLocalModel>> {
+    override fun getDataFromMediator (q: String) : Flow<PagingData<ItemLocalModel>> {
         val pagingSourceFactory = { database.getDataDao().getData() }
 
         return Pager(
@@ -47,13 +49,18 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow.map {
             it.map {
                 it.apply {
-                    owner = database.getDataDao().getOwner(ownerId).firstOrNull()
+                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
                 }
             }
         }
     }
 
-    override fun getDetailInfo(detailData: ItemLocalModel): ItemLocalModel {
+    override fun getDetailInfo(detailData: ItemLocalModel) : ItemLocalModel {
         return detailData
     }
+
+    override suspend fun getModelById(id: Int): ItemLocalModel {
+        return dao.getItemById(id)
+    }
+
 }
