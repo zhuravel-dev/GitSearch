@@ -12,7 +12,7 @@ data class ItemLocalModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     var name: String? = null,
-    var ownerId: Int? = null,
+    var ownerId: Int,
     var description: String? = null,
     var url: String? = null,
     var updated_at: String? = null,

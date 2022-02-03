@@ -33,7 +33,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
-            val action = FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id)
+            val action = FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
             findNavController().navigate(action)
         }
         viewBinding.recyclerView.adapter = pagingAdapter.withLoadStateHeaderAndFooter(

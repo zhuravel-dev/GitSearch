@@ -15,7 +15,11 @@
             android:id="@+id/actionFragmentFirst_to_fragmentDetail"
             app:destination="@+id/fragmentDetail">
             <argument
-                android:name="myId"
+                android:name="myModelId"
+                app:argType="integer" />
+
+            <argument
+                android:name="myOwnerId"
                 app:argType="integer" />
 
         </action>
@@ -28,8 +32,13 @@
         android:label="DetailFragment"
         tools:layout="@layout/fragment_detail">
         <argument
-            android:name="myId"
+            android:name="myModelId"
             app:argType="integer" />
+
+        <argument
+            android:name="myOwnerId"
+            app:argType="integer" />
+
     </fragment>
 
 </navigation>

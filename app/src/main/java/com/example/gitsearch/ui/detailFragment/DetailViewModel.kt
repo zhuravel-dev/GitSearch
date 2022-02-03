@@ -28,6 +28,7 @@ class DetailViewModel
         when (event) {
             is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.detailData)
             is DetailFragmentIntent.GetModelById -> getModelById(event.id)
+            is DetailFragmentIntent.GetOwnerById -> getOwnerById(event.id)
         }
     }
 
@@ -47,6 +48,17 @@ class DetailViewModel
             _state.value = DetailFragmentState.Loading
             _state.value = try {
                 DetailFragmentState.DataLoaded(repository.getModelById(id))
+            } catch (e: Exception) {
+                DetailFragmentState.Error(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun getOwnerById(id: Int){
+        viewModelScope.launch {
+            _state.value = DetailFragmentState.Loading
+            _state.value = try {
+                DetailFragmentState.DataLoadedOwner(repository.getOneOwnerById(id))
             } catch (e: Exception) {
                 DetailFragmentState.Error(e.localizedMessage)
             }

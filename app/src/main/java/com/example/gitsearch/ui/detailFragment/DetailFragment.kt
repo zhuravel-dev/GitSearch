@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.R
 import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.local.model.OwnerLocalModel
 import com.example.gitsearch.databinding.FragmentDetailBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import com.squareup.picasso.Picasso
@@ -29,15 +30,17 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private val viewBinding by viewBinding(FragmentDetailBinding::bind)
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
-    private val catchId by lazy { args.myId }
-
+    private val modelId by lazy { args.myModelId }
+    private val ownerId by lazy { args.myOwnerId }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetModelById(catchId))
+                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetModelById(modelId))
+                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetOwnerById(ownerId))
+                // detailFragmentViewModel.onIntent(DetailFragmentIntent.GetAllById(modelId, ownerId))
             }
         }
     }
@@ -64,7 +67,11 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                     }
                     is DetailFragmentState.DataLoaded -> {
                         viewBinding.progressBar.visibility = View.GONE
-                        showDetailInformation(it.detailData)
+                        showModelInformation(it.model)
+                    }
+                    is DetailFragmentState.DataLoadedOwner -> {
+                        viewBinding.progressBar.visibility = View.GONE
+                        showOwnerModelInformation(it.ownerModel)
                     }
                     is DetailFragmentState.Error -> {
                         viewBinding.progressBar.visibility = View.GONE
@@ -75,14 +82,19 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showDetailInformation(detailData: ItemLocalModel) = viewBinding.run {
-            Picasso.get().load(detailData.owner?.avatar_url).into(ivUserAvatarDetailScreen)
-            tvUserLogin.text = detailData.owner?.login
-            tvNameOfRepository.text = "${detailData.name} repository"
-            tvRepositoryDescription.text = detailData.description
-            tvProgramingLanguages.text = detailData.language
+    private fun showModelInformation(model: ItemLocalModel) = viewBinding.run {
+         /*   Picasso.get().load(ownerModel.avatar_url).into(ivUserAvatarDetailScreen)
+            tvUserLogin.text = ownerModel.login*/
+            tvNameOfRepository.text = "${model.name} repository"
+            tvRepositoryDescription.text = model.description
+            tvProgramingLanguages.text = model.language
             tvTopics.text =
-                detailData.topics.toString().substring(1, detailData.topics.toString().length - 1)
-            tvWatchers.text = "${detailData.watchers.toString()} watchers"
+                model.topics.toString().substring(1, model.topics.toString().length - 1)
+            tvWatchers.text = "${model.watchers.toString()} watchers"
+        }
+
+    private fun showOwnerModelInformation(ownerModel: OwnerLocalModel) = viewBinding.run {
+        Picasso.get().load(ownerModel.avatar_url).into(ivUserAvatarDetailScreen)
+        tvUserLogin.text = ownerModel.login
     }
 }
