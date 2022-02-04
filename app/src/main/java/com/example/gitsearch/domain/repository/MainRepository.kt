@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @ExperimentalPagingApi
 interface MainRepository {
 
-    suspend fun getDataFromNetwork(q: String) : Flow<PagingData<Item>>
-    fun getDataFromMediator (q: String): Flow<PagingData<ItemLocalModel>>
-    fun getDetailInfo (detailData: ItemLocalModel) : ItemLocalModel
-    suspend fun getModelById (id: Int) : ItemLocalModel
-    suspend fun getOneOwnerById (id: Int) : OwnerLocalModel
+    suspend fun getDataFromNetwork(q: String): Flow<PagingData<Item>>
+    suspend fun getDataFromMediator(q: String): Flow<PagingData<ItemLocalModel>>
+    suspend fun getModelById(id: Int): ItemLocalModel
+    suspend fun getOneOwnerById(id: Int): OwnerLocalModel
 }

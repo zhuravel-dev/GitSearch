@@ -3,7 +3,6 @@ package com.example.gitsearch.ui.detailFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
-import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,42 +25,16 @@ class DetailViewModel
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetDetailInfo -> getDetailInfo(event.detailData)
-            is DetailFragmentIntent.GetModelById -> getModelById(event.id)
-            is DetailFragmentIntent.GetOwnerById -> getOwnerById(event.id)
+            is DetailFragmentIntent.GetAllById -> getAllById(event.modelId, event.ownerId)
         }
     }
 
-    private fun getDetailInfo(detailData: ItemLocalModel) {
+    private fun getAllById(modelId: Int, ownerId: Int) {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
-            _state.value = try {
-                DetailFragmentState.DataLoaded(repository.getDetailInfo(detailData))
-            } catch (e: Exception) {
-                DetailFragmentState.Error(e.localizedMessage)
-            }
-        }
-    }
-
-    private fun getModelById(id: Int){
-        viewModelScope.launch {
-            _state.value = DetailFragmentState.Loading
-            _state.value = try {
-                DetailFragmentState.DataLoaded(repository.getModelById(id))
-            } catch (e: Exception) {
-                DetailFragmentState.Error(e.localizedMessage)
-            }
-        }
-    }
-
-    private fun getOwnerById(id: Int){
-        viewModelScope.launch {
-            _state.value = DetailFragmentState.Loading
-            _state.value = try {
-                DetailFragmentState.DataLoadedOwner(repository.getOneOwnerById(id))
-            } catch (e: Exception) {
-                DetailFragmentState.Error(e.localizedMessage)
-            }
+            val model = repository.getModelById(modelId)
+            val owner = repository.getOneOwnerById(ownerId)
+            _state.value = DetailFragmentState.DataLoadedAll(model, owner)
         }
     }
 }

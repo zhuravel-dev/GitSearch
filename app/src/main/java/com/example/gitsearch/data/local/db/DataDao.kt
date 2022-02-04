@@ -17,6 +17,9 @@ interface DataDao {
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOwnerById(id: Int?): List<OwnerLocalModel>
 
+    @Query("SELECT * FROM owner")
+    suspend fun getOwners(): List<OwnerLocalModel>
+
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOneOwnerById(id: Int?): OwnerLocalModel
 

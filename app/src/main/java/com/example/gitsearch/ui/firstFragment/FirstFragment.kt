@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
-    private val viewBinding by viewBinding(FragmentFirstBinding::bind)
+    private val viewBinding: FragmentFirstBinding? by viewBinding(FragmentFirstBinding::bind)
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
 
@@ -36,12 +36,12 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             val action = FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
             findNavController().navigate(action)
         }
-        viewBinding.recyclerView.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
+        viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
             header = FirstFragmentLoaderStateAdapter(),
             footer = FirstFragmentLoaderStateAdapter()
         )
         pagingAdapter.addLoadStateListener { state ->
-            with(viewBinding) {
+            viewBinding?.run {
                 recyclerView.isVisible = state.refresh != LoadState.Loading
                 progressBar.isVisible = state.refresh == LoadState.Loading
             }
@@ -55,7 +55,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         initAdapter()
     }
 
-    private fun setupUI() = viewBinding.run {
+    private fun setupUI() = viewBinding?.run {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.run {
             addItemDecoration(
@@ -85,21 +85,21 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             firstFragmentViewModel.state.collect {
                 when (it) {
                     is FirstFragmentState.Idle -> {
-                        viewBinding.tvWelcomeText.visibility = View.VISIBLE
+                        viewBinding?.tvWelcomeText?.visibility = View.VISIBLE
                     }
                     is FirstFragmentState.Loading -> {
-                        viewBinding.tvWelcomeText.visibility = View.GONE
-                        viewBinding.progressBar.visibility = View.VISIBLE
+                        viewBinding?.tvWelcomeText?.visibility = View.GONE
+                        viewBinding?.progressBar?.visibility = View.VISIBLE
                     }
                     is FirstFragmentState.DataLoaded -> {
-                        viewBinding.tvWelcomeText.visibility = View.GONE
-                        viewBinding.progressBar.visibility = View.GONE
-                        viewBinding.recyclerView.visibility = View.VISIBLE
+                        viewBinding?.tvWelcomeText?.visibility = View.GONE
+                        viewBinding?.progressBar?.visibility = View.GONE
+                        viewBinding?.recyclerView?.visibility = View.VISIBLE
                         pagingAdapter.submitData(it.data)
                     }
                     is FirstFragmentState.Error -> {
-                        viewBinding.tvWelcomeText.visibility = View.GONE
-                        viewBinding.progressBar.visibility = View.GONE
+                        viewBinding?.tvWelcomeText?.visibility = View.GONE
+                        viewBinding?.progressBar?.visibility = View.GONE
                     }
                 }
             }

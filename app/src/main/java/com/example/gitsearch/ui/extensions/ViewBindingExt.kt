@@ -23,14 +23,14 @@ internal inline fun <T : ViewBinding> AppCompatActivity.viewBinding(
 
 // usage
 // private val binding by viewBinding(FirstFragmentBinding::bind)
-internal fun <T : ViewBinding> Fragment.viewBinding(
+internal fun <T : ViewBinding?> Fragment.viewBinding(
     viewBindingFactory: (View) -> T
 ) = FragmentViewBindingDelegate(this, viewBindingFactory)
 
-internal class FragmentViewBindingDelegate<T : ViewBinding>(
+internal class FragmentViewBindingDelegate<T : ViewBinding?>(
     val fragment: Fragment,
     val viewBindingFactory: (View) -> T
-) : ReadOnlyProperty<Fragment, T> {
+) : ReadOnlyProperty<Fragment, T?> {
     private var binding: T? = null
 
     init {
@@ -47,7 +47,8 @@ internal class FragmentViewBindingDelegate<T : ViewBinding>(
         })
     }
 
-    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): T? {
+        if(thisRef.view == null) return null
         val binding = binding
         if (binding != null) {
             return binding

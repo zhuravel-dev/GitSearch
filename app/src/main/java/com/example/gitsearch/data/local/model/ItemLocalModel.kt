@@ -10,16 +10,16 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "items")
 data class ItemLocalModel(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
-    var name: String? = null,
-    var ownerId: Int,
-    var description: String? = null,
-    var url: String? = null,
-    var updated_at: String? = null,
-    var stargazers_count: Int? = null,
-    var language: String? = null,
-    var topics: List<String>? = null,
-    var watchers: Int? = null
+    val id: Int,
+    val name: String,
+    val ownerId: Int,
+    val description: String? = null,
+    val url: String,
+    val updated_at: String,
+    val stargazers_count: Int,
+    val language: String? = null,
+    val topics: List<String>? = null,
+    val watchers: Int
 ) : Parcelable {
     @Ignore var owner: OwnerLocalModel? = null
 }

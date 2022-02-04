@@ -2,7 +2,6 @@ package com.example.gitsearch.data.repository
 
 import androidx.paging.*
 import com.example.gitsearch.data.local.db.DataDB
-import com.example.gitsearch.data.local.db.DataDao
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.local.model.OwnerLocalModel
 import com.example.gitsearch.data.local.paging3.GithubPagingSource
@@ -19,11 +18,10 @@ const val NETWORK_PAGE_SIZE = 10
 @ExperimentalPagingApi
 data class MainRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val database: DataDB,
-    private val dao: DataDao
+    private val database: DataDB
 ) : MainRepository {
 
-    override suspend fun getDataFromNetwork(q: String) : Flow<PagingData<Item>> {
+    override suspend fun getDataFromNetwork(q: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
@@ -33,7 +31,7 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getDataFromMediator (q: String) : Flow<PagingData<ItemLocalModel>> {
+    override suspend fun getDataFromMediator(q: String): Flow<PagingData<ItemLocalModel>> {
         val pagingSourceFactory = { database.getDataDao().getData() }
 
         return Pager(
@@ -41,7 +39,7 @@ data class MainRepositoryImpl @Inject constructor(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            remoteMediator = PagingRemoteMediator (
+            remoteMediator = PagingRemoteMediator(
                 q,
                 apiService,
                 database
@@ -56,16 +54,12 @@ data class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getDetailInfo(detailData: ItemLocalModel) : ItemLocalModel {
-        return detailData
-    }
-
     override suspend fun getModelById(id: Int): ItemLocalModel {
-        return dao.getItemById(id)
+        return database.getDataDao().getItemById(id)
     }
 
     override suspend fun getOneOwnerById(id: Int): OwnerLocalModel {
-        return dao.getOneOwnerById(id)
+        return database.getDataDao().getOneOwnerById(id)
     }
 
 }

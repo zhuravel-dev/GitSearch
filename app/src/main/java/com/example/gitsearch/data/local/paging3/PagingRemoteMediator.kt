@@ -64,7 +64,7 @@ class PagingRemoteMediator(
                             ItemLocalModel(
                                 id,
                                 name,
-                                ownerId = owner?.id ?: 0,
+                                ownerId = owner.id,
                                 description,
                                 url,
                                 updated_at,

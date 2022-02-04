@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DetailFragment : Fragment(R.layout.fragment_detail) {
 
-    private val viewBinding by viewBinding(FragmentDetailBinding::bind)
+    private val viewBinding: FragmentDetailBinding? by viewBinding(FragmentDetailBinding::bind)
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
     private val modelId by lazy { args.myModelId }
@@ -38,9 +38,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetModelById(modelId))
-                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetOwnerById(ownerId))
-                // detailFragmentViewModel.onIntent(DetailFragmentIntent.GetAllById(modelId, ownerId))
+                detailFragmentViewModel.onIntent(DetailFragmentIntent.GetAllById(modelId, ownerId))
             }
         }
     }
@@ -51,7 +49,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         observeViewModel()
     }
 
-    private fun setupToolbar() = viewBinding.run {
+    private fun setupToolbar() = viewBinding?.run {
         toolbar.customToolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
@@ -59,42 +57,33 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            detailFragmentViewModel.state.collect {
-                when (it) {
-                    is DetailFragmentState.Idle -> {}
-                    is DetailFragmentState.Loading -> {
-                        viewBinding.progressBar.visibility = View.VISIBLE
+                detailFragmentViewModel.state.collect {
+                    when (it) {
+                        is DetailFragmentState.Idle -> {}
+                        is DetailFragmentState.Loading -> {
+                            viewBinding?.progressBar?.visibility = View.VISIBLE
+                        }
+                        is DetailFragmentState.DataLoadedAll -> {
+                            viewBinding?.progressBar?.visibility = View.GONE
+                            showModelInformation(it.model, it.ownerModel)
+                        }
+                        is DetailFragmentState.Error -> {
+                            viewBinding?.progressBar?.visibility = View.GONE
+                        }
                     }
-                    is DetailFragmentState.DataLoaded -> {
-                        viewBinding.progressBar.visibility = View.GONE
-                        showModelInformation(it.model)
-                    }
-                    is DetailFragmentState.DataLoadedOwner -> {
-                        viewBinding.progressBar.visibility = View.GONE
-                        showOwnerModelInformation(it.ownerModel)
-                    }
-                    is DetailFragmentState.Error -> {
-                        viewBinding.progressBar.visibility = View.GONE
-                    }
-                }
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showModelInformation(model: ItemLocalModel) = viewBinding.run {
-         /*   Picasso.get().load(ownerModel.avatar_url).into(ivUserAvatarDetailScreen)
-            tvUserLogin.text = ownerModel.login*/
-            tvNameOfRepository.text = "${model.name} repository"
-            tvRepositoryDescription.text = model.description
-            tvProgramingLanguages.text = model.language
-            tvTopics.text =
-                model.topics.toString().substring(1, model.topics.toString().length - 1)
-            tvWatchers.text = "${model.watchers.toString()} watchers"
-        }
-
-    private fun showOwnerModelInformation(ownerModel: OwnerLocalModel) = viewBinding.run {
+    private fun showModelInformation(model: ItemLocalModel, ownerModel: OwnerLocalModel) = viewBinding?.run {
         Picasso.get().load(ownerModel.avatar_url).into(ivUserAvatarDetailScreen)
         tvUserLogin.text = ownerModel.login
+                tvNameOfRepository.text = "${model.name} repository"
+        tvRepositoryDescription.text = model.description
+        tvProgramingLanguages.text = model.language
+        tvTopics.text =
+            model.topics.toString().substring(1, model.topics.toString().length - 1)
+        tvWatchers.text = "${model.watchers.toString()} watchers"
     }
 }
