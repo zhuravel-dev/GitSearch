@@ -11,6 +11,7 @@ import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.databinding.ItemFirstLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -30,7 +31,8 @@ class FirstFragmentAdapter :
             itemView.setOnClickListener {
                 data.let { onItemClick?.invoke(data) }
             }
-            Picasso.get().load(data.owner?.avatar_url).transform(CircleTransform()).into(itemViewBinding.ivUserAvatar)
+            Picasso.get().load(data.owner?.avatar_url)
+                .transform(CropCircleTransformation()).into(itemViewBinding.ivUserAvatar)
             itemViewBinding.tvOwnerName.text = data.owner?.login.plus("/")
             itemViewBinding.tvRepositoryName.text = data.name
             itemViewBinding.tvRepositoryDescription.text = data.description
@@ -40,7 +42,7 @@ class FirstFragmentAdapter :
             itemViewBinding.tvStarCount.text = "\u2606 ${data.stargazers_count}"
             val updatedDate = data.updated_at
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val parsedDate = LocalDateTime.parse(updatedDate, DateTimeFormatter.ISO_DATE_TIME)
+                val parsedDate = LocalDateTime.parse(updatedDate, DateTimeFormatter.ISO_DATE_TIME)
                 val formattedDate = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 itemViewBinding.tvUpdatedAt.text = "Updated $formattedDate"
             } else {
