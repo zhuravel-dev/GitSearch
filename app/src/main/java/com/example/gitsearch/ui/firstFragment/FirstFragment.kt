@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
@@ -33,7 +34,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
-            val action = FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
+            val action =
+                FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
             findNavController().navigate(action)
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
@@ -66,7 +68,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             )
         }
         recyclerView.adapter = pagingAdapter
-        toolbar.customToolbar.setNavigationOnClickListener { System.exit(0) }
+        toolbar.customToolbar.setNavigationOnClickListener { exitProcess(0) }
+
         toolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
                 lifecycleScope.launch {

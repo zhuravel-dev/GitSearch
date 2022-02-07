@@ -8,7 +8,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.databinding.ItemLayoutBinding
+import com.example.gitsearch.databinding.ItemFirstLayoutBinding
 import com.example.gitsearch.ui.extensions.viewBindingVH
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,14 +23,14 @@ class FirstFragmentAdapter :
 
     var onItemClick: ((ItemLocalModel) -> Unit)? = null
 
-    inner class RepoViewHolder(private val itemViewBinding: ItemLayoutBinding) :
+    inner class RepoViewHolder(private val itemViewBinding: ItemFirstLayoutBinding) :
         RecyclerView.ViewHolder(itemViewBinding.root) {
         @SuppressLint("SetTextI18n", "SimpleDateFormat")
         fun bind(data: ItemLocalModel) {
             itemView.setOnClickListener {
                 data.let { onItemClick?.invoke(data) }
             }
-            Picasso.get().load(data.owner?.avatar_url).into(itemViewBinding.ivUserAvatar)
+            Picasso.get().load(data.owner?.avatar_url).transform(CircleTransform()).into(itemViewBinding.ivUserAvatar)
             itemViewBinding.tvOwnerName.text = data.owner?.login.plus("/")
             itemViewBinding.tvRepositoryName.text = data.name
             itemViewBinding.tvRepositoryDescription.text = data.description
@@ -52,7 +52,7 @@ class FirstFragmentAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val reductionViewBinding by parent.viewBindingVH(ItemLayoutBinding::inflate)
+        val reductionViewBinding by parent.viewBindingVH(ItemFirstLayoutBinding::inflate)
         return RepoViewHolder(reductionViewBinding)
     }
 
