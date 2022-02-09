@@ -2,40 +2,36 @@ package com.example.gitsearch.ui.firstFragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
-import com.example.gitsearch.databinding.FragmentFirstBinding
+import com.example.gitsearch.databinding.FragmentFirstSortingByBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.system.exitProcess
 
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FirstFragment : Fragment(R.layout.fragment_first) {
+class FirstFragmentSortingBy : Fragment(R.layout.fragment_first_sorting_by) {
 
-    private val viewBinding: FragmentFirstBinding? by viewBinding(FragmentFirstBinding::bind)
+    private val viewBinding: FragmentFirstSortingByBinding? by viewBinding(FragmentFirstSortingByBinding::bind)
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
     private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
             val action =
-                FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
+                FirstFragmentSortingByStarsDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
             findNavController().navigate(action)
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
@@ -68,7 +64,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             )
         }
         recyclerView.adapter = pagingAdapter
-        toolbar.customToolbar.setNavigationOnClickListener { exitProcess(0) }
+       /* toolbar.customToolbar.setNavigationOnClickListener { exitProcess(0) }
 
         toolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
@@ -80,7 +76,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 return true
             }
             override fun onQueryTextChange(q: String?): Boolean = true
-        })
+        })*/
     }
 
     private fun observeViewModel() {
