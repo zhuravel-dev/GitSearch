@@ -1,7 +1,13 @@
 package com.example.gitsearch.ui.activities
 
 import android.os.Bundle
+import androidx.activity.viewModels
+
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.databinding.ActivityMainBinding
 import com.example.gitsearch.ui.extensions.viewBinding
@@ -10,6 +16,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 
 @OptIn(ExperimentalPagingApi::class)
@@ -18,7 +26,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
 
     private val viewBinding by viewBinding(ActivityMainBinding::inflate)
-    private lateinit var tabLayout: TabLayout
+    private lateinit var mainTabLayout: TabLayout
+    private val mainSharedViewModel: MainSharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,13 +35,28 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar = viewBinding.toolbarActivity
         setSupportActionBar(toolbar)
-        tabLayout = viewBinding.tabLayout
+        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { exitProcess(0) }
+        val searchView = viewBinding.searchView
+       // searchView.setOnQueryTextListener(this)
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(q: String): Boolean {
+                lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        mainSharedViewModel.onIntent(MainIntent.SearchGitList(q))
+                    }
+                }
+                return true
+            }
+            override fun onQueryTextChange(q: String?): Boolean = true
+        })
 
         val pager = viewBinding.viewPager
         val adapter = ViewPagerAdapter(this)
         pager.adapter = adapter
 
-        TabLayoutMediator(tabLayout, pager) { tab, position ->
+        mainTabLayout = viewBinding.tabLayout
+        TabLayoutMediator(mainTabLayout, pager) { tab, position ->
             when (position) {
                 0 -> {
                     tab.text = "Sort by Stars"
@@ -43,6 +67,17 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        // toolbar.customToolbar.setNavigationOnClickListener { exitProcess(0) }
     }
+
+  /*  override fun onQueryTextSubmit(query: String): Boolean {
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    mainSharedViewModel.onIntent(MainIntent.SearchGitList(query))
+                }
+            }
+            return true
+        }
+
+    override fun onQueryTextChange(q: String?): Boolean = true*/
+
 }
