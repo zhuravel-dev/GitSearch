@@ -1,6 +1,7 @@
 package com.example.gitsearch.data.local.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -16,10 +17,10 @@ data class ItemLocalModel(
     val description: String? = null,
     val url: String,
     val updated_at: String,
-    val stargazers_count: Int,
+    @ColumnInfo(name = "stars") val stargazers_count: Int,
     val language: String? = null,
     val topics: List<String>? = null,
-    val watchers: Int
+    @ColumnInfo(name = "watchers") val watchers: Int
 ) : Parcelable {
     @Ignore var owner: OwnerLocalModel? = null
 }

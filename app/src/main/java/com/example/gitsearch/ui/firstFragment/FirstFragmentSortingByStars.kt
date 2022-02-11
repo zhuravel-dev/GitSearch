@@ -26,14 +26,19 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class FirstFragmentSortingByStars : Fragment(R.layout.fragment_first_sorting_by_stars) {
 
-    private val viewBinding: FragmentFirstSortingByStarsBinding? by viewBinding(FragmentFirstSortingByStarsBinding::bind)
+    private val viewBinding: FragmentFirstSortingByStarsBinding? by viewBinding(
+        FragmentFirstSortingByStarsBinding::bind
+    )
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
             val action =
-                FirstFragmentSortingByStarsDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
+                FirstFragmentSortingByStarsDirections.actionFragmentFirstToFragmentDetail(
+                    it.id,
+                    it.ownerId
+                )
             findNavController().navigate(action)
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(

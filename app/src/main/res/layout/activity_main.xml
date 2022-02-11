@@ -15,38 +15,6 @@
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:liftOnScroll="true">
 
-        <!--<com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/tlb_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:contentInsetEnd="0dp"
-            app:contentInsetStart="0dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_search"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="12dp"
-                android:hint="@string/hint_search"
-                app:endIconMode="clear_text"
-                app:startIconDrawable="@drawable/ic_search">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edt_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:imeOptions="actionDone"
-                    android:maxLength="20"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </com.google.android.material.appbar.MaterialToolbar>-->
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarActivity"
             android:layout_width="match_parent"

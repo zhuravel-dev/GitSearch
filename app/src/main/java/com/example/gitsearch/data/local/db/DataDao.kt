@@ -17,14 +17,19 @@ interface DataDao {
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOwnerById(id: Int?): List<OwnerLocalModel>
 
-    @Query("SELECT * FROM owner")
-    suspend fun getOwners(): List<OwnerLocalModel>
-
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOneOwnerById(id: Int?): OwnerLocalModel
 
     @Query("SELECT * FROM items WHERE id=:id")
     suspend fun getItemById(id: Int?): ItemLocalModel
+
+    @Query("SELECT * FROM items WHERE " +
+            "id=:id " + "ORDER BY stars DESC, name ASC")
+    suspend fun getMainModelByIdSortedByStars(id: Int?): ItemLocalModel
+
+    @Query("SELECT * FROM items WHERE " +
+            "id=:id " + "ORDER BY watchers DESC, name ASC")
+    suspend fun getMainModelByIdSortedByWatchers(id: Int?): ItemLocalModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(data: List<ItemLocalModel>)

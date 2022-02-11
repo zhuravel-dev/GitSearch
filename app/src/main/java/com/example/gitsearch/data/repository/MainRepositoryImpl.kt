@@ -25,7 +25,7 @@ data class MainRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = false,
             ),
             pagingSourceFactory = { GithubPagingSource(apiService, q) }
         ).flow
@@ -37,7 +37,7 @@ data class MainRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = false,
             ),
             remoteMediator = PagingRemoteMediator(
                 q,
@@ -60,6 +60,14 @@ data class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getOneOwnerById(id: Int): OwnerLocalModel {
         return database.getDataDao().getOneOwnerById(id)
+    }
+
+    override suspend fun getModelByIdSortedByStars(id: Int): ItemLocalModel {
+        return database.getDataDao().getItemById(id)
+    }
+
+    override suspend fun getMainModelByIdSortedByWatchers(id: Int): ItemLocalModel {
+        return database.getDataDao().getItemById(id)
     }
 
 }

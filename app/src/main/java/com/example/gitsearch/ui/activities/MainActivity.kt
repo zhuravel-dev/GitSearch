@@ -2,7 +2,6 @@ package com.example.gitsearch.ui.activities
 
 import android.os.Bundle
 import androidx.activity.viewModels
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Lifecycle
@@ -35,10 +34,8 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar = viewBinding.toolbarActivity
         setSupportActionBar(toolbar)
-        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { exitProcess(0) }
         val searchView = viewBinding.searchView
-       // searchView.setOnQueryTextListener(this)
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
                 lifecycleScope.launch {
@@ -66,18 +63,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }.attach()
-
     }
-
-  /*  override fun onQueryTextSubmit(query: String): Boolean {
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    mainSharedViewModel.onIntent(MainIntent.SearchGitList(query))
-                }
-            }
-            return true
-        }
-
-    override fun onQueryTextChange(q: String?): Boolean = true*/
-
 }

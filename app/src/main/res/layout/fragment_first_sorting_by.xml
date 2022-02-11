@@ -8,10 +8,6 @@
     android:paddingBottom="@dimen/normal"
     tools:context=".ui.firstFragment.FirstFragmentSortingByStars">
 
-    <!--<include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar_with_search" />-->
-
     <TextView
         android:id="@+id/tvWelcomeText"
         android:layout_width="wrap_content"
