@@ -31,8 +31,31 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun getDataFromMediator(q: String): Flow<PagingData<ItemLocalModel>> {
-        val pagingSourceFactory = { database.getDataDao().getData() }
+    override suspend fun getDataFromMediatorSortedByStars(q: String): Flow<PagingData<ItemLocalModel>> {
+        val pagingSourceFactory = { database.getDataDao().getDataSortedByStars() }
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            remoteMediator = PagingRemoteMediator(
+                q,
+                apiService,
+                database
+            ),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow.map {
+            it.map {
+                it.apply {
+                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
+                }
+            }
+        }
+    }
+
+    override suspend fun getDataFromMediatorSortedByUpdate(q: String): Flow<PagingData<ItemLocalModel>> {
+        val pagingSourceFactory = { database.getDataDao().getDataSortedByUpdate() }
 
         return Pager(
             config = PagingConfig(
@@ -60,14 +83,6 @@ data class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getOneOwnerById(id: Int): OwnerLocalModel {
         return database.getDataDao().getOneOwnerById(id)
-    }
-
-    override suspend fun getModelByIdSortedByStars(id: Int): ItemLocalModel {
-        return database.getDataDao().getItemById(id)
-    }
-
-    override suspend fun getMainModelByIdSortedByWatchers(id: Int): ItemLocalModel {
-        return database.getDataDao().getItemById(id)
     }
 
 }

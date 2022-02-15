@@ -25,15 +25,25 @@ class MainSharedViewModel @Inject constructor(
     @ExperimentalPagingApi
     fun onIntent(event: MainIntent) {
         when (event) {
-            is MainIntent.SearchGitList -> searchList(event.q)
+            is MainIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
+            is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
         }
     }
 
     @ExperimentalPagingApi
-    private fun searchList(q: String) {
+    private fun searchListSortedByStars(q: String) {
         viewModelScope.launch {
             _state.value = MainState.Loading
-            repository.getDataFromMediator(q).cachedIn(viewModelScope).collectLatest {
+            repository.getDataFromMediatorSortedByStars(q).cachedIn(viewModelScope).collectLatest {
+                _state.value = MainState.DataLoaded(it)
+            }
+        }
+    }
+
+    private fun searchListSortedByUpdate(q: String) {
+        viewModelScope.launch {
+            _state.value = MainState.Loading
+            repository.getDataFromMediatorSortedByUpdate(q).cachedIn(viewModelScope).collectLatest {
                 _state.value = MainState.DataLoaded(it)
             }
         }

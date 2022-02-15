@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FirstFragmentSortingBy : Fragment(R.layout.fragment_first_sorting_by) {
+class FirstFragmentSortingByUpdate : Fragment(R.layout.fragment_first_sorting_by) {
 
     private val viewBinding: FragmentFirstSortingByBinding? by viewBinding(FragmentFirstSortingByBinding::bind)
     private val pagingAdapter by lazy { FirstFragmentAdapter() }

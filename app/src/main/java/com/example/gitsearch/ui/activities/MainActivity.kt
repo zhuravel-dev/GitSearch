@@ -18,7 +18,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
-
 @OptIn(ExperimentalPagingApi::class)
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -36,11 +35,13 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { exitProcess(0) }
         val searchView = viewBinding.searchView
+
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
                 lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        mainSharedViewModel.onIntent(MainIntent.SearchGitList(q))
+                       // mainSharedViewModel.onIntent(MainIntent.SearchGitListSortedByStars(q))
+                        mainSharedViewModel.onIntent(MainIntent.SearchGitListSortedByUpdate(q))
                     }
                 }
                 return true
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                     tab.text = "Sort by Stars"
                 }
                 1 -> {
-                    tab.text = "Sort by"
+                    tab.text = "Sort by Update"
                 }
             }
         }.attach()

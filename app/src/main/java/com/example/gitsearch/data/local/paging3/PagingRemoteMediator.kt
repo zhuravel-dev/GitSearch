@@ -53,7 +53,7 @@ class PagingRemoteMediator(
                 dataBase.getKeysDao().insertAll(keys)
                 dataBase.getDataDao().let { dao ->
                     dao.insertData(response.items.map {
-                        it.owner?.run {
+                        it.owner.run {
                             dao.insertOwner(OwnerLocalModel(
                                 id,
                                 login,

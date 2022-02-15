@@ -11,8 +11,11 @@ import com.example.gitsearch.data.local.model.OwnerLocalModel
 @Dao
 interface DataDao {
 
-    @Query("SELECT * FROM items")
-    fun getData(): PagingSource<Int, ItemLocalModel>
+    @Query("SELECT * FROM items ORDER BY stars DESC")
+    fun getDataSortedByStars(): PagingSource<Int, ItemLocalModel>
+
+    @Query("SELECT * FROM items ORDER BY updated DESC")
+    fun getDataSortedByUpdate(): PagingSource<Int, ItemLocalModel>
 
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOwnerById(id: Int?): List<OwnerLocalModel>
@@ -22,14 +25,6 @@ interface DataDao {
 
     @Query("SELECT * FROM items WHERE id=:id")
     suspend fun getItemById(id: Int?): ItemLocalModel
-
-    @Query("SELECT * FROM items WHERE " +
-            "id=:id " + "ORDER BY stars DESC, name ASC")
-    suspend fun getMainModelByIdSortedByStars(id: Int?): ItemLocalModel
-
-    @Query("SELECT * FROM items WHERE " +
-            "id=:id " + "ORDER BY watchers DESC, name ASC")
-    suspend fun getMainModelByIdSortedByWatchers(id: Int?): ItemLocalModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(data: List<ItemLocalModel>)

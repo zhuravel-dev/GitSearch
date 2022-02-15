@@ -16,7 +16,7 @@ class ViewPagerAdapter(fragment: FragmentActivity) : FragmentStateAdapter(fragme
 
         return when (position) {
             0 -> FirstFragmentSortingByStars()
-            1 -> FirstFragmentSortingBy()
+            1 -> FirstFragmentSortingByUpdate()
             else -> {
                 Fragment()
             }

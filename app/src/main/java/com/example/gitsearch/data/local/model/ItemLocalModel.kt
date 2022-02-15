@@ -16,11 +16,11 @@ data class ItemLocalModel(
     val ownerId: Int,
     val description: String? = null,
     val url: String,
-    val updated_at: String,
+    @ColumnInfo(name = "updated") val updated_at: String,
     @ColumnInfo(name = "stars") val stargazers_count: Int,
     val language: String? = null,
     val topics: List<String>? = null,
-    @ColumnInfo(name = "watchers") val watchers: Int
+    val watchers: Int
 ) : Parcelable {
     @Ignore var owner: OwnerLocalModel? = null
 }
