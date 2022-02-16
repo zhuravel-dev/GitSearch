@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.system.exitProcess
 
 @OptIn(ExperimentalPagingApi::class)
@@ -35,13 +36,23 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { exitProcess(0) }
         val searchView = viewBinding.searchView
+        mainTabLayout = viewBinding.tabLayout
 
-        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
                 lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                       // mainSharedViewModel.onIntent(MainIntent.SearchGitListSortedByStars(q))
-                        mainSharedViewModel.onIntent(MainIntent.SearchGitListSortedByUpdate(q))
+                        when (mainTabLayout.selectedTabPosition) {
+                            0 -> {
+                                mainSharedViewModel.onIntent(MainIntent.SearchGitListSortedByStars(q))
+                            }
+                            1 -> {
+                                mainSharedViewModel.onIntent(MainIntent.SearchGitListSortedByUpdate(q))
+                            }
+                            else -> {
+                                Timber.i("MainActivity, searchView.setOnQueryTextListener - something wrong")
+                            }
+                        }
                     }
                 }
                 return true
@@ -53,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(this)
         pager.adapter = adapter
 
-        mainTabLayout = viewBinding.tabLayout
+
         TabLayoutMediator(mainTabLayout, pager) { tab, position ->
             when (position) {
                 0 -> {

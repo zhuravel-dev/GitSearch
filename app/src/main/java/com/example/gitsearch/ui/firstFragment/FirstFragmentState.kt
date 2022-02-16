@@ -9,5 +9,4 @@ sealed class FirstFragmentState {
     object Loading : FirstFragmentState()
     data class DataLoaded(val data: PagingData<ItemLocalModel>) : FirstFragmentState()
     data class Error(val error: String?) : FirstFragmentState()
-
 }
