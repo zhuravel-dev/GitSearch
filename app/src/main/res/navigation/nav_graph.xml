@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/fragmentFirst"
-        android:name="com.example.gitsearch.ui.firstFragment.FirstFragment"
+        android:name="com.example.gitsearch.ui.firstFragment.FirstFragmentSortingByStars"
         android:label="FirstFragment"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_first_sorting_by_stars">
 
         <action
             android:id="@+id/actionFragmentFirst_to_fragmentDetail"

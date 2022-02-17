@@ -2,40 +2,43 @@ package com.example.gitsearch.ui.firstFragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
-import com.example.gitsearch.databinding.FragmentFirstBinding
+import com.example.gitsearch.databinding.FragmentFirstSortingByStarsBinding
+import com.example.gitsearch.ui.activities.MainSharedViewModel
+import com.example.gitsearch.ui.activities.MainState
 import com.example.gitsearch.ui.extensions.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlin.system.exitProcess
 
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FirstFragment : Fragment(R.layout.fragment_first) {
+class FirstFragmentSortingByStars : Fragment(R.layout.fragment_first_sorting_by_stars) {
 
-    private val viewBinding: FragmentFirstBinding? by viewBinding(FragmentFirstBinding::bind)
+    private val viewBinding: FragmentFirstSortingByStarsBinding? by viewBinding(
+        FragmentFirstSortingByStarsBinding::bind
+    )
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
-    private val firstFragmentViewModel: FirstFragmentViewModel by viewModels()
+    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
             val action =
-                FirstFragmentDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
+                FirstFragmentSortingByStarsDirections.actionFragmentFirstToFragmentDetail(
+                    it.id,
+                    it.ownerId
+                )
             findNavController().navigate(action)
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
@@ -68,39 +71,26 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             )
         }
         recyclerView.adapter = pagingAdapter
-        toolbar.customToolbar.setNavigationOnClickListener { exitProcess(0) }
-
-        toolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(q: String): Boolean {
-                lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        firstFragmentViewModel.onIntent(FirstFragmentIntent.SearchGitList(q))
-                    }
-                }
-                return true
-            }
-            override fun onQueryTextChange(q: String?): Boolean = true
-        })
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            firstFragmentViewModel.state.collect {
+            mainSharedViewModel.state.collect {
                 when (it) {
-                    is FirstFragmentState.Idle -> {
+                    is MainState.Idle -> {
                         viewBinding?.tvWelcomeText?.visibility = View.VISIBLE
                     }
-                    is FirstFragmentState.Loading -> {
+                    is MainState.Loading -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.VISIBLE
                     }
-                    is FirstFragmentState.DataLoaded -> {
+                    is MainState.DataLoaded -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.GONE
                         viewBinding?.recyclerView?.visibility = View.VISIBLE
                         pagingAdapter.submitData(it.data)
                     }
-                    is FirstFragmentState.Error -> {
+                    is MainState.Error -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.GONE
                     }

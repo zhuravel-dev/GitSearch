@@ -11,14 +11,14 @@ import com.example.gitsearch.data.local.model.OwnerLocalModel
 @Dao
 interface DataDao {
 
-    @Query("SELECT * FROM items")
-    fun getData(): PagingSource<Int, ItemLocalModel>
+    @Query("SELECT * FROM items ORDER BY stars DESC")
+    fun getDataSortedByStars(): PagingSource<Int, ItemLocalModel>
+
+    @Query("SELECT * FROM items ORDER BY updated DESC")
+    fun getDataSortedByUpdate(): PagingSource<Int, ItemLocalModel>
 
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOwnerById(id: Int?): List<OwnerLocalModel>
-
-    @Query("SELECT * FROM owner")
-    suspend fun getOwners(): List<OwnerLocalModel>
 
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOneOwnerById(id: Int?): OwnerLocalModel

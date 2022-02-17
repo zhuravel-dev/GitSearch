@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-const val NETWORK_PAGE_SIZE = 10
+const val NETWORK_PAGE_SIZE = 5
 
 @ExperimentalPagingApi
 data class MainRepositoryImpl @Inject constructor(
@@ -25,19 +25,42 @@ data class MainRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = false,
             ),
             pagingSourceFactory = { GithubPagingSource(apiService, q) }
         ).flow
     }
 
-    override suspend fun getDataFromMediator(q: String): Flow<PagingData<ItemLocalModel>> {
-        val pagingSourceFactory = { database.getDataDao().getData() }
+    override suspend fun getDataFromMediatorSortedByStars(q: String): Flow<PagingData<ItemLocalModel>> {
+        val pagingSourceFactory = { database.getDataDao().getDataSortedByStars() }
 
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = false,
+            ),
+            remoteMediator = PagingRemoteMediator(
+                q,
+                apiService,
+                database
+            ),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow.map {
+            it.map {
+                it.apply {
+                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
+                }
+            }
+        }
+    }
+
+    override suspend fun getDataFromMediatorSortedByUpdate(q: String): Flow<PagingData<ItemLocalModel>> {
+        val pagingSourceFactory = { database.getDataDao().getDataSortedByUpdate() }
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = false,
             ),
             remoteMediator = PagingRemoteMediator(
                 q,
