@@ -1,8 +1,9 @@
 *.iml
 .gradle
+.idea
 /local.properties
 /.idea/caches
-/.idea/libraries
+/.idea/librariesgit merge
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
@@ -13,4 +14,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-/.idea
+.idea/deploymentTargetDropDown.xml
+.idea/
