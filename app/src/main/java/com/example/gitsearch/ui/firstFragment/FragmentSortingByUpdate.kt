@@ -12,10 +12,11 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
-import com.example.gitsearch.databinding.FragmentFirstSortingByBinding
-import com.example.gitsearch.ui.activities.MainSharedViewModel
-import com.example.gitsearch.ui.activities.MainState
+import com.example.gitsearch.databinding.FragmentFirstSortingByUpdateBinding
 import com.example.gitsearch.ui.extensions.viewBinding
+import com.example.gitsearch.ui.pager.MainPagerFragmentDirections
+import com.example.gitsearch.ui.pager.MainPagerState
+import com.example.gitsearch.ui.pager.PagerSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -24,17 +25,21 @@ import kotlinx.coroutines.launch
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FirstFragmentSortingByUpdate : Fragment(R.layout.fragment_first_sorting_by) {
+class FragmentSortingByUpdate : Fragment(R.layout.fragment_first_sorting_by_update) {
 
-    private val viewBinding: FragmentFirstSortingByBinding? by viewBinding(FragmentFirstSortingByBinding::bind)
+    private val viewBinding: FragmentFirstSortingByUpdateBinding? by viewBinding(
+        FragmentFirstSortingByUpdateBinding::bind
+    )
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
-    private val mainSharedViewModel: MainSharedViewModel by activityViewModels()
+    private val pagerSharedViewModel: PagerSharedViewModel by activityViewModels()
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
-            val action =
-                FirstFragmentSortingByStarsDirections.actionFragmentFirstToFragmentDetail(it.id, it.ownerId)
-            findNavController().navigate(action)
+            findNavController().navigate(
+                MainPagerFragmentDirections.actionToDetailFragment(
+                it.id,
+                it.ownerId
+            ))
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
             header = FirstFragmentLoaderStateAdapter(),
@@ -70,22 +75,22 @@ class FirstFragmentSortingByUpdate : Fragment(R.layout.fragment_first_sorting_by
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            mainSharedViewModel.state.collect {
+            pagerSharedViewModel.pagerState.collect {
                 when (it) {
-                    is MainState.Idle -> {
+                    is MainPagerState.Idle -> {
                         viewBinding?.tvWelcomeText?.visibility = View.VISIBLE
                     }
-                    is MainState.Loading -> {
+                    is MainPagerState.Loading -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.VISIBLE
                     }
-                    is MainState.DataLoaded -> {
+                    is MainPagerState.DataLoaded -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.GONE
                         viewBinding?.recyclerView?.visibility = View.VISIBLE
                         pagingAdapter.submitData(it.data)
                     }
-                    is MainState.Error -> {
+                    is MainPagerState.Error -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.GONE
                     }

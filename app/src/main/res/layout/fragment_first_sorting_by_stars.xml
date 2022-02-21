@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:paddingBottom="@dimen/normal"
-    tools:context=".ui.firstFragment.FirstFragmentSortingByStars">
+    tools:context=".ui.firstFragment.FragmentSortingByStars">
 
     <TextView
         android:id="@+id/tvWelcomeText"

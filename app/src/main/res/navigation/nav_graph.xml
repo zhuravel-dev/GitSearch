@@ -3,27 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragmentFirst">
+    app:startDestination="@id/mainPagerFragment">
 
     <fragment
-        android:id="@+id/fragmentFirst"
-        android:name="com.example.gitsearch.ui.firstFragment.FirstFragmentSortingByStars"
-        android:label="FirstFragment"
-        tools:layout="@layout/fragment_first_sorting_by_stars">
-
+        android:id="@+id/mainPagerFragment"
+        android:name="com.example.gitsearch.ui.pager.MainPagerFragment"
+        android:label="MainPagerFragment"
+        tools:layout="@layout/fragment_main_pager">
         <action
-            android:id="@+id/actionFragmentFirst_to_fragmentDetail"
+            android:id="@+id/action_to_detailFragment"
             app:destination="@+id/fragmentDetail">
             <argument
                 android:name="myModelId"
                 app:argType="integer" />
-
             <argument
                 android:name="myOwnerId"
                 app:argType="integer" />
-
         </action>
-
     </fragment>
 
     <fragment
@@ -34,11 +30,9 @@
         <argument
             android:name="myModelId"
             app:argType="integer" />
-
         <argument
             android:name="myOwnerId"
             app:argType="integer" />
-
     </fragment>
 
 </navigation>

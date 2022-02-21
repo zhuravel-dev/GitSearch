@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.activities
+package com.example.gitsearch.ui.pager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,37 +16,37 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class MainSharedViewModel @Inject constructor(
+class PagerSharedViewModel @Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<MainState>(MainState.Idle)
-    val state: StateFlow<MainState>
+    private val _state = MutableStateFlow<MainPagerState>(MainPagerState.Idle)
+    val pagerState: StateFlow<MainPagerState>
         get() = _state
 
     @ExperimentalPagingApi
-    fun onIntent(event: MainIntent) {
+    fun onIntent(event: PagerIntent) {
         when (event) {
-            is MainIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
-            is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
+            is PagerIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
+            is PagerIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
         }
     }
 
     @ExperimentalPagingApi
     private fun searchListSortedByStars(q: String) {
         viewModelScope.launch {
-            _state.value = MainState.Loading
+            _state.value = MainPagerState.Loading
             repository.getDataFromMediatorSortedByStars(q).cachedIn(viewModelScope).collectLatest {
-                _state.value = MainState.DataLoaded(it)
+                _state.value = MainPagerState.DataLoaded(it)
             }
         }
     }
 
     private fun searchListSortedByUpdate(q: String) {
         viewModelScope.launch {
-            _state.value = MainState.Loading
+            _state.value = MainPagerState.Loading
             repository.getDataFromMediatorSortedByUpdate(q).cachedIn(viewModelScope).collectLatest {
-                _state.value = MainState.DataLoaded(it)
+                _state.value = MainPagerState.DataLoaded(it)
             }
         }
     }
