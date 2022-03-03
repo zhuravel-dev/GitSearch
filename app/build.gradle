@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
+    id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs'
@@ -18,6 +18,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        // Enables Jetpack Compose for this module
+        compose true
     }
 
     viewBinding {
@@ -41,6 +46,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.1.1'
+    }
 }
 
 dependencies {
@@ -56,7 +64,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:4.12.0"
     implementation "androidx.activity:activity-ktx:1.4.0"
 
-    implementation "androidx.fragment:fragment-ktx:1.4.0"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 
@@ -115,4 +123,17 @@ dependencies {
 
     // CoordinatorLayout for AppBar
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+
+    implementation "androidx.compose.runtime:runtime:$rootProject.composeVersion"
+    implementation "androidx.compose.ui:ui:$rootProject.composeVersion"
+    implementation "androidx.compose.foundation:foundation:$rootProject.composeVersion"
+    implementation "androidx.compose.foundation:foundation-layout:1.1.1"
+    implementation "androidx.compose.material:material:$rootProject.composeVersion"
+    implementation "androidx.compose.runtime:runtime-livedata:$rootProject.composeVersion"
+    implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
+    implementation "com.google.android.material:compose-theme-adapter:$rootProject.composeVersion"
 }
