@@ -1,5 +1,6 @@
 package com.example.gitsearch.ui.detailFragment
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
@@ -18,6 +19,8 @@ class DetailViewModel
 @Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
+
+    val loading = mutableStateOf(false)
 
     private val _state = MutableStateFlow<DetailFragmentState>(DetailFragmentState.Idle)
     val state: StateFlow<DetailFragmentState>

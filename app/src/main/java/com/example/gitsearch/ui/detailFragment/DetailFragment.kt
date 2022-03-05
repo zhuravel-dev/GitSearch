@@ -28,42 +28,43 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.local.model.OwnerLocalModel
+import com.example.gitsearch.domain.repository.MainRepository
+import com.example.gitsearch.ui.GitSearchApplication
+import com.example.gitsearch.ui.compose.theme.AppTheme
+import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
 import com.example.gitsearch.ui.compose.loadPicture
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 const val IMAGE_HEIGHT = 260
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(InternalCoroutinesApi::class)
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
 class DetailFragment : Fragment() {
+
+   // @Inject lateinit var application: GitSearchApplication
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
     private val modelId by lazy { args.myModelId }
     private val ownerId by lazy { args.myOwnerId }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-    @OptIn(InternalCoroutinesApi::class)
     private fun observeViewModel() {
         lifecycleScope.launch {
             detailFragmentViewModel.state.collect {
                 when (it) {
                     is DetailFragmentState.Idle -> {}
                     is DetailFragmentState.Loading -> {
-                        //viewBinding?.progressBar?.visibility = View.VISIBLE
+                       // setUI()
                     }
                     is DetailFragmentState.DataLoadedAll -> {
                         //viewBinding?.progressBar?.visibility = View.GONE
@@ -80,6 +81,30 @@ class DetailFragment : Fragment() {
                     is DetailFragmentState.Error -> {
                         //viewBinding?.progressBar?.visibility = View.GONE
                     }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun setUI() {
+        val loading = detailFragmentViewModel.loading.value
+        val scaffoldState = rememberScaffoldState()
+        AppTheme(
+            displayProgressBar = loading,
+            scaffoldState = scaffoldState
+        ) {
+            Scaffold(
+                scaffoldState = scaffoldState,
+                snackbarHost = {
+                    scaffoldState.snackbarHostState
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    //CircularProgressIndicator()
+                    CircularProgress(isDisplayed = loading, verticalBias = 0.3f)
                 }
             }
         }
