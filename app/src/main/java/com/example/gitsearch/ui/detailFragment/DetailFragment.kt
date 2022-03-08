@@ -5,44 +5,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
-import androidx.paging.ExperimentalPagingApi
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import androidx.compose.ui.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.data.local.model.OwnerLocalModel
-import com.example.gitsearch.domain.repository.MainRepository
-import com.example.gitsearch.ui.GitSearchApplication
-import com.example.gitsearch.ui.compose.theme.AppTheme
-import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
 import com.example.gitsearch.ui.compose.loadPicture
+import com.example.gitsearch.ui.compose.theme.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
-const val IMAGE_HEIGHT = 260
+const val IMAGE_HEIGHT = 360
 
 @OptIn(InternalCoroutinesApi::class)
 @ExperimentalPagingApi
@@ -52,11 +48,27 @@ const val IMAGE_HEIGHT = 260
 @ExperimentalMaterialApi
 class DetailFragment : Fragment() {
 
-   // @Inject lateinit var application: GitSearchApplication
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
-    private val modelId by lazy { args.myModelId }
-    private val ownerId by lazy { args.myOwnerId }
+    private val mainModel by lazy { args.mainModel }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        /*lifecycleScope.launch {
+            detailFragmentViewModel.onIntent(DetailFragmentIntent.GetModel(mainModel))
+        }*/
+
+        return ComposeView(requireContext()).apply {
+            setContent {
+                AppTheme() {
+                    DetailScreen(mainModel)
+                }
+            }
+        }
+    }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -64,7 +76,7 @@ class DetailFragment : Fragment() {
                 when (it) {
                     is DetailFragmentState.Idle -> {}
                     is DetailFragmentState.Loading -> {
-                       // setUI()
+                        //setUI()
                     }
                     is DetailFragmentState.DataLoadedAll -> {
                         //viewBinding?.progressBar?.visibility = View.GONE
@@ -73,7 +85,7 @@ class DetailFragment : Fragment() {
                             removeAllViews()
                             addView(ComposeView(requireContext()).apply {
                                 setContent {
-                                    MyDetailScreen(it.model, it.ownerModel)
+                                    // MyDetailScreen(it.model, it.ownerModel)
                                 }
                             })
                         }
@@ -87,73 +99,55 @@ class DetailFragment : Fragment() {
     }
 
     @Composable
-    private fun setUI() {
-        val loading = detailFragmentViewModel.loading.value
-        val scaffoldState = rememberScaffoldState()
-        AppTheme(
-            displayProgressBar = loading,
-            scaffoldState = scaffoldState
-        ) {
-            Scaffold(
-                scaffoldState = scaffoldState,
-                snackbarHost = {
-                    scaffoldState.snackbarHostState
-                }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    //CircularProgressIndicator()
-                    CircularProgress(isDisplayed = loading, verticalBias = 0.3f)
-                }
-            }
-        }
-    }
+    private fun DetailScreen(model: ItemLocalModel) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        )
+        {
+            val (topBar, image, textColumn) = createRefs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        observeViewModel()
-        lifecycleScope.launch {
-            detailFragmentViewModel.onIntent(DetailFragmentIntent.GetAllById(modelId, ownerId))
-        }
-        return FrameLayout(requireContext())
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun MyDetailScreen(
-    model: ItemLocalModel,
-    ownerModel: OwnerLocalModel
-) {
-    Scaffold(
-        topBar = {
             TopAppBar(
-                title = { Text(text = "Detail info") },
+                modifier = Modifier
+                    .constrainAs(topBar) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
                 backgroundColor = MaterialTheme.colors.primary,
+                title = {
+                    Text(
+                        text = "Detail information",
+                        color = Color.White,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.h6
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = {
-
-                    }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = { findNavController().popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 }
             )
-        }
-    ) {
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            stickyHeader {
-                Box(
-                    Modifier
-                        .background(Color.Gray)
-                        .fillMaxWidth()
-                        .height(300.dp)
-                )
+
+            Box(
+                Modifier
+                    .background(Color.LightGray)
+                    .fillMaxWidth()
+                    .height(360.dp)
+                    .constrainAs(image) {
+                        top.linkTo(topBar.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            ) {
                 val image = loadPicture(
-                    url = ownerModel.avatar_url,
+                    url = model.owner!!.avatar_url,
                     defaultImage = DEFAULT_AVATAR_IMAGE
                 ).value
                 image?.let { img ->
@@ -167,68 +161,70 @@ fun MyDetailScreen(
                     )
                 }
             }
-            item {
-                Column(
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(textColumn) {
+                        top.linkTo(image.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = model.owner!!.login,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Row(
+                        .wrapContentWidth(Alignment.Start),
+                    style = MaterialTheme.typography.h5
+                )
+                val nameOfRepository = "${model.name} repository"
+                Text(
+                    text = nameOfRepository,
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.h5
+                )
+                model.description?.let { description ->
+                    Text(
+                        text = description,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 4.dp)
-                    ) {
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                    model.language?.let { language ->
                         Text(
-                            text = ownerModel.login,
+                            text = language,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentWidth(Alignment.Start),
-                            style = MaterialTheme.typography.h3
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.subtitle1
                         )
-                        val nameOfRepository = "${model.name} repository"
-                        Text(
-                            text = nameOfRepository,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(Alignment.Start),
-                            style = MaterialTheme.typography.h3
-                        )
-                        model.description?.let { description ->
-                            Text(
-                                text = description,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.Start),
-                                style = MaterialTheme.typography.h3
-                            )
-                            model.language?.let { language ->
-                                Text(
-                                    text = language,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentWidth(Alignment.Start),
-                                    style = MaterialTheme.typography.h3
-                                )
-                            }
-                            val topics = model.topics.toString()
-                                .substring(1, model.topics.toString().length - 1)
-                            Text(
-                                text = topics,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.Start),
-                                style = MaterialTheme.typography.h3
-                            )
-                            val watchers = "${model.watchers.toString()} watchers"
-                            Text(
-                                text = watchers,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.Start),
-                                style = MaterialTheme.typography.h3
-                            )
-                        }
                     }
+                    val topics = model.topics.toString()
+                        .substring(1, model.topics.toString().length - 1)
+                    Text(
+                        text = topics,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                    val watchers = "${model.watchers} watchers"
+                    Text(
+                        text = watchers,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1
+                    )
                 }
             }
         }

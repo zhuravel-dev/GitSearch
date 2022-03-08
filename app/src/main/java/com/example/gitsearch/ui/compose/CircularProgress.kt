@@ -1,3 +1,4 @@
+/*
 package com.example.gitsearch.ui.compose
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,4 +27,4 @@ fun CircularProgress(isDisplayed: Boolean, verticalBias: Float): Unit {
             )
         }
     }
-}
+}*/

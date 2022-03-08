@@ -36,10 +36,7 @@ class FragmentSortingByUpdate : Fragment(R.layout.fragment_first_sorting_by_upda
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
             findNavController().navigate(
-                MainPagerFragmentDirections.actionToDetailFragment(
-                it.id,
-                it.ownerId
-            ))
+                MainPagerFragmentDirections.actionToDetailFragment(it))
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
             header = FirstFragmentLoaderStateAdapter(),
