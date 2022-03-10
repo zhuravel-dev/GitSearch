@@ -1,30 +1,28 @@
-/*
 package com.example.gitsearch.ui.compose
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun CircularProgress(isDisplayed: Boolean, verticalBias: Float): Unit {
-    if (isDisplayed) {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            val (progressBar) = createRefs()
-            val topBias = createGuidelineFromTop(verticalBias)
-            CircularProgressIndicator(
-                modifier = Modifier.constrainAs(progressBar)
-                {
-                    top.linkTo(topBias)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                },
-                color = MaterialTheme.colors.primary
-            )
-        }
+fun CircularProgress() {
+
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(80.dp),
+            color = MaterialTheme.colors.primary
+        )
     }
-}*/
+}

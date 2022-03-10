@@ -14,4 +14,5 @@ interface MainRepository {
     suspend fun getDataFromMediatorSortedByUpdate(q: String): Flow<PagingData<ItemLocalModel>>
     suspend fun getModelById(id: Int): ItemLocalModel
     suspend fun getOneOwnerById(id: Int): OwnerLocalModel
+    suspend fun getMainModel(): ItemLocalModel
 }

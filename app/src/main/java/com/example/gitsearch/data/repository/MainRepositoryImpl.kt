@@ -48,7 +48,7 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow.map {
             it.map {
                 it.apply {
-                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
+                    owner = database.getDataDao().getOwnersById(ownerId).firstOrNull()
                 }
             }
         }
@@ -71,7 +71,7 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow.map {
             it.map {
                 it.apply {
-                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
+                    owner = database.getDataDao().getOwnersById(ownerId).firstOrNull()
                 }
             }
         }
@@ -83,6 +83,10 @@ data class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getOneOwnerById(id: Int): OwnerLocalModel {
         return database.getDataDao().getOneOwnerById(id)
+    }
+
+    override suspend fun getMainModel(): ItemLocalModel {
+        return database.getDataDao().getMainModel()
     }
 
 }

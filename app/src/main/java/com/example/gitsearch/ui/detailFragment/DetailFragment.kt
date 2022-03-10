@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,6 +11,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,19 +26,18 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
 import com.example.gitsearch.ui.compose.loadPicture
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 const val IMAGE_HEIGHT = 360
 
@@ -57,49 +58,38 @@ class DetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        /*lifecycleScope.launch {
-            detailFragmentViewModel.onIntent(DetailFragmentIntent.GetModel(mainModel))
-        }*/
-
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme() {
-                    DetailScreen(mainModel)
-                }
-            }
-        }
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            detailFragmentViewModel.state.collect {
-                when (it) {
-                    is DetailFragmentState.Idle -> {}
-                    is DetailFragmentState.Loading -> {
-                        //setUI()
-                    }
-                    is DetailFragmentState.DataLoadedAll -> {
-                        //viewBinding?.progressBar?.visibility = View.GONE
-                        // showModelInformation(it.model, it.ownerModel)
-                        (view as? FrameLayout)?.run {
-                            removeAllViews()
-                            addView(ComposeView(requireContext()).apply {
-                                setContent {
-                                    // MyDetailScreen(it.model, it.ownerModel)
-                                }
-                            })
-                        }
-                    }
-                    is DetailFragmentState.Error -> {
-                        //viewBinding?.progressBar?.visibility = View.GONE
-                    }
+                    launchDetailScreen(model = mainModel, viewModel = detailFragmentViewModel)
                 }
             }
         }
     }
 
     @Composable
-    private fun DetailScreen(model: ItemLocalModel) {
+    private fun launchDetailScreen(model: ItemLocalModel, viewModel: DetailViewModel){
+
+        val viewState by viewModel.state.collectAsState()
+
+        LaunchedEffect(true) {
+            delay(1000)
+            viewModel.onIntent(DetailFragmentIntent.GetModel(mainModel))
+        }
+
+        when (viewState) {
+            is DetailFragmentState.Idle -> { CircularProgress() }
+            is DetailFragmentState.Loading -> {}
+            is DetailFragmentState.DataLoadedMainModel -> setupUI(model = model)
+            is DetailFragmentState.Error -> TODO()
+            else -> {}
+        }
+    }
+
+
+    @Composable
+    private fun setupUI(model: ItemLocalModel) {
+
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
