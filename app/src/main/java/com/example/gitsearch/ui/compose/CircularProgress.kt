@@ -21,7 +21,7 @@ fun CircularProgress() {
 
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(64.dp),
             color = MaterialTheme.colors.primary
         )
     }

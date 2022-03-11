@@ -32,6 +32,7 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
+import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.loadPicture
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,7 +69,7 @@ class DetailFragment : Fragment() {
     }
 
     @Composable
-    private fun launchDetailScreen(model: ItemLocalModel, viewModel: DetailViewModel){
+    private fun launchDetailScreen(model: ItemLocalModel, viewModel: DetailViewModel) {
 
         val viewState by viewModel.state.collectAsState()
 
@@ -78,14 +79,15 @@ class DetailFragment : Fragment() {
         }
 
         when (viewState) {
-            is DetailFragmentState.Idle -> { CircularProgress() }
+            is DetailFragmentState.Idle -> {
+                CircularProgress()
+            }
             is DetailFragmentState.Loading -> {}
             is DetailFragmentState.DataLoadedMainModel -> setupUI(model = model)
-            is DetailFragmentState.Error -> TODO()
+            is DetailFragmentState.Error -> ErrorDialog()
             else -> {}
         }
     }
-
 
     @Composable
     private fun setupUI(model: ItemLocalModel) {
