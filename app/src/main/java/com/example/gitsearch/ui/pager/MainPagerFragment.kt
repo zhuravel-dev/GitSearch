@@ -4,24 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.HorizontalScrollView
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.widget.SearchView
 import androidx.compose.foundation.background
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposeCompilerApi
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,28 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.paging.ExperimentalPagingApi
-import com.example.gitsearch.R
-import com.example.gitsearch.databinding.FragmentMainPagerBinding
 import com.example.gitsearch.ui.compose.theme.AppTheme
-import com.example.gitsearch.ui.extensions.viewBinding
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import kotlin.system.exitProcess
 
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
@@ -84,10 +63,46 @@ class MainPagerFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
-                    Surface(color = MaterialTheme.colors.background) {
-                        SearchViewActionBar(viewModel = viewModel)
-                    }
+                    SetupUI()
                 }
+            }
+        }
+    }
+
+
+    @OptIn(ExperimentalPagerApi::class)
+    @Composable
+    private fun SetupUI() {
+       // val pagerState = rememberPagerState()
+        var tabPage by remember { mutableStateOf(TabPage.Stars)  }
+
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            val (topBar, tabs) = createRefs()
+
+            TopAppBar(modifier = Modifier
+                .constrainAs(topBar) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }) {
+                SearchViewActionBar(viewModel = viewModel)
+            }
+
+            Box(
+                Modifier
+                    .background(Color.LightGray)
+                    .fillMaxWidth()
+                    .constrainAs(tabs) {
+                        top.linkTo(topBar.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            ){
+                TabStars(selectedTabIndex = tabPage.ordinal, onSelectedTab = { tabPage = it } )
             }
         }
     }
@@ -140,7 +155,6 @@ class MainPagerFragment : Fragment() {
             }
         )
     }
-
 
     @Composable
     private fun SearchAppBar(

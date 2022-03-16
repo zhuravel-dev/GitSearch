@@ -137,4 +137,5 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$rootProject.composeVersion"
     implementation "androidx.compose.material:material-icons-extended:$rootProject.composeVersion"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+    implementation "com.google.accompanist:accompanist-pager:0.18.0"
 }
