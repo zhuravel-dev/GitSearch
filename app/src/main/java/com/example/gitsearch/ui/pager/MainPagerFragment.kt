@@ -31,7 +31,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
@@ -73,210 +76,62 @@ class MainPagerFragment : Fragment() {
     @OptIn(ExperimentalPagerApi::class)
     @Composable
     private fun SetupUI() {
-       // val pagerState = rememberPagerState()
-        var tabPage by remember { mutableStateOf(TabPage.Stars)  }
+        var tabPage by remember { mutableStateOf(TabPage.Stars) }
+        val pagerState = rememberPagerState(pageCount = TabPage.values().size)
+        val scope = rememberCoroutineScope()
 
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-        ) {
-            val (topBar, tabs) = createRefs()
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                val (topBar, tabs, pager) = createRefs()
 
-            TopAppBar(modifier = Modifier
-                .constrainAs(topBar) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }) {
-                SearchViewActionBar(viewModel = viewModel)
-            }
-
-            Box(
-                Modifier
-                    .background(Color.LightGray)
-                    .fillMaxWidth()
-                    .constrainAs(tabs) {
-                        top.linkTo(topBar.bottom)
+                TopAppBar(modifier = Modifier
+                    .constrainAs(topBar) {
+                        top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    }
-            ){
-                TabStars(selectedTabIndex = tabPage.ordinal, onSelectedTab = { tabPage = it } )
-            }
-        }
-    }
-
-    @Composable
-    fun SearchViewActionBar(viewModel: SearchViewModel) {
-        val searchState by viewModel.searchState
-        val searchTextState by viewModel.searchTextState
-        val context = LocalContext.current
-
-        Scaffold(
-            topBar = {
-                AppBarStates(
-                    searchState = searchState,
-                    searchTextState = searchTextState,
-                    onTextChange = {
-                        viewModel.updateSearchTextState(it)
-                    },
-                    onCloseClicked = {
-                        viewModel.updateSearchState(SearchState.CLOSED)
-                    },
-                    onSearchClicked = {
-                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                    },
-                    onSearchTriggered = {
-                        viewModel.updateSearchState(SearchState.OPENED)
-                    }
-                )
-            },
-            content = {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search Image",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(90.dp)
-                    )
-                    Text(
-                        text = "Find something on GitHub!",
-                        fontSize = 25.sp,
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Gray
-                    )
+                    }) {
+                    SearchViewActionBar(viewModel = viewModel)
                 }
-            }
-        )
-    }
 
-    @Composable
-    private fun SearchAppBar(
-        text: String,
-        onTextChange: (String) -> Unit,
-        onCloseClicked: () -> Unit,
-        onSearchClicked: (String) -> Unit
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            elevation = AppBarDefaults.TopAppBarElevation,
-            color = MaterialTheme.colors.primary
-        ) {
-            TextField(
-                value = text,
-                onValueChange = { onTextChange(it) },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        text = "Search...",
-                        color = Color.White,
-                        modifier = Modifier.alpha(ContentAlpha.medium)
-                    )
-                },
-                textStyle = TextStyle(
-                    fontSize = MaterialTheme.typography.subtitle1.fontSize
-                ),
-                singleLine = true,
-                leadingIcon = {
-                    IconButton(
-                        onClick = { },
-                        modifier = Modifier.alpha(ContentAlpha.medium)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "SearchImage",
-                            tint = Color.White
-                        )
-                    }
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            if (text.isNotEmpty()) {
-                                onTextChange("")
-                            } else {
-                                onCloseClicked()
+                Box(
+                    Modifier
+                        .background(Color.LightGray)
+                        .fillMaxWidth()
+                        .constrainAs(tabs) {
+                            top.linkTo(topBar.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                ) {
+                    TabStars(selectedTabIndex = pagerState.currentPage, onSelectedTab = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(it.ordinal)
+                        } })
+                }
+
+                Column(
+                    modifier = Modifier
+                        .constrainAs(pager) {
+                            top.linkTo(tabs.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .padding(12.dp),
+                ) {
+
+                    HorizontalPager(state = pagerState) { index ->
+                        Column(Modifier.fillMaxSize()) {
+                            when (index) {
+                                0 -> Text(text = "Test1")
+                                1 -> Text(text = "Test2")
                             }
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close Image",
-                            tint = Color.White
-                        )
                     }
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        onSearchClicked(text)
-                    }
-                ),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    cursorColor = Color.White.copy(alpha = ContentAlpha.medium)
-                )
-            )
-        }
-    }
-
-
-    @Composable
-    fun DefaultAppBar(
-        onSearchClicked: () -> Unit
-    ) {
-        TopAppBar(
-            title = {
-                Text(text = "Search on GitHub", style = MaterialTheme.typography.body1)
-            },
-            actions = {
-                IconButton(onClick = { onSearchClicked() }) {
-                    Icon(
-                        Icons.Filled.Search,
-                        contentDescription = "Search Image",
-                        tint = Color.White
-                    )
                 }
             }
-        )
-    }
-
-
-    @Composable
-    fun AppBarStates(
-        searchState: SearchState,
-        searchTextState: String,
-        onTextChange: (String) -> Unit,
-        onCloseClicked: () -> Unit,
-        onSearchClicked: (String) -> Unit,
-        onSearchTriggered: () -> Unit
-    ) {
-        when (searchState) {
-            SearchState.CLOSED -> {
-                DefaultAppBar(
-                    onSearchClicked = onSearchTriggered
-                )
-            }
-            SearchState.OPENED -> {
-                SearchAppBar(
-                    text = searchTextState,
-                    onTextChange = onTextChange,
-                    onCloseClicked = onCloseClicked,
-                    onSearchClicked = onSearchClicked
-                )
-            }
-        }
     }
 
 
