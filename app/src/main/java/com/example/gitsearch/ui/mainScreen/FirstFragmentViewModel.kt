@@ -1,4 +1,5 @@
-package com.example.gitsearch.ui.firstFragment
+/*
+package com.example.gitsearch.ui.mainScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,4 +41,4 @@ class FirstFragmentViewModel @ExperimentalPagingApi
             }
         }
     }
-}
+}*/

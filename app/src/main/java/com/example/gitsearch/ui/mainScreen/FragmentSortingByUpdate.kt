@@ -1,8 +1,8 @@
-package com.example.gitsearch.ui.firstFragment
+/*
+package com.example.gitsearch.ui.mainScreen
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,11 +12,8 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitsearch.R
-import com.example.gitsearch.databinding.FragmentFirstSortingByStarsBinding
-import com.example.gitsearch.ui.extensions.viewBinding
+import com.example.gitsearch.databinding.FragmentFirstSortingByUpdateBinding
 import com.example.gitsearch.ui.pager.MainPagerFragmentDirections
-import com.example.gitsearch.ui.pager.MainPagerState
-import com.example.gitsearch.ui.pager.PagerSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -25,23 +22,18 @@ import kotlinx.coroutines.launch
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FragmentSortingByStars : Fragment(R.layout.fragment_first_sorting_by_stars) {
+class FragmentSortingByUpdate : Fragment(R.layout.fragment_first_sorting_by_update) {
 
-    private val viewBinding: FragmentFirstSortingByStarsBinding? by viewBinding(
-        FragmentFirstSortingByStarsBinding::bind)
+    private val viewBinding: FragmentFirstSortingByUpdateBinding? by viewBinding(
+        FragmentFirstSortingByUpdateBinding::bind
+    )
     private val pagingAdapter by lazy { FirstFragmentAdapter() }
-    private val pagerSharedViewModel: PagerSharedViewModel by activityViewModels()
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupUI()
-        observeViewModel()
-        initAdapter()
-    }
+    private val MainViewModel: MainViewModel by activityViewModels()
 
     private fun initAdapter() {
         pagingAdapter.onItemClick = {
-             findNavController().navigate(MainPagerFragmentDirections.actionToDetailFragment(it))
+            findNavController().navigate(
+                MainPagerFragmentDirections.actionToDetailFragment(it))
         }
         viewBinding?.recyclerView?.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
             header = FirstFragmentLoaderStateAdapter(),
@@ -53,6 +45,13 @@ class FragmentSortingByStars : Fragment(R.layout.fragment_first_sorting_by_stars
                 progressBar.isVisible = state.refresh == LoadState.Loading
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        observeViewModel()
+        initAdapter()
     }
 
     private fun setupUI() = viewBinding?.run {
@@ -70,22 +69,22 @@ class FragmentSortingByStars : Fragment(R.layout.fragment_first_sorting_by_stars
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            pagerSharedViewModel.pagerState.collect {
+            MainViewModel.state.collect {
                 when (it) {
-                    is MainPagerState.Idle -> {
+                    is MainState.Idle -> {
                         viewBinding?.tvWelcomeText?.visibility = View.VISIBLE
                     }
-                    is MainPagerState.Loading -> {
+                    is MainState.Loading -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.VISIBLE
                     }
-                    is MainPagerState.DataLoaded -> {
+                    is MainState.DataLoaded -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.GONE
                         viewBinding?.recyclerView?.visibility = View.VISIBLE
                         pagingAdapter.submitData(it.data)
                     }
-                    is MainPagerState.Error -> {
+                    is MainState.Error -> {
                         viewBinding?.tvWelcomeText?.visibility = View.GONE
                         viewBinding?.progressBar?.visibility = View.GONE
                     }
@@ -93,4 +92,4 @@ class FragmentSortingByStars : Fragment(R.layout.fragment_first_sorting_by_stars
             }
         }
     }
-}
+}*/

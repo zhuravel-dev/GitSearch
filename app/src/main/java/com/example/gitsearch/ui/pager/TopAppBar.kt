@@ -1,3 +1,13 @@
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Update
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+
+/*
 package com.example.gitsearch.ui.pager
 
 import android.widget.Toast
@@ -8,12 +18,15 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -21,16 +34,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.ExperimentalPagingApi
+import com.example.gitsearch.ui.mainScreen.MainIntent
+import com.example.gitsearch.ui.mainScreen.MainViewModel
 
+@OptIn(ExperimentalPagingApi::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @Composable
-fun SearchViewActionBar(viewModel: SearchViewModel) {
+fun SearchViewActionBar(viewModel: MainViewModel) {
     val searchState by viewModel.searchState
     val searchTextState by viewModel.searchTextState
     val context = LocalContext.current
 
     Scaffold(
         topBar = {
-            AppBarStates(
+            MainAppBar(
                 searchState = searchState,
                 searchTextState = searchTextState,
                 onTextChange = {
@@ -45,6 +62,7 @@ fun SearchViewActionBar(viewModel: SearchViewModel) {
                 onSearchTriggered = {
                     viewModel.updateSearchState(SearchState.OPENED)
                 }
+
             )
         },
         content = {
@@ -169,7 +187,7 @@ fun DefaultAppBar(
 
 
 @Composable
-fun AppBarStates(
+fun MainAppBar(
     searchState: SearchState,
     searchTextState: String,
     onTextChange: (String) -> Unit,
@@ -189,6 +207,30 @@ fun AppBarStates(
                 onTextChange = onTextChange,
                 onCloseClicked = onCloseClicked,
                 onSearchClicked = onSearchClicked
+            )
+        }
+    }
+}
+
+
+
+ */
+enum class TabPage(val icon: ImageVector) {
+    Star(Icons.Default.Star),
+    Update(Icons.Default.Update)
+}
+
+@Composable
+fun SelectTab(selectedTabIndex: Int, onSelectedTab: (TabPage) -> Unit, modifier: Modifier) {
+    TabRow(selectedTabIndex = selectedTabIndex) {
+        TabPage.values().forEachIndexed { index, tabPage ->
+            Tab(
+                selected = index == selectedTabIndex,
+                onClick = { onSelectedTab(tabPage) },
+                text = { Text(text = "Sorting by " + tabPage.name, style = MaterialTheme.typography.body1) },
+                icon = { Icon(imageVector = tabPage.icon, contentDescription = null) },
+                selectedContentColor = Color.White,
+                unselectedContentColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
             )
         }
     }

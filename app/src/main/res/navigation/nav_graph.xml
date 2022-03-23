@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainPagerFragment"
-        android:name="com.example.gitsearch.ui.pager.MainPagerFragment"
+        android:name="com.example.gitsearch.ui.mainScreen.MainFragmentWithPager"
         android:label="MainPagerFragment"
         tools:layout="@layout/fragment_main_pager">
         <action
