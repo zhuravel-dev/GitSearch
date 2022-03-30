@@ -3,9 +3,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
 /*
 package com.example.gitsearch.ui.pager
@@ -220,14 +225,26 @@ enum class TabPage(val icon: ImageVector) {
     Update(Icons.Default.Update)
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SelectTab(selectedTabIndex: Int, onSelectedTab: (TabPage) -> Unit, modifier: Modifier) {
-    TabRow(selectedTabIndex = selectedTabIndex) {
+fun SelectTab() {
+    val scope = rememberCoroutineScope()
+    val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
+    val pagerState = rememberPagerState(
+        pageCount = pages.size
+    )
+
+    TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier) {
         TabPage.values().forEachIndexed { index, tabPage ->
             Tab(
-                selected = index == selectedTabIndex,
-                onClick = { onSelectedTab(tabPage) },
-                text = { Text(text = "Sorting by " + tabPage.name, style = MaterialTheme.typography.body1) },
+                selected = pagerState.currentPage == index,
+                onClick = { scope.launch { pagerState.scrollToPage(index) } },
+                text = {
+                    Text(
+                        text = "Sorting by " + tabPage.name,
+                        style = MaterialTheme.typography.body1
+                    )
+                },
                 icon = { Icon(imageVector = tabPage.icon, contentDescription = null) },
                 selectedContentColor = Color.White,
                 unselectedContentColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
