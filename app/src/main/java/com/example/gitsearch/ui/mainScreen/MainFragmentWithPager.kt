@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,8 +49,8 @@ import kotlinx.coroutines.launch
 class MainFragmentWithPager : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModels()
-    /*private val args: MainFragmentWithPagerArgs by navArgs()
-    private val mainModel by lazy { args.mainModel }*/
+    /* private val args: MainFragmentWithPagerArgs by navArgs()
+     private val mainModel by lazy { args.mainModel }*/
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreateView(
@@ -75,7 +75,7 @@ class MainFragmentWithPager : Fragment() {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(Color(0xFFEAECEC))
         ) {
             val (search, tabs, pager) = createRefs()
 
@@ -165,33 +165,48 @@ class MainFragmentWithPager : Fragment() {
                         end.linkTo(tabs.end)
                     }
             ) { index ->
-                Column(Modifier.fillMaxSize()) {
-                    when (index) {
-                        0 -> Recycler()
-                        1 -> Text(text = "Page2")
-                    }
+                when (index) {
+                    0 -> Recycler()
+                    1 -> Recycler()
                 }
             }
         }
     }
 
+
     @Composable
     private fun Recycler() {
 
+        LazyColumn() {
+            items(
+                count = 10,
+                itemContent = {
+                    Card()
+                }
+            )
+        }
+    }
+
+
+    @Composable
+    private fun Card(/*model: ItemLocalModel*/) {
+
         Card(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
             elevation = 4.dp,
             backgroundColor = Color.White,
-            shape = RoundedCornerShape(corner = CornerSize(16.dp))
+            shape = RoundedCornerShape(corner = CornerSize(8.dp))
         ) {
-            Row {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Text(text = "Name", style = typography.h6)
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth()
+                //.align(Alignment.CenterVertically)
+            ) {
+                Row(){
+                    Text(text = "model.name", style = typography.h6)
                     Text(text = "DETAIL INFO", style = typography.caption)
                 }
             }

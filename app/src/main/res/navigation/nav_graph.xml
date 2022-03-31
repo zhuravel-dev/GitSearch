@@ -10,13 +10,9 @@
         android:name="com.example.gitsearch.ui.mainScreen.MainFragmentWithPager"
         android:label="MainPagerFragment"
         tools:layout="@layout/fragment_main_pager">
-        <action
-            android:id="@+id/action_to_detailFragment"
-            app:destination="@+id/fragmentDetail">
             <argument
                 android:name="mainModel"
                 app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
-        </action>
     </fragment>
 
     <fragment

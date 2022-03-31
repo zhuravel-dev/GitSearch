@@ -222,3 +222,5 @@ class DetailFragment : Fragment() {
         }
     }
 }
+
+
