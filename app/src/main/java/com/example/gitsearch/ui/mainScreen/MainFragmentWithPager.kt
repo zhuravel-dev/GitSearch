@@ -73,6 +73,7 @@ class MainFragmentWithPager : Fragment() {
             setContent {
                 AppTheme {
                     LaunchMainScreen(viewModel = mainViewModel)
+                    //SetupUI(viewModel = mainViewModel)
                 }
             }
         }
@@ -82,26 +83,34 @@ class MainFragmentWithPager : Fragment() {
     private fun LaunchMainScreen(viewModel: MainViewModel) {
 
         val viewState by viewModel.state.collectAsState()
+        val textState = remember { mutableStateOf("") }
+
 
         LaunchedEffect(true) {
             delay(1000)
-            viewModel.onIntent(MainIntent.SearchGitListSortedByStars(q = "Hello"))
+            viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
         }
+
+
+        /*LaunchedEffect(true) {
+            delay(1000)
+                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+        }*/
 
         when (viewState) {
             is MainState.Idle -> {
                 CircularProgress()
             }
             is MainState.Loading -> {}
-            is MainState.DataLoaded -> SetupUI()
+            is MainState.DataLoaded -> SetupUI(viewModel)
             is MainState.Error -> ErrorDialog()
         }
     }
 
     @OptIn(ExperimentalPagerApi::class, ExperimentalPagingApi::class)
     @Composable
-    private fun SetupUI(onImeAction: (String) -> Unit = {}) {
-        val textState = remember { mutableStateOf(TextFieldValue("")) }
+    private fun SetupUI(viewModel: MainViewModel) {
+        val textState = remember { mutableStateOf("") }
 
         ConstraintLayout(
             modifier = Modifier
@@ -114,6 +123,7 @@ class MainFragmentWithPager : Fragment() {
                 value = textState.value,
                 onValueChange = { text ->
                     textState.value = text
+                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(text))
                 },
                 label = { Text("Search on GitHab...") },
                 singleLine = true,
@@ -128,12 +138,8 @@ class MainFragmentWithPager : Fragment() {
                 keyboardOptions = KeyboardOptions(
                     KeyboardCapitalization.None,
                     imeAction = ImeAction.Search,
-                    keyboardType = KeyboardType.Text
+                    keyboardType = KeyboardType.Text,
                 ),
-                  keyboardActions = KeyboardActions(onSearch = {
-                      Log.d("SEARCH", "keyboardActions")
-                      onImeAction("")
-                  }),
                 leadingIcon = {
                     Icon(
                         Icons.Default.Search,
@@ -144,7 +150,7 @@ class MainFragmentWithPager : Fragment() {
                         tint = Color.Gray
                     )
                 },
-                trailingIcon = {
+                /*trailingIcon = {
                     if (textState.value != TextFieldValue("")) {
                         IconButton(
                             onClick = {
@@ -161,13 +167,20 @@ class MainFragmentWithPager : Fragment() {
                             )
                         }
                     }
-                },
+                },*/
             )
+
+            /*LaunchedEffect(key1 = textState) {
+                if (textState.value.length >= 3) viewModel.onIntent(
+                    MainIntent.SearchGitListSortedByStars(
+                        textState.value))
+            }*/
+
+
             val scope = rememberCoroutineScope()
             val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
             val pagerState = rememberPagerState(
-                pageCount = pages.size
-            )
+                pageCount = pages.size)
 
             TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier
                 .padding(8.dp)
@@ -183,7 +196,7 @@ class MainFragmentWithPager : Fragment() {
                         text = {
                             Text(
                                 text = "Sorting by " + tabPage.name,
-                                style = MaterialTheme.typography.body1
+                                style = typography.body1
                             )
                         },
                         icon = { Icon(imageVector = tabPage.icon, contentDescription = null) },
@@ -203,26 +216,47 @@ class MainFragmentWithPager : Fragment() {
                     }
             ) { index ->
                 when (index) {
-                    0 -> FragmentSortingByStars()
-                    // 1 -> Recycler()
+                    0 -> ResponseSortingByStars(viewModel = mainViewModel)
+                    1 -> ResponseSortingByUpdates(viewModel = mainViewModel)
                 }
             }
         }
     }
 
     @Composable
-    private fun Recycler(model: List<ItemLocalModel>) {
+    private fun ResponseSortingByStars(viewModel: MainViewModel) {
+
+        val textState = remember { mutableStateOf("") }
+
+        LaunchedEffect(true) {
+            viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+        }
 
         LazyColumn() {
-
-            items(model) { model ->
-                Card(model)
+            items(20) {
+                Card()
             }
         }
     }
 
     @Composable
-    private fun Card(model: ItemLocalModel) {
+    private fun ResponseSortingByUpdates(viewModel: MainViewModel) {
+
+        val textState = remember { mutableStateOf("") }
+
+        LaunchedEffect(true) {
+            viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+        }
+
+        LazyColumn() {
+            items(20) {
+                Card()
+            }
+        }
+    }
+
+    @Composable
+    private fun Card() {
 
         Card(
             modifier = Modifier
@@ -239,8 +273,8 @@ class MainFragmentWithPager : Fragment() {
                         .fillMaxWidth()
                         .align(Alignment.CenterVertically)
                 ) {
-                    Text(text = model.name, style = typography.h6)
-                    model.description?.let { Text(text = it, style = typography.caption) }
+                    Text(text = "model.name", style = typography.h6)
+                    Text(text = "model.description", style = typography.caption)
                 }
             }
         }
