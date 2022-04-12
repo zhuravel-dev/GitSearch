@@ -73,7 +73,6 @@ class MainFragmentWithPager : Fragment() {
             setContent {
                 AppTheme {
                     LaunchMainScreen(viewModel = mainViewModel)
-                    //SetupUI(viewModel = mainViewModel)
                 }
             }
         }
@@ -85,17 +84,10 @@ class MainFragmentWithPager : Fragment() {
         val viewState by viewModel.state.collectAsState()
         val textState = remember { mutableStateOf("") }
 
-
         LaunchedEffect(true) {
             delay(1000)
             viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
         }
-
-
-        /*LaunchedEffect(true) {
-            delay(1000)
-                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
-        }*/
 
         when (viewState) {
             is MainState.Idle -> {
@@ -123,7 +115,6 @@ class MainFragmentWithPager : Fragment() {
                 value = textState.value,
                 onValueChange = { text ->
                     textState.value = text
-                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(text))
                 },
                 label = { Text("Search on GitHab...") },
                 singleLine = true,
@@ -140,42 +131,12 @@ class MainFragmentWithPager : Fragment() {
                     imeAction = ImeAction.Search,
                     keyboardType = KeyboardType.Text,
                 ),
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp),
-                        tint = Color.Gray
-                    )
-                },
-                /*trailingIcon = {
-                    if (textState.value != TextFieldValue("")) {
-                        IconButton(
-                            onClick = {
-                                textState.value =
-                                    TextFieldValue("")
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .padding(15.dp)
-                                    .size(24.dp)
-                            )
-                        }
-                    }
-                },*/
             )
-
-            /*LaunchedEffect(key1 = textState) {
+            LaunchedEffect(key1 = textState) {
                 if (textState.value.length >= 3) viewModel.onIntent(
-                    MainIntent.SearchGitListSortedByStars(
-                        textState.value))
-            }*/
-
+                    MainIntent.SearchGitListSortedByStars(textState.value))
+                Timber.i("LaunchedEffect")
+            }
 
             val scope = rememberCoroutineScope()
             val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
@@ -226,12 +187,22 @@ class MainFragmentWithPager : Fragment() {
     @Composable
     private fun ResponseSortingByStars(viewModel: MainViewModel) {
 
+        val viewState by viewModel.state.collectAsState()
         val textState = remember { mutableStateOf("") }
 
         LaunchedEffect(true) {
             viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
         }
 
+        when (viewState) {
+            is MainState.Idle -> {
+                CircularProgress()
+            }
+            is MainState.Loading -> {}
+            is MainState.DataLoaded -> ResponseSortingByUpdates(viewModel = mainViewModel)
+            is MainState.Error -> ErrorDialog()
+        }
+        
         LazyColumn() {
             items(20) {
                 Card()
