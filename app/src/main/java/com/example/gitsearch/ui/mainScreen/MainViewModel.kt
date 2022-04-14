@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
     fun onIntent(event: MainIntent) {
         when (event) {
             is MainIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
-            is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
+            //is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
         }
     }
 
@@ -56,18 +56,18 @@ class MainViewModel @Inject constructor(
     private fun searchListSortedByStars(q: String) {
         viewModelScope.launch {
             _state.value = MainState.Loading
-            repository.getDataFromMediatorSortedByStars(q).cachedIn(viewModelScope).collectLatest {
+            repository.getDataFromMediatorSortedByStars(q).cachedIn(viewModelScope).also {
                 _state.value = MainState.DataLoaded(it)
             }
         }
     }
 
-    private fun searchListSortedByUpdate(q: String) {
+    /*private fun searchListSortedByUpdate(q: String) {
         viewModelScope.launch {
             _state.value = MainState.Loading
-            repository.getDataFromMediatorSortedByUpdate(q).cachedIn(viewModelScope).collectLatest {
-                _state.value = MainState.DataLoaded(it)
+            repository.getDataFromMediatorSortedByUpdate(q).cachedIn(viewModelScope).apply {
+                _state.value = MainState.DataLoaded(this)
             }
         }
-    }
+    }*/
 }

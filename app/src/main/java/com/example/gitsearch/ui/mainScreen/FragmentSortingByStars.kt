@@ -1,3 +1,4 @@
+/*
 package com.example.gitsearch.ui.mainScreen
 
 import android.os.Bundle
@@ -74,6 +75,7 @@ class FragmentSortingByStars : Fragment() {
 }
 
 
+*/
 /* private fun initAdapter() {
      pagingAdapter.onItemClick = {
          findNavController().navigate(MainFragmentWithPagerDirections.actionToDetailFragment(it))
@@ -88,8 +90,10 @@ class FragmentSortingByStars : Fragment() {
              progressBar.isVisible = state.refresh == LoadState.Loading
          }
      }
- }*/
+ }*//*
 
+
+*/
 /* private fun setupUI() = viewBinding?.run {
      recyclerView.layoutManager = LinearLayoutManager(requireContext())
      recyclerView.run {
@@ -101,8 +105,10 @@ class FragmentSortingByStars : Fragment() {
          )
      }
      recyclerView.adapter = pagingAdapter
- }*/
+ }*//*
 
+
+*/
 /* private fun observeViewModel() {
      lifecycleScope.launch {
          MainViewModel.state.collect {

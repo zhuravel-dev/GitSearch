@@ -1,57 +1,42 @@
 package com.example.gitsearch.ui.mainScreen
 
-import TabPage
 import android.os.Bundle
-import android.util.Log
-import android.util.Log.INFO
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.domain.repository.MainRepository
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.theme.AppTheme
-import com.example.gitsearch.ui.detailFragment.DetailFragmentIntent
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(InternalCoroutinesApi::class)
 @ExperimentalPagingApi
@@ -81,43 +66,34 @@ class MainFragmentWithPager : Fragment() {
     @Composable
     private fun LaunchMainScreen(viewModel: MainViewModel) {
 
-        val viewState by viewModel.state.collectAsState()
+        val resultState by viewModel.state.collectAsState()
         val textState = remember { mutableStateOf("") }
 
         LaunchedEffect(true) {
-            delay(1000)
             viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
         }
 
-        when (viewState) {
-            is MainState.Idle -> {
-                CircularProgress()
+        /* LaunchedEffect(textState) {
+            if (textState.value.length >= 3) {
+                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
             }
-            is MainState.Loading -> {}
-            is MainState.DataLoaded -> SetupUI(viewModel)
-            is MainState.Error -> ErrorDialog()
-        }
-    }
-
-    @OptIn(ExperimentalPagerApi::class, ExperimentalPagingApi::class)
-    @Composable
-    private fun SetupUI(viewModel: MainViewModel) {
-        val textState = remember { mutableStateOf("") }
+        }*/
 
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFEAECEC))
         ) {
-            val (search, tabs, pager) = createRefs()
+            val search = createRef()
 
             OutlinedTextField(
                 value = textState.value,
                 onValueChange = { text ->
                     textState.value = text
+                    if (textState.value.length >= 3) {
+                        viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                    }
                 },
-                label = { Text("Search on GitHab...") },
-                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -125,129 +101,69 @@ class MainFragmentWithPager : Fragment() {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    },
-                keyboardOptions = KeyboardOptions(
-                    KeyboardCapitalization.None,
-                    imeAction = ImeAction.Search,
-                    keyboardType = KeyboardType.Text,
-                ),
+                    }
             )
-            LaunchedEffect(key1 = textState) {
-                if (textState.value.length >= 3) viewModel.onIntent(
-                    MainIntent.SearchGitListSortedByStars(textState.value))
-                Timber.i("LaunchedEffect")
+
+            when (resultState) {
+                is MainState.Idle -> {
+                    CircularProgress()
+                }
+                is MainState.Loading -> {}
+                is MainState.DataLoaded -> {
+                    ListOfResult((resultState as MainState.DataLoaded).data)
+                }
+                is MainState.Error -> ErrorDialog()
             }
+        }
+    }
 
-            val scope = rememberCoroutineScope()
-            val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
-            val pagerState = rememberPagerState(
-                pageCount = pages.size)
+    @Composable
+    private fun ListOfResult(userList: Flow<PagingData<ItemLocalModel>>) {
 
-            TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier
-                .padding(8.dp)
-                .constrainAs(tabs) {
-                    top.linkTo(search.bottom)
-                    start.linkTo(search.start)
-                    end.linkTo(search.end)
-                }) {
-                TabPage.values().forEachIndexed { index, tabPage ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { scope.launch { pagerState.scrollToPage(index) } },
-                        text = {
-                            Text(
-                                text = "Sorting by " + tabPage.name,
-                                style = typography.body1
-                            )
-                        },
-                        icon = { Icon(imageVector = tabPage.icon, contentDescription = null) },
-                        selectedContentColor = Color.White,
-                        unselectedContentColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled)
+        val userListItems: LazyPagingItems<ItemLocalModel> = userList.collectAsLazyPagingItems()
+
+        /*LazyColumn {
+            items(userListItems) { item ->
+                UserList(item)
+            }
+        }*/
+
+        LazyColumn {
+            items(userListItems.itemCount) { index ->
+                userListItems[index]?.let {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = it.name,
+                        color = Color.Black
                     )
                 }
             }
+        }
+    }
 
-            HorizontalPager(state = pagerState,
+        @Composable
+       fun UserList(model: ItemLocalModel?) {
+
+            Card(
                 modifier = Modifier
-                    .padding(12.dp)
-                    .constrainAs(pager) {
-                        top.linkTo(tabs.bottom)
-                        start.linkTo(tabs.start)
-                        end.linkTo(tabs.end)
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                elevation = 4.dp,
+                backgroundColor = Color.White,
+                shape = RoundedCornerShape(corner = CornerSize(8.dp))
+            ) {
+                Row {
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        model?.name?.let { Text(text = it, style = typography.h6) }
+                        model?.description?.let { Text(text = it, style = typography.caption) }
                     }
-            ) { index ->
-                when (index) {
-                    0 -> ResponseSortingByStars(viewModel = mainViewModel)
-                    1 -> ResponseSortingByUpdates(viewModel = mainViewModel)
                 }
             }
         }
+
     }
-
-    @Composable
-    private fun ResponseSortingByStars(viewModel: MainViewModel) {
-
-        val viewState by viewModel.state.collectAsState()
-        val textState = remember { mutableStateOf("") }
-
-        LaunchedEffect(true) {
-            viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
-        }
-
-        when (viewState) {
-            is MainState.Idle -> {
-                CircularProgress()
-            }
-            is MainState.Loading -> {}
-            is MainState.DataLoaded -> ResponseSortingByUpdates(viewModel = mainViewModel)
-            is MainState.Error -> ErrorDialog()
-        }
-        
-        LazyColumn() {
-            items(20) {
-                Card()
-            }
-        }
-    }
-
-    @Composable
-    private fun ResponseSortingByUpdates(viewModel: MainViewModel) {
-
-        val textState = remember { mutableStateOf("") }
-
-        LaunchedEffect(true) {
-            viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
-        }
-
-        LazyColumn() {
-            items(20) {
-                Card()
-            }
-        }
-    }
-
-    @Composable
-    private fun Card() {
-
-        Card(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            elevation = 4.dp,
-            backgroundColor = Color.White,
-            shape = RoundedCornerShape(corner = CornerSize(8.dp))
-        ) {
-            Row() {
-                Column(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth()
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Text(text = "model.name", style = typography.h6)
-                    Text(text = "model.description", style = typography.caption)
-                }
-            }
-        }
-    }
-}
