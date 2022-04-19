@@ -133,11 +133,11 @@ dependencies {
     implementation "androidx.compose.material:material:$rootProject.composeVersion"
     implementation "androidx.compose.runtime:runtime-livedata:$rootProject.composeVersion"
     implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
-    implementation "com.google.android.material:compose-theme-adapter:1.1.5"
+    implementation "com.google.android.material:compose-theme-adapter:1.1.6"
     implementation "androidx.compose.material:material-icons-core:$rootProject.composeVersion"
     implementation "androidx.compose.material:material-icons-extended:$rootProject.composeVersion"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
     implementation "com.google.accompanist:accompanist-pager:0.18.0"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.17.0"
-    implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
+   // implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
 }

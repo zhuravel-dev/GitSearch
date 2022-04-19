@@ -6,11 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.remote.model.ItemsResponse
 import com.example.gitsearch.domain.repository.MainRepository
 import com.example.gitsearch.ui.pager.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,6 +32,11 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<MainState>
         get() = _state
 
+
+    /*private val _pagingData = MutableStateFlow<PagingData<ItemLocalModel>>()
+    val pagingData: StateFlow<PagingData<ItemLocalModel>>
+        get() = _pagingData*/
+
     private val _searchState: MutableState<SearchState> = mutableStateOf(SearchState.CLOSED)
     val searchState: State<SearchState> = _searchState
 
@@ -42,7 +51,7 @@ class MainViewModel @Inject constructor(
         _searchTextState.value = newVal
     }
 
-    @ExperimentalPagingApi
+
     fun onIntent(event: MainIntent) {
         when (event) {
             is MainIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
@@ -50,24 +59,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
-
-    @ExperimentalPagingApi
-    private fun searchListSortedByStars(q: String) {
+    private fun searchListSortedByStars(q: String? = null) {
         viewModelScope.launch {
             _state.value = MainState.Loading
-            repository.getDataFromMediatorSortedByStars(q).cachedIn(viewModelScope).also {
-                _state.value = MainState.DataLoaded(it)
-            }
+            val data = repository.getResponse(q)
+            _state.value = MainState.DataLoaded(data)
         }
     }
-
-    /*private fun searchListSortedByUpdate(q: String) {
-        viewModelScope.launch {
-            _state.value = MainState.Loading
-            repository.getDataFromMediatorSortedByUpdate(q).cachedIn(viewModelScope).apply {
-                _state.value = MainState.DataLoaded(this)
-            }
-        }
-    }*/
 }
