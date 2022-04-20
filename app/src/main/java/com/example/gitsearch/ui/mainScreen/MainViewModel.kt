@@ -13,6 +13,7 @@ import com.example.gitsearch.data.remote.model.ItemsResponse
 import com.example.gitsearch.domain.repository.MainRepository
 import com.example.gitsearch.ui.pager.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +61,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun searchListSortedByStars(q: String? = null) {
-        viewModelScope.launch {
+        val handler = CoroutineExceptionHandler { _, exception ->
+            println("CoroutineExceptionHandler got $exception")
+            _state.value = MainState.Error(exception.message.orEmpty())
+        }
+        viewModelScope.launch(handler) {
             _state.value = MainState.Loading
             val data = repository.getResponse(q)
             _state.value = MainState.DataLoaded(data)
