@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -22,18 +22,20 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.paging.ExperimentalPagingApi
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.remote.model.Item
-import com.example.gitsearch.data.remote.model.ItemsResponse
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.theme.AppTheme
@@ -42,7 +44,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.log
 
 
 @OptIn(InternalCoroutinesApi::class)
@@ -143,11 +144,12 @@ private fun SearchField(viewModel: MainViewModel) {
     )
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ListOfResult(userList: SnapshotStateList<Item>, modifier: Modifier) {
     val users = remember { userList }
-    if(userList.isEmpty()) ErrorDialog().also {
+    if (userList.isEmpty()) ErrorDialog().also {
         users.clear()
         return
     }
@@ -169,14 +171,34 @@ private fun ListOfResult(userList: SnapshotStateList<Item>, modifier: Modifier) 
                         .fillMaxWidth()
 
                 ) {
+                    val painter = rememberImagePainter(data = item.owner.avatar_url,
+                        builder = {
+                            CircleCropTransformation()
+                        }
+                    )
                     val login = remember { mutableStateOf(TextFieldValue(text = item.owner.login)) }
                     val name = remember { mutableStateOf(TextFieldValue(text = item.name)) }
-                    val description = remember { mutableStateOf(TextFieldValue(text = item.description)) }
-                    val topics = remember { mutableStateOf(TextFieldValue(text = item.topics.toString())) }
-                    val stars = remember { mutableStateOf(TextFieldValue(text = "\u2606 ${item.stargazers_count}")) }
+                    val description =
+                        remember { mutableStateOf(TextFieldValue(text = item.description)) }
+                    val topics = remember {
+                        mutableStateOf(
+                            TextFieldValue(
+                                text = item.topics.toString()
+                                    .substring(1, item.topics.toString().length - 1)
+                            )
+                        )
+                    }
+                    val stars =
+                        remember { mutableStateOf(TextFieldValue(text = "\u2606 ${item.stargazers_count}")) }
                     val lang = remember { mutableStateOf(TextFieldValue(text = item.language)) }
-                    val date = remember { mutableStateOf(TextFieldValue(text = "Updated ${parseDate(item.updated_at)}")) }
-
+                    val date =
+                        remember { mutableStateOf(TextFieldValue(text = "Updated ${parseDate(item.updated_at)}")) }
+                    Image(
+                        painter = painter,
+                        contentDescription = "User Avatar",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                     Row {
                         Text(
                             text = login.value.text + "/", color = Color.Black, fontSize = 20.sp
@@ -201,7 +223,7 @@ private fun ListOfResult(userList: SnapshotStateList<Item>, modifier: Modifier) 
                             color = Color.Gray
                         )
                         Text(
-                            modifier = Modifier.weight(0.5f),
+                            modifier = Modifier.weight(1f),
                             text = date.value.text,
                             color = Color.Gray,
                             maxLines = 1
@@ -217,7 +239,9 @@ private fun ListOfResult(userList: SnapshotStateList<Item>, modifier: Modifier) 
 private fun parseDate(notParsed: String): String = try {
     val parsedDate = LocalDateTime.parse(notParsed, DateTimeFormatter.ISO_DATE_TIME)
     parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-} catch (e: Throwable) {""}
+} catch (e: Throwable) {
+    ""
+}
 
 /* if (listState.layoutInfo.visibleItemsInfo.lastIndex == userList.items.size) {
      Timber.d("End")*/

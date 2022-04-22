@@ -1,9 +1,6 @@
 package com.example.gitsearch.ui.mainScreen
 
-import androidx.paging.PagingData
-import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.data.remote.model.ItemsResponse
-import kotlinx.coroutines.flow.Flow
 
 sealed class MainState {
     object Idle : MainState()
