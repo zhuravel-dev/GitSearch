@@ -6,7 +6,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun ErrorDialog() {
+fun ErrorDialog(modifier: androidx.compose.ui.Modifier) {
 
     AlertDialog(
         onDismissRequest = {},

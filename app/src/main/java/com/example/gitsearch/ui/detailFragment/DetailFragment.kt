@@ -80,11 +80,11 @@ class DetailFragment : Fragment() {
 
         when (viewState) {
             is DetailFragmentState.Idle -> {
-                CircularProgress()
+                CircularProgress(modifier = Modifier)
             }
             is DetailFragmentState.Loading -> {}
             is DetailFragmentState.DataLoadedMainModel -> setupUI(model = model)
-            is DetailFragmentState.Error -> ErrorDialog()
+            is DetailFragmentState.Error -> ErrorDialog(modifier = Modifier)
             else -> {}
         }
     }
