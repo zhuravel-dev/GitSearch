@@ -15,7 +15,7 @@
             app:destination="@+id/fragmentDetail">
             <argument
                 android:name="mainModel"
-                app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
+                app:argType="com.example.gitsearch.data.remote.model.Item" />
         </action>
     </fragment>
 
@@ -26,7 +26,7 @@
         tools:layout="@layout/fragment_detail">
         <argument
             android:name="mainModel"
-            app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
+            app:argType="com.example.gitsearch.data.remote.model.Item" />
     </fragment>
 
 </navigation>

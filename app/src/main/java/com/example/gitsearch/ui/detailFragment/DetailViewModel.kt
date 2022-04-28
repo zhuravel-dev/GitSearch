@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
-import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,12 +29,12 @@ class DetailViewModel
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetModel -> getModel(event.mainModel)
-            //is DetailFragmentIntent.GetAllById -> getAllById(event.modelId, event.ownerId)
+            //is DetailFragmentIntent.GetModel -> getModel(event.mainModel)
+            is DetailFragmentIntent.GetAllById -> getAllById(event.modelId, event.ownerId)
         }
     }
 
-    private fun getModel(model: ItemLocalModel) {
+    private fun getModel(model: Item) {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             _state.value = DetailFragmentState.DataLoadedMainModel(model)
@@ -45,7 +45,7 @@ class DetailViewModel
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             val model = repository.getModelById(modelId)
-            val owner = repository.getOneOwnerById(ownerId)
+            val owner = model.owner
             _state.value = DetailFragmentState.DataLoadedAll(model, owner)
         }
     }

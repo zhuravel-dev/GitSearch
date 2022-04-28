@@ -1,9 +1,10 @@
 package com.example.gitsearch.data.remote.model
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.android.parcel.Parcelize
 
-data class ItemsResponse (@Json(name= "items") val items : List<Item> )
-
+@Parcelize
 data class Item (
 	@Json(name= "id") val id : Int = 0,
 	@Json(name= "name") val name : String = "",
@@ -16,4 +17,4 @@ data class Item (
 	@Json(name= "language") val language : String = "",
 	@Json(name= "topics") val topics : List<String> = listOf(),
 	@Json(name= "watchers") val watchers : Int = 0
-)
+) : Parcelable

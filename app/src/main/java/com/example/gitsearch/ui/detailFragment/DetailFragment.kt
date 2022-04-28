@@ -29,7 +29,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
-import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
 import com.example.gitsearch.ui.compose.ErrorDialog
@@ -52,7 +52,8 @@ class DetailFragment : Fragment() {
 
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
-    private val mainModel by lazy { args.mainModel }
+
+    private val model by lazy { args.mainModel }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,35 +63,34 @@ class DetailFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme() {
-                    launchDetailScreen(model = mainModel, viewModel = detailFragmentViewModel)
+                    setupUI(model = model)
                 }
             }
         }
     }
 
     @Composable
-    private fun launchDetailScreen(model: ItemLocalModel, viewModel: DetailViewModel) {
+    private fun launchDetailScreen(model: Item, viewModel: DetailViewModel) {
 
         val viewState by viewModel.state.collectAsState()
 
         LaunchedEffect(true) {
             delay(1000)
-            viewModel.onIntent(DetailFragmentIntent.GetModel(mainModel))
+            viewModel.onIntent(DetailFragmentIntent.GetModel(model))
         }
 
         when (viewState) {
-            is DetailFragmentState.Idle -> {
-                CircularProgress(modifier = Modifier)
-            }
-            is DetailFragmentState.Loading -> {}
+            is DetailFragmentState.Idle -> {}
+            is DetailFragmentState.Loading -> { CircularProgress(modifier = Modifier) }
             is DetailFragmentState.DataLoadedMainModel -> setupUI(model = model)
             is DetailFragmentState.Error -> ErrorDialog(modifier = Modifier)
             else -> {}
         }
     }
 
+
     @Composable
-    private fun setupUI(model: ItemLocalModel) {
+    private fun setupUI(model: Item) {
 
         ConstraintLayout(
             modifier = Modifier
@@ -139,7 +139,7 @@ class DetailFragment : Fragment() {
                     }
             ) {
                 val image = loadPicture(
-                    url = model.owner!!.avatar_url,
+                    url = model.owner.avatar_url,
                     defaultImage = DEFAULT_AVATAR_IMAGE
                 ).value
                 image?.let { img ->

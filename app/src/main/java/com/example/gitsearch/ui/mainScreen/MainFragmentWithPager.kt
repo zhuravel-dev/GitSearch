@@ -20,10 +20,10 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -43,7 +44,6 @@ import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -119,12 +119,12 @@ class MainFragmentWithPager : Fragment() {
                     usersState.addAll(list)
 
                     SearchField(modifier = Modifier
-                        .constrainAs(search) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(results.top)
-                        }, viewModel
+                            .constrainAs(search) {
+                                top.linkTo(parent.top)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(results.top)
+                            }, viewModel
                     )
 
                     ListOfResult(
@@ -138,7 +138,7 @@ class MainFragmentWithPager : Fragment() {
                             }, usersState
                     )
                 }
-                is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error){
+                is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -175,7 +175,7 @@ class MainFragmentWithPager : Fragment() {
     @OptIn(ExperimentalCoilApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    private fun ListOfResult(modifier: Modifier, userList: SnapshotStateList<Item>, ) {
+    private fun ListOfResult(modifier: Modifier, userList: SnapshotStateList<Item>) {
         val users = remember { userList }
         if (userList.isEmpty()) ErrorDialog(modifier = Modifier).also {
             users.clear()
@@ -183,28 +183,30 @@ class MainFragmentWithPager : Fragment() {
         }
         val listState = rememberLazyListState()
 
-        if (listState.layoutInfo.visibleItemsInfo.lastIndex == users.size - 1) {
-            Timber.d("End")
-        }
-
+        /* if (listState.layoutInfo.visibleItemsInfo.lastIndex == users.size - 1) {
+             Timber.d("End")
+         }*/
 
         LazyColumn(state = listState, modifier = modifier) {
             itemsIndexed(users) { index, item ->
                 Card(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    onClick = {
+                        findNavController().navigate(
+                            MainFragmentWithPagerDirections.actionToDetailFragment(item))
+                    },
                     elevation = 4.dp,
                     backgroundColor = Color.White,
                     shape = RoundedCornerShape(corner = CornerSize(8.dp))
                 ) {
 
                     ConstraintLayout(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding()
+                        modifier = Modifier,
                     ) {
                         val (image, column) = createRefs()
+
                         val painter = rememberImagePainter(data = item.owner.avatar_url,
                             builder = {
                                 transformations(
@@ -217,29 +219,27 @@ class MainFragmentWithPager : Fragment() {
                             painter = painter,
                             contentDescription = "User Avatar",
                             modifier = Modifier
-                                .size(120.dp, 120.dp)
+                                .size(140.dp, 100.dp)
+                                .padding(44.dp, 4.dp, 4.dp, 4.dp)
                                 .constrainAs(image) {
                                     top.linkTo(parent.top)
                                     start.linkTo(parent.start)
                                     bottom.linkTo(parent.bottom)
                                     end.linkTo(column.start)
                                 },
-                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center
                         )
 
                         Column(
                             modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth()
+                                .width(320.dp)
                                 .constrainAs(column) {
                                     top.linkTo(parent.top)
                                     start.linkTo(image.end)
                                     bottom.linkTo(parent.bottom)
                                     end.linkTo(parent.end)
-                                }
-
+                                },
                         ) {
-
                             val login =
                                 remember { mutableStateOf(TextFieldValue(text = item.owner.login)) }
                             val name = remember { mutableStateOf(TextFieldValue(text = item.name)) }
@@ -254,13 +254,13 @@ class MainFragmentWithPager : Fragment() {
                                 )
                             }
                             val stars =
-                                remember { mutableStateOf(TextFieldValue(text = "\u2606 ${item.stargazers_count}")) }
+                                remember { mutableStateOf(TextFieldValue(text = "\u2606${item.stargazers_count}")) }
                             val lang =
                                 remember { mutableStateOf(TextFieldValue(text = item.language)) }
                             val date = remember {
                                 mutableStateOf(
                                     TextFieldValue(
-                                        text = "Updated ${parseDate(item.updated_at)}"
+                                        text = "upd.${parseDate(item.updated_at)}"
                                     )
                                 )
                             }
@@ -280,17 +280,16 @@ class MainFragmentWithPager : Fragment() {
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    modifier = Modifier.weight(0.1f),
-                                    text = stars.value.text,
+                                    text = stars.value.text + "  ",
                                     color = Color.Gray,
+                                    maxLines = 1
                                 )
                                 Text(
-                                    modifier = Modifier.weight(0.1f),
-                                    text = lang.value.text,
-                                    color = Color.Gray
+                                    text = lang.value.text + "  ",
+                                    color = Color.Gray,
+                                    maxLines = 1
                                 )
                                 Text(
-                                    modifier = Modifier.weight(0.3f),
                                     text = date.value.text,
                                     color = Color.Gray,
                                     maxLines = 1
@@ -307,9 +306,7 @@ class MainFragmentWithPager : Fragment() {
     private fun parseDate(notParsed: String): String = try {
         val parsedDate = LocalDateTime.parse(notParsed, DateTimeFormatter.ISO_DATE_TIME)
         parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-    } catch (e: Throwable) {
-        ""
-    }
+    } catch (e: Throwable) { "" }
 
     @Composable
     private fun WelcomeText(modifier: Modifier) {
