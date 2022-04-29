@@ -18,8 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,18 +27,17 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.remote.model.Item
 import com.example.gitsearch.ui.compose.CircularProgress
-import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
 import com.example.gitsearch.ui.compose.ErrorDialog
-import com.example.gitsearch.ui.compose.loadPicture
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 
-const val IMAGE_HEIGHT = 360
 
 @OptIn(InternalCoroutinesApi::class)
 @ExperimentalPagingApi
@@ -52,7 +49,6 @@ class DetailFragment : Fragment() {
 
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
-
     private val model by lazy { args.mainModel }
 
     override fun onCreateView(
@@ -81,7 +77,9 @@ class DetailFragment : Fragment() {
 
         when (viewState) {
             is DetailFragmentState.Idle -> {}
-            is DetailFragmentState.Loading -> { CircularProgress(modifier = Modifier) }
+            is DetailFragmentState.Loading -> {
+                CircularProgress(modifier = Modifier)
+            }
             is DetailFragmentState.DataLoadedMainModel -> setupUI(model = model)
             is DetailFragmentState.Error -> ErrorDialog(modifier = Modifier)
             else -> {}
@@ -89,12 +87,12 @@ class DetailFragment : Fragment() {
     }
 
 
+    @OptIn(ExperimentalCoilApi::class)
     @Composable
     private fun setupUI(model: Item) {
 
         ConstraintLayout(
             modifier = Modifier
-                .fillMaxSize()
                 .background(Color.White)
         )
         {
@@ -127,32 +125,23 @@ class DetailFragment : Fragment() {
                 }
             )
 
-            Box(
-                Modifier
-                    .background(Color.LightGray)
-                    .fillMaxWidth()
-                    .height(360.dp)
+            val painter = rememberImagePainter(data = model.owner.avatar_url)
+
+            Image(
+                painter = painter,
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    //.background(Color.LightGray)
+                    .size(400.dp, 360.dp)
                     .constrainAs(image) {
                         top.linkTo(topBar.bottom)
                         start.linkTo(parent.start)
+                        bottom.linkTo(textColumn.top)
                         end.linkTo(parent.end)
-                    }
-            ) {
-                val image = loadPicture(
-                    url = model.owner.avatar_url,
-                    defaultImage = DEFAULT_AVATAR_IMAGE
-                ).value
-                image?.let { img ->
-                    Image(
-                        bitmap = img.asImageBitmap(),
-                        contentDescription = "Owner`s avatar",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IMAGE_HEIGHT.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
+                    },
+                alignment = Alignment.Center
+            )
 
             Column(
                 modifier = Modifier
@@ -161,13 +150,12 @@ class DetailFragment : Fragment() {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(12.dp, 0.dp, 12.dp, 0.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = model.owner!!.login,
+                    text = model.owner.login,
                     modifier = Modifier
-                        .fillMaxWidth()
                         .wrapContentWidth(Alignment.Start),
                     style = MaterialTheme.typography.h5
                 )
@@ -179,45 +167,42 @@ class DetailFragment : Fragment() {
                     color = Color.Gray,
                     style = MaterialTheme.typography.h5
                 )
-                model.description?.let { description ->
-                    Text(
-                        text = description,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.Start),
-                        color = Color.Gray,
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                    model.language?.let { language ->
-                        Text(
-                            text = language,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(Alignment.Start),
-                            color = Color.Gray,
-                            style = MaterialTheme.typography.subtitle1
-                        )
-                    }
-                    val topics = model.topics.toString()
-                        .substring(1, model.topics.toString().length - 1)
-                    Text(
-                        text = topics,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.Start),
-                        color = Color.Gray,
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                    val watchers = "${model.watchers} watchers"
-                    Text(
-                        text = watchers,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.Start),
-                        color = Color.Gray,
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+                Text(
+                    text = model.description,
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.subtitle1,
+                    maxLines = 2
+                )
+                Text(
+                    text = model.language,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.subtitle1
+                )
+                val topics = model.topics.toString()
+                    .substring(1, model.topics.toString().length - 1)
+                Text(
+                    text = topics,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.subtitle1,
+                    maxLines = 1
+                )
+                val watchers = "${model.watchers} watchers"
+                Text(
+                    text = watchers,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.subtitle1
+                )
             }
         }
     }
