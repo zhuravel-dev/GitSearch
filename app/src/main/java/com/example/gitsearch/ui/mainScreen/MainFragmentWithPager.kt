@@ -1,5 +1,6 @@
 package com.example.gitsearch.ui.mainScreen
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -118,7 +119,8 @@ class MainFragmentWithPager : Fragment() {
                     usersState.clear()
                     usersState.addAll(list)
 
-                    SearchField(modifier = Modifier
+                    SearchField(
+                        modifier = Modifier
                             .constrainAs(search) {
                                 top.linkTo(parent.top)
                                 start.linkTo(parent.start)
@@ -135,7 +137,7 @@ class MainFragmentWithPager : Fragment() {
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                                 bottom.linkTo(parent.bottom)
-                            }, usersState
+                            }, usersState, mainViewModel,
                     )
                 }
                 is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error) {
@@ -172,132 +174,144 @@ class MainFragmentWithPager : Fragment() {
         )
     }
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     @OptIn(ExperimentalCoilApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    private fun ListOfResult(modifier: Modifier, userList: SnapshotStateList<Item>) {
+    private fun ListOfResult(
+        modifier: Modifier,
+        userList: SnapshotStateList<Item>,
+        viewModel: MainViewModel
+    ) {
         val users = remember { userList }
         if (userList.isEmpty()) ErrorDialog(modifier = Modifier).also {
             users.clear()
             return
         }
         val listState = rememberLazyListState()
-
-        /* if (listState.layoutInfo.visibleItemsInfo.lastIndex == users.size - 1) {
-             Timber.d("End")
-         }*/
+        val textState = remember { mutableStateOf("") }
 
         LazyColumn(state = listState, modifier = modifier) {
             itemsIndexed(users) { index, item ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    onClick = {
-                        findNavController().navigate(
-                            MainFragmentWithPagerDirections.actionToDetailFragment(item))
-                    },
-                    elevation = 4.dp,
-                    backgroundColor = Color.White,
-                    shape = RoundedCornerShape(corner = CornerSize(8.dp))
-                ) {
-
-                    ConstraintLayout(
-                        modifier = Modifier,
+                /*if (listState.layoutInfo.visibleItemsInfo.lastIndex == users.size - 1) {
+                    viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                }*/
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        onClick = {
+                            findNavController().navigate(
+                                MainFragmentWithPagerDirections.actionToDetailFragment(item)
+                            )
+                        },
+                        elevation = 4.dp,
+                        backgroundColor = Color.White,
+                        shape = RoundedCornerShape(corner = CornerSize(8.dp))
                     ) {
-                        val (image, column) = createRefs()
-
-                        val painter = rememberImagePainter(data = item.owner.avatar_url,
-                            builder = {
-                                transformations(
-                                    CircleCropTransformation()
-                                )
-                            }
-                        )
-
-                        Image(
-                            painter = painter,
-                            contentDescription = "User Avatar",
-                            modifier = Modifier
-                                .size(140.dp, 100.dp)
-                                .padding(44.dp, 4.dp, 4.dp, 4.dp)
-                                .constrainAs(image) {
-                                    top.linkTo(parent.top)
-                                    start.linkTo(parent.start)
-                                    bottom.linkTo(parent.bottom)
-                                    end.linkTo(column.start)
-                                },
-                            alignment = Alignment.Center
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .width(320.dp)
-                                .constrainAs(column) {
-                                    top.linkTo(parent.top)
-                                    start.linkTo(image.end)
-                                    bottom.linkTo(parent.bottom)
-                                    end.linkTo(parent.end)
-                                },
+                        ConstraintLayout(
+                            modifier = Modifier,
                         ) {
-                            val login =
-                                remember { mutableStateOf(TextFieldValue(text = item.owner.login)) }
-                            val name = remember { mutableStateOf(TextFieldValue(text = item.name)) }
-                            val description =
-                                remember { mutableStateOf(TextFieldValue(text = item.description)) }
-                            val topics = remember {
-                                mutableStateOf(
-                                    TextFieldValue(
-                                        text = item.topics.toString()
-                                            .substring(1, item.topics.toString().length - 1)
+                            val (image, column) = createRefs()
+
+                            val painter = rememberImagePainter(data = item.owner.avatar_url,
+                                builder = {
+                                    transformations(
+                                        CircleCropTransformation()
                                     )
-                                )
-                            }
-                            val stars =
-                                remember { mutableStateOf(TextFieldValue(text = "\u2606${item.stargazers_count}")) }
-                            val lang =
-                                remember { mutableStateOf(TextFieldValue(text = item.language)) }
-                            val date = remember {
-                                mutableStateOf(
-                                    TextFieldValue(
-                                        text = "upd.${parseDate(item.updated_at)}"
-                                    )
-                                )
-                            }
-                            Row {
-                                Text(
-                                    text = login.value.text + "/",
-                                    color = Color.Black,
-                                    fontSize = 20.sp
-                                )
-                                Text(
-                                    text = name.value.text, color = Color.Black, fontSize = 20.sp
-                                )
-                            }
-                            Text(text = description.value.text, color = Color.Gray, maxLines = 1)
-                            Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly
+                                }
+                            )
+
+                            Image(
+                                painter = painter,
+                                contentDescription = "User Avatar",
+                                modifier = Modifier
+                                    .size(140.dp, 100.dp)
+                                    .padding(44.dp, 4.dp, 4.dp, 4.dp)
+                                    .constrainAs(image) {
+                                        top.linkTo(parent.top)
+                                        start.linkTo(parent.start)
+                                        bottom.linkTo(parent.bottom)
+                                        end.linkTo(column.start)
+                                    },
+                                alignment = Alignment.Center
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .width(320.dp)
+                                    .constrainAs(column) {
+                                        top.linkTo(parent.top)
+                                        start.linkTo(image.end)
+                                        bottom.linkTo(parent.bottom)
+                                        end.linkTo(parent.end)
+                                    },
                             ) {
+                                val login =
+                                    remember { mutableStateOf(TextFieldValue(text = item.owner.login)) }
+                                val name =
+                                    remember { mutableStateOf(TextFieldValue(text = item.name)) }
+                                val description =
+                                    remember { mutableStateOf(TextFieldValue(text = item.description)) }
+                                val topics = remember {
+                                    mutableStateOf(
+                                        TextFieldValue(
+                                            text = item.topics.toString()
+                                                .substring(1, item.topics.toString().length - 1)
+                                        )
+                                    )
+                                }
+                                val stars =
+                                    remember { mutableStateOf(TextFieldValue(text = "\u2606${item.stargazers_count}")) }
+                                val lang =
+                                    remember { mutableStateOf(TextFieldValue(text = item.language)) }
+                                val date = remember {
+                                    mutableStateOf(
+                                        TextFieldValue(
+                                            text = "upd.${parseDate(item.updated_at)}"
+                                        )
+                                    )
+                                }
+                                Row {
+                                    Text(
+                                        text = login.value.text + "/",
+                                        color = Color.Black,
+                                        fontSize = 20.sp
+                                    )
+                                    Text(
+                                        text = name.value.text,
+                                        color = Color.Black,
+                                        fontSize = 20.sp
+                                    )
+                                }
                                 Text(
-                                    text = stars.value.text + "  ",
+                                    text = description.value.text,
                                     color = Color.Gray,
                                     maxLines = 1
                                 )
-                                Text(
-                                    text = lang.value.text + "  ",
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
-                                Text(
-                                    text = date.value.text,
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
+                                Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Text(
+                                        text = stars.value.text + "  ",
+                                        color = Color.Gray,
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = lang.value.text + "  ",
+                                        color = Color.Gray,
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = date.value.text,
+                                        color = Color.Gray,
+                                        maxLines = 1
+                                    )
+                                }
                             }
                         }
                     }
-                }
             }
         }
     }
@@ -306,7 +320,9 @@ class MainFragmentWithPager : Fragment() {
     private fun parseDate(notParsed: String): String = try {
         val parsedDate = LocalDateTime.parse(notParsed, DateTimeFormatter.ISO_DATE_TIME)
         parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-    } catch (e: Throwable) { "" }
+    } catch (e: Throwable) {
+        ""
+    }
 
     @Composable
     private fun WelcomeText(modifier: Modifier) {

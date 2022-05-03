@@ -17,7 +17,7 @@ fun ErrorDialog(modifier: Modifier) {
         title = { Text(text = "Loading error") },
         text = { Text(text = "Please retry!") },
         confirmButton = {
-            Button( onClick = { System.out } ) { Text(text = "OK") }
+            Button( onClick = { System.exit(0) } ) { Text(text = "OK") }
         }
     )
 }

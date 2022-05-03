@@ -1,13 +1,9 @@
 package com.example.gitsearch.ui.mainScreen
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.domain.repository.MainRepository
-import com.example.gitsearch.ui.pager.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,12 +23,11 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<MainState>
         get() = _state
 
-
     /*private val _pagingData = MutableStateFlow<PagingData<ItemLocalModel>>()
     val pagingData: StateFlow<PagingData<ItemLocalModel>>
         get() = _pagingData*/
 
-    private val _searchState: MutableState<SearchState> = mutableStateOf(SearchState.CLOSED)
+  /*  private val _searchState: MutableState<SearchState> = mutableStateOf(SearchState.CLOSED)
     val searchState: State<SearchState> = _searchState
 
     private val _searchTextState: MutableState<String> = mutableStateOf("")
@@ -44,7 +39,7 @@ class MainViewModel @Inject constructor(
 
     fun updateSearchTextState(newVal: String) {
         _searchTextState.value = newVal
-    }
+    }*/
 
 
     fun onIntent(event: MainIntent) {

@@ -133,7 +133,7 @@ class DetailFragment : Fragment() {
                 modifier = Modifier
                     .padding(0.dp, 0.dp, 0.dp, 8.dp)
                     //.background(Color.LightGray)
-                    .size(400.dp, 360.dp)
+                    .size(440.dp, 360.dp)
                     .constrainAs(image) {
                         top.linkTo(topBar.bottom)
                         start.linkTo(parent.start)
