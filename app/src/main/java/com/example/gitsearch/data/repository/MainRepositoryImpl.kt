@@ -77,8 +77,9 @@ data class MainRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getModelById(id: Int): Item {
-        return apiService.getRepository(id)
+    override suspend fun getModelById(id: Int): ItemLocalModel {
+        //return apiService.getRepository(id)
+        return database.getDataDao().getItemById(id)
     }
 
   /*  override suspend fun getOneOwnerById(id: Int): Owner {

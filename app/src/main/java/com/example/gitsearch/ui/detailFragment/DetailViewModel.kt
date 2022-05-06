@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
-import com.example.gitsearch.data.remote.model.Item
+import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +34,7 @@ class DetailViewModel
         }
     }
 
-    private fun getModel(model: Item) {
+    private fun getModel(model: ItemLocalModel) {
         viewModelScope.launch {
             _state.value = DetailFragmentState.Loading
             _state.value = DetailFragmentState.DataLoadedMainModel(model)
@@ -46,7 +46,7 @@ class DetailViewModel
             _state.value = DetailFragmentState.Loading
             val model = repository.getModelById(modelId)
             val owner = model.owner
-            _state.value = DetailFragmentState.DataLoadedAll(model, owner)
+            _state.value = DetailFragmentState.DataLoadedAll(model, owner!!)
         }
     }
 }

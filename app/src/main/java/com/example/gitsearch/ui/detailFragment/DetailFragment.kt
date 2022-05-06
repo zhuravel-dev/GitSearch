@@ -11,9 +11,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -29,14 +26,11 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.example.gitsearch.data.remote.model.Item
-import com.example.gitsearch.ui.compose.CircularProgress
-import com.example.gitsearch.ui.compose.ErrorDialog
+import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.delay
 
 
 @OptIn(InternalCoroutinesApi::class)
@@ -65,7 +59,7 @@ class DetailFragment : Fragment() {
         }
     }
 
-    @Composable
+   /* @Composable
     private fun launchDetailScreen(model: Item, viewModel: DetailViewModel) {
 
         val viewState by viewModel.state.collectAsState()
@@ -84,12 +78,12 @@ class DetailFragment : Fragment() {
             is DetailFragmentState.Error -> ErrorDialog(modifier = Modifier)
             else -> {}
         }
-    }
+    }*/
 
 
     @OptIn(ExperimentalCoilApi::class)
     @Composable
-    private fun setupUI(model: Item) {
+    private fun setupUI(model: ItemLocalModel) {
 
         ConstraintLayout(
             modifier = Modifier
@@ -125,7 +119,7 @@ class DetailFragment : Fragment() {
                 }
             )
 
-            val painter = rememberImagePainter(data = model.owner.avatar_url)
+            val painter = rememberImagePainter(data = model.owner?.avatar_url)
 
             Image(
                 painter = painter,
@@ -153,12 +147,14 @@ class DetailFragment : Fragment() {
                     .padding(12.dp, 0.dp, 12.dp, 0.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(
-                    text = model.owner.login,
-                    modifier = Modifier
-                        .wrapContentWidth(Alignment.Start),
-                    style = MaterialTheme.typography.h5
-                )
+                model.owner?.let {
+                    Text(
+                        text = it.login,
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.Start),
+                        style = MaterialTheme.typography.h5
+                    )
+                }
                 val nameOfRepository = "${model.name} repository"
                 Text(
                     text = nameOfRepository,
@@ -167,22 +163,26 @@ class DetailFragment : Fragment() {
                     color = Color.Gray,
                     style = MaterialTheme.typography.h5
                 )
-                Text(
-                    text = model.description,
-                    modifier = Modifier
-                        .wrapContentWidth(Alignment.Start),
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.subtitle1,
-                    maxLines = 2
-                )
-                Text(
-                    text = model.language,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentWidth(Alignment.Start),
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.subtitle1
-                )
+                model.description?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1,
+                        maxLines = 2
+                    )
+                }
+                model.language?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
                 val topics = model.topics.toString()
                     .substring(1, model.topics.toString().length - 1)
                 Text(

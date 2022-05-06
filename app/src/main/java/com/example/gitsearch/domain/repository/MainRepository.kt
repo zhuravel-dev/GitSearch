@@ -12,7 +12,7 @@ interface MainRepository {
     suspend fun getDataFromNetwork(q: String): Flow<PagingData<Item>>
     suspend fun getDataFromMediatorSortedByStars(q: String): Flow<PagingData<ItemLocalModel>>
     suspend fun getDataFromMediatorSortedByUpdate(q: String): Flow<PagingData<ItemLocalModel>>
-    suspend fun getModelById(id: Int): Item
+    suspend fun getModelById(id: Int): ItemLocalModel
     //suspend fun getOneOwnerById(id: Int): Owner
     suspend fun getMainModel(): ItemLocalModel
     suspend fun getResponse(q: String? = null): ItemsResponse

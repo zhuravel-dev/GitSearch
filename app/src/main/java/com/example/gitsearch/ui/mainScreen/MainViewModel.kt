@@ -27,19 +27,19 @@ class MainViewModel @Inject constructor(
     val pagingData: StateFlow<PagingData<ItemLocalModel>>
         get() = _pagingData*/
 
-  /*  private val _searchState: MutableState<SearchState> = mutableStateOf(SearchState.CLOSED)
-    val searchState: State<SearchState> = _searchState
+    /*  private val _searchState: MutableState<SearchState> = mutableStateOf(SearchState.CLOSED)
+      val searchState: State<SearchState> = _searchState
 
-    private val _searchTextState: MutableState<String> = mutableStateOf("")
-    val searchTextState: State<String> = _searchTextState
+      private val _searchTextState: MutableState<String> = mutableStateOf("")
+      val searchTextState: State<String> = _searchTextState
 
-    fun updateSearchState(newVal: SearchState) {
-        _searchState.value = newVal
-    }
+      fun updateSearchState(newVal: SearchState) {
+          _searchState.value = newVal
+      }
 
-    fun updateSearchTextState(newVal: String) {
-        _searchTextState.value = newVal
-    }*/
+      fun updateSearchTextState(newVal: String) {
+          _searchTextState.value = newVal
+      }*/
 
 
     fun onIntent(event: MainIntent) {
@@ -49,14 +49,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun searchListSortedByStars(q: String? = null) {
+    private fun searchListSortedByStars(q: String) {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("CoroutineExceptionHandler got $exception")
             _state.value = MainState.Error(exception.message.orEmpty())
         }
         viewModelScope.launch(handler) {
             _state.value = MainState.Loading
-            val data = repository.getResponse(q)
+            //val data = repository.getResponse(q)
+            val data = repository.getDataFromMediatorSortedByStars(q)
             _state.value = MainState.DataLoaded(data)
         }
     }

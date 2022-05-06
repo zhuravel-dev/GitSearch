@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +19,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -35,10 +33,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.example.gitsearch.data.remote.model.Item
+import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.theme.AppTheme
@@ -58,7 +59,7 @@ import java.time.format.DateTimeFormatter
 class MainFragmentWithPager : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private val usersState = mutableStateListOf<Item>()
+    private val usersState = mutableListOf<ItemLocalModel>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterialApi::class)
@@ -115,9 +116,9 @@ class MainFragmentWithPager : Fragment() {
                     })
                 }
                 is MainState.DataLoaded -> {
-                    val list = (resultState as? MainState.DataLoaded)?.data?.items ?: listOf()
-                    usersState.clear()
-                    usersState.addAll(list)
+                     val list = (resultState as MainState.DataLoaded).data.collectAsLazyPagingItems()
+                  /*  usersState.clear()
+                    usersState.addAll()*/
 
                     SearchField(
                         modifier = Modifier
@@ -137,7 +138,7 @@ class MainFragmentWithPager : Fragment() {
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                                 bottom.linkTo(parent.bottom)
-                            }, usersState, mainViewModel,
+                            }, list
                     )
                 }
                 is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error) {
@@ -166,152 +167,148 @@ class MainFragmentWithPager : Fragment() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
-            /*.constrainAs(search) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        }*/
         )
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")
     @OptIn(ExperimentalCoilApi::class)
+    @ExperimentalPagingApi
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     private fun ListOfResult(
         modifier: Modifier,
-        userList: SnapshotStateList<Item>,
-        viewModel: MainViewModel
+        userList: LazyPagingItems<ItemLocalModel>,
     ) {
-        val users = remember { userList }
-        if (userList.isEmpty()) ErrorDialog(modifier = Modifier).also {
-            users.clear()
-            return
-        }
         val listState = rememberLazyListState()
-        val textState = remember { mutableStateOf("") }
 
         LazyColumn(state = listState, modifier = modifier) {
-            itemsIndexed(users) { index, item ->
-                /*if (listState.layoutInfo.visibleItemsInfo.lastIndex == users.size - 1) {
-                    viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
-                }*/
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        onClick = {
-                            findNavController().navigate(
-                                MainFragmentWithPagerDirections.actionToDetailFragment(item)
-                            )
-                        },
-                        elevation = 4.dp,
-                        backgroundColor = Color.White,
-                        shape = RoundedCornerShape(corner = CornerSize(8.dp))
+            itemsIndexed(userList) { index, item ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    onClick = {
+                        findNavController().navigate(
+                            MainFragmentWithPagerDirections.actionToDetailFragment(item!!)
+                        )
+                    },
+                    elevation = 4.dp,
+                    backgroundColor = Color.White,
+                    shape = RoundedCornerShape(corner = CornerSize(8.dp))
+                ) {
+                    ConstraintLayout(
+                        modifier = Modifier,
                     ) {
-                        ConstraintLayout(
-                            modifier = Modifier,
-                        ) {
-                            val (image, column) = createRefs()
+                        val (image, column) = createRefs()
 
-                            val painter = rememberImagePainter(data = item.owner.avatar_url,
-                                builder = {
-                                    transformations(
-                                        CircleCropTransformation()
-                                    )
-                                }
-                            )
-
-                            Image(
-                                painter = painter,
-                                contentDescription = "User Avatar",
-                                modifier = Modifier
-                                    .size(140.dp, 100.dp)
-                                    .padding(44.dp, 4.dp, 4.dp, 4.dp)
-                                    .constrainAs(image) {
-                                        top.linkTo(parent.top)
-                                        start.linkTo(parent.start)
-                                        bottom.linkTo(parent.bottom)
-                                        end.linkTo(column.start)
-                                    },
-                                alignment = Alignment.Center
-                            )
-
-                            Column(
-                                modifier = Modifier
-                                    .width(320.dp)
-                                    .constrainAs(column) {
-                                        top.linkTo(parent.top)
-                                        start.linkTo(image.end)
-                                        bottom.linkTo(parent.bottom)
-                                        end.linkTo(parent.end)
-                                    },
-                            ) {
-                                val login =
-                                    remember { mutableStateOf(TextFieldValue(text = item.owner.login)) }
-                                val name =
-                                    remember { mutableStateOf(TextFieldValue(text = item.name)) }
-                                val description =
-                                    remember { mutableStateOf(TextFieldValue(text = item.description)) }
-                                val topics = remember {
-                                    mutableStateOf(
-                                        TextFieldValue(
-                                            text = item.topics.toString()
-                                                .substring(1, item.topics.toString().length - 1)
-                                        )
-                                    )
-                                }
-                                val stars =
-                                    remember { mutableStateOf(TextFieldValue(text = "\u2606${item.stargazers_count}")) }
-                                val lang =
-                                    remember { mutableStateOf(TextFieldValue(text = item.language)) }
-                                val date = remember {
-                                    mutableStateOf(
-                                        TextFieldValue(
-                                            text = "upd.${parseDate(item.updated_at)}"
-                                        )
-                                    )
-                                }
-                                Row {
-                                    Text(
-                                        text = login.value.text + "/",
-                                        color = Color.Black,
-                                        fontSize = 20.sp
-                                    )
-                                    Text(
-                                        text = name.value.text,
-                                        color = Color.Black,
-                                        fontSize = 20.sp
-                                    )
-                                }
-                                Text(
-                                    text = description.value.text,
-                                    color = Color.Gray,
-                                    maxLines = 1
+                        val painter = rememberImagePainter(data = item?.owner?.avatar_url,
+                            builder = {
+                                transformations(
+                                    CircleCropTransformation()
                                 )
-                                Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Text(
-                                        text = stars.value.text + "  ",
-                                        color = Color.Gray,
-                                        maxLines = 1
+                            }
+                        )
+
+                        Image(
+                            painter = painter,
+                            contentDescription = "User Avatar",
+                            modifier = Modifier
+                                .size(140.dp, 100.dp)
+                                .padding(44.dp, 4.dp, 4.dp, 4.dp)
+                                .constrainAs(image) {
+                                    top.linkTo(parent.top)
+                                    start.linkTo(parent.start)
+                                    bottom.linkTo(parent.bottom)
+                                    end.linkTo(column.start)
+                                },
+                            alignment = Alignment.Center
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .width(320.dp)
+                                .constrainAs(column) {
+                                    top.linkTo(parent.top)
+                                    start.linkTo(image.end)
+                                    bottom.linkTo(parent.bottom)
+                                    end.linkTo(parent.end)
+                                },
+                        ) {
+                            val login =
+                                remember { mutableStateOf(item?.owner?.let { TextFieldValue(text = it.login) }) }
+                            val name =
+                                remember { mutableStateOf(item?.name?.let { TextFieldValue(text = it) }) }
+                            val description =
+                                remember {
+                                    mutableStateOf(item?.description?.let {
+                                        TextFieldValue(
+                                            text = it
+                                        )
+                                    })
+                                }
+                            val topics = remember {
+                                mutableStateOf(
+                                    TextFieldValue(
+                                        text = item?.topics.toString()
+                                            .substring(1, item?.topics.toString().length - 1)
                                     )
-                                    Text(
-                                        text = lang.value.text + "  ",
-                                        color = Color.Gray,
-                                        maxLines = 1
+                                )
+                            }
+                            val stars =
+                                remember { mutableStateOf(TextFieldValue(text = "\u2606${item?.stargazers_count}")) }
+                            val lang =
+                                remember { mutableStateOf(item?.language?.let { TextFieldValue(text = it) }) }
+                            val date = remember {
+                                mutableStateOf(
+                                    TextFieldValue(
+                                        text = "upd.${item?.updated_at?.let { parseDate(it) }}"
                                     )
+                                )
+                            }
+                            Row {
+                                Text(
+                                    text = login.value?.text + "/",
+                                    color = Color.Black,
+                                    fontSize = 20.sp
+                                )
+                                name.value?.let {
                                     Text(
-                                        text = date.value.text,
-                                        color = Color.Gray,
-                                        maxLines = 1
+                                        text = it.text,
+                                        color = Color.Black,
+                                        fontSize = 20.sp
                                     )
                                 }
                             }
+                            description.value?.let {
+                                Text(
+                                    text = it.text,
+                                    color = Color.Gray,
+                                    maxLines = 1
+                                )
+                            }
+                            Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    text = stars.value.text + "  ",
+                                    color = Color.Gray,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    text = lang.value?.text + "  ",
+                                    color = Color.Gray,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    text = date.value.text,
+                                    color = Color.Gray,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
+                }
             }
         }
     }
