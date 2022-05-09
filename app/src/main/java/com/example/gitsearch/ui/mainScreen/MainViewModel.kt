@@ -45,7 +45,7 @@ class MainViewModel @Inject constructor(
     fun onIntent(event: MainIntent) {
         when (event) {
             is MainIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
-            //is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
+            is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
         }
     }
 
@@ -58,6 +58,19 @@ class MainViewModel @Inject constructor(
             _state.value = MainState.Loading
             //val data = repository.getResponse(q)
             val data = repository.getDataFromMediatorSortedByStars(q)
+            _state.value = MainState.DataLoaded(data)
+        }
+    }
+
+    private fun searchListSortedByUpdate(q: String) {
+        val handler = CoroutineExceptionHandler { _, exception ->
+            println("CoroutineExceptionHandler got $exception")
+            _state.value = MainState.Error(exception.message.orEmpty())
+        }
+        viewModelScope.launch(handler) {
+            _state.value = MainState.Loading
+            //val data = repository.getResponse(q)
+            val data = repository.getDataFromMediatorSortedByUpdate(q)
             _state.value = MainState.DataLoaded(data)
         }
     }

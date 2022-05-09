@@ -1,53 +1,39 @@
 package com.example.gitsearch.ui.mainScreen
 
-import android.annotation.SuppressLint
+import TabPage
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemsIndexed
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
+import com.example.gitsearch.ui.compose.WelcomeText
 import com.example.gitsearch.ui.compose.theme.AppTheme
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.launch
 
 
 @OptIn(InternalCoroutinesApi::class)
@@ -77,6 +63,7 @@ class MainFragmentWithPager : Fragment() {
         }
     }
 
+    @OptIn(ExperimentalPagerApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     private fun LaunchMainScreen(viewModel: MainViewModel) {
@@ -88,18 +75,74 @@ class MainFragmentWithPager : Fragment() {
                 .fillMaxSize()
                 .background(Color(0xFFEAECEC))
         ) {
-            val (search, welcomeText, progress, results, error) = createRefs()
+            val (search, tabs, pager, welcomeText, progress, results, error) = createRefs()
+
+            val scope = rememberCoroutineScope()
+            val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
+            val pagerState = rememberPagerState(
+                pageCount = pages.size
+            )
+
+            TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier
+                .padding(8.dp, 72.dp, 8.dp, 0.dp)
+                .constrainAs(tabs) {
+                    top.linkTo(search.bottom)
+                    start.linkTo(search.start)
+                    end.linkTo(search.end)
+                }) {
+                TabPage.values().forEachIndexed { index, tabPage ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = { scope.launch { pagerState.scrollToPage(index) } },
+                        text = {
+                            Text(
+                                text = "Sorting by " + tabPage.name,
+                                style = typography.body1
+                            )
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = tabPage.icon,
+                                contentDescription = null
+                            )
+                        },
+                        selectedContentColor = Color.White,
+                        unselectedContentColor = MaterialTheme.colors.onSurface.copy(
+                            ContentAlpha.disabled
+                        )
+                    )
+                }
+            }
 
             when (resultState) {
                 is MainState.Idle -> {
-                    SearchField(
+                    /*SearchField(
                         modifier = Modifier
                             .constrainAs(search) {
                                 top.linkTo(parent.top)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                             }, viewModel
+                    )*/
+
+                    val textState = remember { mutableStateOf("") }
+
+                    OutlinedTextField(
+                        value = textState.value,
+                        onValueChange = { text ->
+                            textState.value = text
+                            if (textState.value.length >= 3 && pagerState.currentPage == 0 ) {
+                                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                            }
+                            if (textState.value.length >= 3 && pagerState.currentPage == 1 ) {
+                                viewModel.onIntent(MainIntent.SearchGitListSortedByUpdate(textState.value))
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
                     )
+
                     WelcomeText(modifier = Modifier
                         .constrainAs(welcomeText) {
                             top.linkTo(parent.top)
@@ -107,6 +150,7 @@ class MainFragmentWithPager : Fragment() {
                             end.linkTo(parent.end)
                         })
                 }
+
                 is MainState.Loading -> {
                     CircularProgress(modifier = Modifier.constrainAs(progress) {
                         top.linkTo(parent.top)
@@ -115,10 +159,11 @@ class MainFragmentWithPager : Fragment() {
                         bottom.linkTo(parent.bottom)
                     })
                 }
+
                 is MainState.DataLoaded -> {
-                     val list = (resultState as MainState.DataLoaded).data.collectAsLazyPagingItems()
-                  /*  usersState.clear()
-                    usersState.addAll()*/
+                    val list = (resultState as MainState.DataLoaded).data.collectAsLazyPagingItems()
+                    /*  usersState.clear()
+                      usersState.addAll()*/
 
                     SearchField(
                         modifier = Modifier
@@ -130,7 +175,29 @@ class MainFragmentWithPager : Fragment() {
                             }, viewModel
                     )
 
-                    ListOfResult(
+                    HorizontalPager(state = pagerState,
+                        modifier = Modifier
+                            .constrainAs(pager) {
+                                top.linkTo(tabs.bottom)
+                                start.linkTo(tabs.start)
+                                end.linkTo(tabs.end)
+                            }
+                    ) { index ->
+                        when (index) {
+                            0 -> FragmentWithSortingByStars().ListOfResultSortedByStars1(
+                                modifier = Modifier
+                                    .height(648.dp),
+                                userList = list
+                            )
+                            1 -> FragmentWithSortingByUpdate().ListOfResultSortedByUpdate(
+                                modifier = Modifier
+                                    .height(648.dp),
+                                userList = list
+                            )
+                        }
+                    }
+
+                   /* ListOfResultSortedByStars(
                         Modifier
                             .height(648.dp)
                             .constrainAs(results) {
@@ -139,7 +206,7 @@ class MainFragmentWithPager : Fragment() {
                                 end.linkTo(parent.end)
                                 bottom.linkTo(parent.bottom)
                             }, list
-                    )
+                    )*/
                 }
                 is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error) {
                     top.linkTo(parent.top)
@@ -170,12 +237,12 @@ class MainFragmentWithPager : Fragment() {
         )
     }
 
-    @SuppressLint("CoroutineCreationDuringComposition")
+    /*@SuppressLint("CoroutineCreationDuringComposition")
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalPagingApi
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    private fun ListOfResult(
+    private fun ListOfResultSortedByStars(
         modifier: Modifier,
         userList: LazyPagingItems<ItemLocalModel>,
     ) {
@@ -311,26 +378,5 @@ class MainFragmentWithPager : Fragment() {
                 }
             }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun parseDate(notParsed: String): String = try {
-        val parsedDate = LocalDateTime.parse(notParsed, DateTimeFormatter.ISO_DATE_TIME)
-        parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-    } catch (e: Throwable) {
-        ""
-    }
-
-    @Composable
-    private fun WelcomeText(modifier: Modifier) {
-        Text(
-            text = "Search something on GitHub!",
-            textAlign = TextAlign.Center,
-            fontSize = 24.sp,
-            color = Color.Gray,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 320.dp)
-        )
-    }
+    }*/
 }
