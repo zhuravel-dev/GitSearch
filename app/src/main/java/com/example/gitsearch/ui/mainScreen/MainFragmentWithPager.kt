@@ -8,14 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+import androidx.compose.material.ContentAlpha.medium
 import androidx.compose.material.MaterialTheme.typography
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -34,7 +43,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
-
 
 @OptIn(InternalCoroutinesApi::class)
 @ExperimentalPagingApi
@@ -56,6 +64,14 @@ class MainFragmentWithPager : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+                /* Surface(color = MaterialTheme.colors.background) {
+                      Scaffold(
+                          topBar = { MyAppBar(viewModel = mainViewModel) }
+                      ) {
+                          LaunchMainScreen(viewModel = mainViewModel)
+                      }
+                  }*/
+
                 AppTheme {
                     LaunchMainScreen(viewModel = mainViewModel)
                 }
@@ -75,7 +91,7 @@ class MainFragmentWithPager : Fragment() {
                 .fillMaxSize()
                 .background(Color(0xFFEAECEC))
         ) {
-            val (search, tabs, pager, welcomeText, progress, results, error) = createRefs()
+            val (topAppBar, tabs, pager, welcomeText, progress, results, error) = createRefs()
 
             val scope = rememberCoroutineScope()
             val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
@@ -84,11 +100,11 @@ class MainFragmentWithPager : Fragment() {
             )
 
             TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier
-                .padding(8.dp, 72.dp, 8.dp, 0.dp)
+                // .padding(0.dp, 56.dp, 0.dp, 0.dp)
                 .constrainAs(tabs) {
-                    top.linkTo(search.bottom)
-                    start.linkTo(search.start)
-                    end.linkTo(search.end)
+                    top.linkTo(topAppBar.bottom)
+                    start.linkTo(topAppBar.start)
+                    end.linkTo(topAppBar.end)
                 }) {
                 TabPage.values().forEachIndexed { index, tabPage ->
                     Tab(
@@ -114,17 +130,62 @@ class MainFragmentWithPager : Fragment() {
                 }
             }
 
+            val textState = remember { mutableStateOf("") }
+
+            TopAppBar(
+                title = {},
+                modifier = Modifier.constrainAs(topAppBar) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
+                    }
+                },
+                actions = {
+                    TextField(
+                        value = textState.value,
+                        onValueChange = { text ->
+                            textState.value = text
+                            if (textState.value.length >= 3) {
+                                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 0.dp, 0.dp, 0.dp),
+                        placeholder = {
+                            Text(
+                                text = "Search...",
+                                color = Color.White,
+                                modifier = Modifier.alpha(medium)
+                            )
+                        },
+                        textStyle = TextStyle(
+                            fontSize = typography.subtitle1.fontSize
+                        ),
+                        singleLine = true,
+                        leadingIcon = {
+                            IconButton(
+                                onClick = { },
+                                modifier = Modifier.alpha(ContentAlpha.medium)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "SearchImage",
+                                    tint = Color.White
+                                )
+                            }
+
+                        },
+                    )
+                })
+
             when (resultState) {
                 is MainState.Idle -> {
-                    /*SearchField(
-                        modifier = Modifier
-                            .constrainAs(search) {
-                                top.linkTo(parent.top)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }, viewModel
-                    )*/
-
+/*
                     val textState = remember { mutableStateOf("") }
 
                     OutlinedTextField(
@@ -141,7 +202,7 @@ class MainFragmentWithPager : Fragment() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                    )
+                    )*/
 
                     WelcomeText(modifier = Modifier
                         .constrainAs(welcomeText) {
@@ -165,15 +226,15 @@ class MainFragmentWithPager : Fragment() {
                     /*  usersState.clear()
                       usersState.addAll()*/
 
-                    SearchField(
-                        modifier = Modifier
-                            .constrainAs(search) {
-                                top.linkTo(parent.top)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(results.top)
-                            }, viewModel
-                    )
+                    /* SearchField(
+                         modifier = Modifier
+                             .constrainAs(search) {
+                                 top.linkTo(parent.top)
+                                 start.linkTo(parent.start)
+                                 end.linkTo(parent.end)
+                                 bottom.linkTo(results.top)
+                             }, viewModel
+                     )*/
 
                     HorizontalPager(state = pagerState,
                         modifier = Modifier
@@ -184,29 +245,16 @@ class MainFragmentWithPager : Fragment() {
                             }
                     ) { index ->
                         when (index) {
-                            0 -> FragmentWithSortingByStars().ListOfResultSortedByStars1(
+                            0 -> ListOfResultSortedByStarsUI(
                                 modifier = Modifier
                                     .height(648.dp),
-                                userList = list
-                            )
-                            1 -> FragmentWithSortingByUpdate().ListOfResultSortedByUpdate(
+                                userList = list)
+                            1 -> ListOfResultSortedByStarsUI(
                                 modifier = Modifier
                                     .height(648.dp),
-                                userList = list
-                            )
+                                userList = list)
                         }
                     }
-
-                   /* ListOfResultSortedByStars(
-                        Modifier
-                            .height(648.dp)
-                            .constrainAs(results) {
-                                top.linkTo(search.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                            }, list
-                    )*/
                 }
                 is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error) {
                     top.linkTo(parent.top)
@@ -236,147 +284,59 @@ class MainFragmentWithPager : Fragment() {
                 .padding(8.dp)
         )
     }
-
-    /*@SuppressLint("CoroutineCreationDuringComposition")
-    @OptIn(ExperimentalCoilApi::class)
-    @ExperimentalPagingApi
-    @RequiresApi(Build.VERSION_CODES.O)
-    @Composable
-    private fun ListOfResultSortedByStars(
-        modifier: Modifier,
-        userList: LazyPagingItems<ItemLocalModel>,
-    ) {
-        val listState = rememberLazyListState()
-
-        LazyColumn(state = listState, modifier = modifier) {
-            itemsIndexed(userList) { index, item ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    onClick = {
-                        findNavController().navigate(
-                            MainFragmentWithPagerDirections.actionToDetailFragment(item!!)
-                        )
-                    },
-                    elevation = 4.dp,
-                    backgroundColor = Color.White,
-                    shape = RoundedCornerShape(corner = CornerSize(8.dp))
-                ) {
-                    ConstraintLayout(
-                        modifier = Modifier,
-                    ) {
-                        val (image, column) = createRefs()
-
-                        val painter = rememberImagePainter(data = item?.owner?.avatar_url,
-                            builder = {
-                                transformations(
-                                    CircleCropTransformation()
-                                )
-                            }
-                        )
-
-                        Image(
-                            painter = painter,
-                            contentDescription = "User Avatar",
-                            modifier = Modifier
-                                .size(140.dp, 100.dp)
-                                .padding(44.dp, 4.dp, 4.dp, 4.dp)
-                                .constrainAs(image) {
-                                    top.linkTo(parent.top)
-                                    start.linkTo(parent.start)
-                                    bottom.linkTo(parent.bottom)
-                                    end.linkTo(column.start)
-                                },
-                            alignment = Alignment.Center
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .width(320.dp)
-                                .constrainAs(column) {
-                                    top.linkTo(parent.top)
-                                    start.linkTo(image.end)
-                                    bottom.linkTo(parent.bottom)
-                                    end.linkTo(parent.end)
-                                },
-                        ) {
-                            val login =
-                                remember { mutableStateOf(item?.owner?.let { TextFieldValue(text = it.login) }) }
-                            val name =
-                                remember { mutableStateOf(item?.name?.let { TextFieldValue(text = it) }) }
-                            val description =
-                                remember {
-                                    mutableStateOf(item?.description?.let {
-                                        TextFieldValue(
-                                            text = it
-                                        )
-                                    })
-                                }
-                            val topics = remember {
-                                mutableStateOf(
-                                    TextFieldValue(
-                                        text = item?.topics.toString()
-                                            .substring(1, item?.topics.toString().length - 1)
-                                    )
-                                )
-                            }
-                            val stars =
-                                remember { mutableStateOf(TextFieldValue(text = "\u2606${item?.stargazers_count}")) }
-                            val lang =
-                                remember { mutableStateOf(item?.language?.let { TextFieldValue(text = it) }) }
-                            val date = remember {
-                                mutableStateOf(
-                                    TextFieldValue(
-                                        text = "upd.${item?.updated_at?.let { parseDate(it) }}"
-                                    )
-                                )
-                            }
-                            Row {
-                                Text(
-                                    text = login.value?.text + "/",
-                                    color = Color.Black,
-                                    fontSize = 20.sp
-                                )
-                                name.value?.let {
-                                    Text(
-                                        text = it.text,
-                                        color = Color.Black,
-                                        fontSize = 20.sp
-                                    )
-                                }
-                            }
-                            description.value?.let {
-                                Text(
-                                    text = it.text,
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
-                            }
-                            Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text(
-                                    text = stars.value.text + "  ",
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
-                                Text(
-                                    text = lang.value?.text + "  ",
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
-                                Text(
-                                    text = date.value.text,
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 }
+
+/*
+@OptIn(ExperimentalPagingApi::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+@Composable
+fun MyAppBar(viewModel: MainViewModel) {
+
+    val textState = remember { mutableStateOf("") }
+
+    TopAppBar(
+        title = {},
+        actions = {
+            TextField(
+                value = textState.value,
+                onValueChange = { text ->
+                    textState.value = text
+                    if (textState.value.length >= 3) {
+                        viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                    }
+                },
+                onValueChange = { text ->
+                            textState.value = text
+                            if (textState.value.length >= 3 && pagerState.currentPage == 0 ) {
+                                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                            }
+                            if (textState.value.length >= 3 && pagerState.currentPage == 1 ) {
+                                viewModel.onIntent(MainIntent.SearchGitListSortedByUpdate(textState.value))
+                            }
+                modifier = Modifier
+                    .fillMaxWidth(),
+                placeholder = {
+                    Text(
+                        text = "Search...",
+                        color = Color.White,
+                        modifier = Modifier.alpha(medium)
+                    )
+                },
+                textStyle = TextStyle(
+                    fontSize = typography.subtitle1.fontSize
+                ),
+                singleLine = true,
+                leadingIcon = {
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier.alpha(ContentAlpha.medium)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "SearchImage",
+                            tint = Color.White
+                        )
+                    }
+                },
+            )
+        })
+}*/

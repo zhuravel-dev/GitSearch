@@ -36,7 +36,7 @@ import com.example.gitsearch.ui.compose.parseDate
 @ExperimentalPagingApi
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun ListOfResultSortedByUpdate(
+fun ListOfResultSortedByUpdateUI(
     modifier: Modifier,
     userList: LazyPagingItems<ItemLocalModel>,
 ) {
@@ -48,11 +48,11 @@ private fun ListOfResultSortedByUpdate(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-              /*  onClick = {
+                onClick = {
                     findNavController().navigate(
                         MainFragmentWithPagerDirections.actionToDetailFragment(item!!)
                     )
-                },*/
+                },
                 elevation = 4.dp,
                 backgroundColor = Color.White,
                 shape = RoundedCornerShape(corner = CornerSize(8.dp))

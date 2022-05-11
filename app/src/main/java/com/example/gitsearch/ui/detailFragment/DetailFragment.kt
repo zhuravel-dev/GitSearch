@@ -152,7 +152,8 @@ class DetailFragment : Fragment() {
                         text = it.login,
                         modifier = Modifier
                             .wrapContentWidth(Alignment.Start),
-                        style = MaterialTheme.typography.h5
+                        style = MaterialTheme.typography.h5,
+                        maxLines = 1
                     )
                 }
                 val nameOfRepository = "${model.name} repository"
@@ -161,7 +162,8 @@ class DetailFragment : Fragment() {
                     modifier = Modifier
                         .wrapContentWidth(Alignment.Start),
                     color = Color.Gray,
-                    style = MaterialTheme.typography.h5
+                    style = MaterialTheme.typography.h5,
+                    maxLines = 1
                 )
                 model.description?.let {
                     Text(

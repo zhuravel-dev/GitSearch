@@ -21,7 +21,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
@@ -32,11 +31,11 @@ import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.parseDate
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, androidx.compose.material.ExperimentalMaterialApi::class)
 @ExperimentalPagingApi
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ListOfResultSortedByStars(
+fun ListOfResultSortedByStarsUI(
     modifier: Modifier,
     userList: LazyPagingItems<ItemLocalModel>,
 ) {
