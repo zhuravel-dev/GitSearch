@@ -39,6 +39,7 @@ import com.example.gitsearch.ui.compose.parseDate
 fun ListOfResultSortedByUpdateUI(
     modifier: Modifier,
     userList: LazyPagingItems<ItemLocalModel>,
+    onClick: (ItemLocalModel) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -48,14 +49,10 @@ fun ListOfResultSortedByUpdateUI(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                onClick = {
-                    findNavController().navigate(
-                        MainFragmentWithPagerDirections.actionToDetailFragment(item!!)
-                    )
-                },
                 elevation = 4.dp,
                 backgroundColor = Color.White,
-                shape = RoundedCornerShape(corner = CornerSize(8.dp))
+                shape = RoundedCornerShape(corner = CornerSize(8.dp)),
+                onClick = { item?.let { onClick(it) } }
             ) {
                 ConstraintLayout(
                     modifier = Modifier,

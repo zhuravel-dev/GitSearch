@@ -26,10 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.CircularProgress
@@ -38,6 +42,7 @@ import com.example.gitsearch.ui.compose.WelcomeText
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -53,7 +58,6 @@ import kotlinx.coroutines.launch
 class MainFragmentWithPager : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private val usersState = mutableListOf<ItemLocalModel>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterialApi::class)
@@ -95,9 +99,7 @@ class MainFragmentWithPager : Fragment() {
 
             val scope = rememberCoroutineScope()
             val pages = remember { listOf("Sorting bu stars", "Sorting by update") }
-            val pagerState = rememberPagerState(
-                pageCount = pages.size
-            )
+            val pagerState = rememberPagerState(pageCount = pages.size)
 
             TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier
                 // .padding(0.dp, 56.dp, 0.dp, 0.dp)
@@ -150,7 +152,7 @@ class MainFragmentWithPager : Fragment() {
                         onValueChange = { text ->
                             textState.value = text
                             if (textState.value.length >= 3) {
-                                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
+                                viewModel.onIntent(MainIntent.SearchGitList(textState.value))
                             }
                         },
                         modifier = Modifier
@@ -185,25 +187,6 @@ class MainFragmentWithPager : Fragment() {
 
             when (resultState) {
                 is MainState.Idle -> {
-/*
-                    val textState = remember { mutableStateOf("") }
-
-                    OutlinedTextField(
-                        value = textState.value,
-                        onValueChange = { text ->
-                            textState.value = text
-                            if (textState.value.length >= 3 && pagerState.currentPage == 0 ) {
-                                viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
-                            }
-                            if (textState.value.length >= 3 && pagerState.currentPage == 1 ) {
-                                viewModel.onIntent(MainIntent.SearchGitListSortedByUpdate(textState.value))
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    )*/
-
                     WelcomeText(modifier = Modifier
                         .constrainAs(welcomeText) {
                             top.linkTo(parent.top)
@@ -222,39 +205,17 @@ class MainFragmentWithPager : Fragment() {
                 }
 
                 is MainState.DataLoaded -> {
-                    val list = (resultState as MainState.DataLoaded).data.collectAsLazyPagingItems()
-                    /*  usersState.clear()
-                      usersState.addAll()*/
-
-                    /* SearchField(
-                         modifier = Modifier
-                             .constrainAs(search) {
-                                 top.linkTo(parent.top)
-                                 start.linkTo(parent.start)
-                                 end.linkTo(parent.end)
-                                 bottom.linkTo(results.top)
-                             }, viewModel
-                     )*/
-
-                    HorizontalPager(state = pagerState,
-                        modifier = Modifier
-                            .constrainAs(pager) {
-                                top.linkTo(tabs.bottom)
-                                start.linkTo(tabs.start)
-                                end.linkTo(tabs.end)
-                            }
-                    ) { index ->
-                        when (index) {
-                            0 -> ListOfResultSortedByStarsUI(
-                                modifier = Modifier
-                                    .height(648.dp),
-                                userList = list)
-                            1 -> ListOfResultSortedByStarsUI(
-                                modifier = Modifier
-                                    .height(648.dp),
-                                userList = list)
-                        }
-                    }
+                    val listStars =
+                        (resultState as MainState.DataLoaded).dataByStars.collectAsLazyPagingItems()
+                    val listUpdate =
+                        (resultState as MainState.DataLoaded).dataByUpdate.collectAsLazyPagingItems()
+                    this@ConstraintLayout.setupPager(
+                        pager,
+                        tabs,
+                        pagerState = pagerState,
+                        userListByStars = listStars,
+                        userListByUpdate = listUpdate
+                    )
                 }
                 is MainState.Error -> ErrorDialog(modifier = Modifier.constrainAs(error) {
                     top.linkTo(parent.top)
@@ -266,23 +227,50 @@ class MainFragmentWithPager : Fragment() {
         }
     }
 
-    @OptIn(ExperimentalPagingApi::class)
+    @ExperimentalPagerApi
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    private fun SearchField(modifier: Modifier, viewModel: MainViewModel) {
-        val textState = remember { mutableStateOf("") }
-
-        OutlinedTextField(
-            value = textState.value,
-            onValueChange = { text ->
-                textState.value = text
-                if (textState.value.length >= 3) {
-                    viewModel.onIntent(MainIntent.SearchGitListSortedByStars(textState.value))
-                }
-            },
+    fun ConstraintLayoutScope.setupPager(
+        pager: ConstrainedLayoutReference,
+        tabs: ConstrainedLayoutReference,
+        userListByStars: LazyPagingItems<ItemLocalModel>? = null,
+        userListByUpdate: LazyPagingItems<ItemLocalModel>? = null,
+        pagerState: PagerState,
+    ) {
+        HorizontalPager(state = pagerState,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        )
+                .constrainAs(pager) {
+                    top.linkTo(tabs.bottom)
+                    start.linkTo(tabs.start)
+                    end.linkTo(tabs.end)
+                }
+        ) { index ->
+            when (index) {
+                0 -> userListByStars?.let {
+                    ListOfResultSortedByStarsUI(
+                        modifier = Modifier
+                            .height(648.dp),
+                        userList = it,
+                        onClick = {
+                            findNavController().navigate(
+                                MainFragmentWithPagerDirections.actionToDetailFragment(it)
+                            )
+                        }
+                    )
+                }
+                1 -> userListByUpdate?.let {
+                    ListOfResultSortedByUpdateUI(
+                        modifier = Modifier
+                            .height(648.dp),
+                        userList = it,
+                        onClick = {
+                            findNavController().navigate(
+                                MainFragmentWithPagerDirections.actionToDetailFragment(it)
+                            )
+                        })
+                }
+            }
+        }
     }
 }
 

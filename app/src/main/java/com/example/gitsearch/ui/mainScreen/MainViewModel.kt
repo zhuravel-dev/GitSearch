@@ -23,55 +23,22 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<MainState>
         get() = _state
 
-    /*private val _pagingData = MutableStateFlow<PagingData<ItemLocalModel>>()
-    val pagingData: StateFlow<PagingData<ItemLocalModel>>
-        get() = _pagingData*/
-
-    /*  private val _searchState: MutableState<SearchState> = mutableStateOf(SearchState.CLOSED)
-      val searchState: State<SearchState> = _searchState
-
-      private val _searchTextState: MutableState<String> = mutableStateOf("")
-      val searchTextState: State<String> = _searchTextState
-
-      fun updateSearchState(newVal: SearchState) {
-          _searchState.value = newVal
-      }
-
-      fun updateSearchTextState(newVal: String) {
-          _searchTextState.value = newVal
-      }*/
-
-
     fun onIntent(event: MainIntent) {
         when (event) {
-            is MainIntent.SearchGitListSortedByStars -> searchListSortedByStars(event.q)
-            is MainIntent.SearchGitListSortedByUpdate -> searchListSortedByUpdate(event.q)
+            is MainIntent.SearchGitList -> searchListSorted(event.q)
         }
     }
 
-    private fun searchListSortedByStars(q: String) {
+    private fun searchListSorted(q: String) {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("CoroutineExceptionHandler got $exception")
             _state.value = MainState.Error(exception.message.orEmpty())
         }
         viewModelScope.launch(handler) {
             _state.value = MainState.Loading
-            //val data = repository.getResponse(q)
-            val data = repository.getDataFromMediatorSortedByStars(q)
-            _state.value = MainState.DataLoaded(data)
-        }
-    }
-
-    private fun searchListSortedByUpdate(q: String) {
-        val handler = CoroutineExceptionHandler { _, exception ->
-            println("CoroutineExceptionHandler got $exception")
-            _state.value = MainState.Error(exception.message.orEmpty())
-        }
-        viewModelScope.launch(handler) {
-            _state.value = MainState.Loading
-            //val data = repository.getResponse(q)
-            val data = repository.getDataFromMediatorSortedByUpdate(q)
-            _state.value = MainState.DataLoaded(data)
+            val dataByStars = repository.getDataFromMediatorSortedByStars(q)
+            val dataByUpdate = repository.getDataFromMediatorSortedByUpdate(q)
+            _state.value = MainState.DataLoaded(dataByStars, dataByUpdate)
         }
     }
 }
