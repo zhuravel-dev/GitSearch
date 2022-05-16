@@ -7,18 +7,15 @@
 
     <fragment
         android:id="@+id/mainPagerFragment"
-        android:name="com.example.gitsearch.ui.pager.MainPagerFragment"
+        android:name="com.example.gitsearch.ui.mainScreen.MainFragmentWithPager"
         android:label="MainPagerFragment"
         tools:layout="@layout/fragment_main_pager">
         <action
             android:id="@+id/action_to_detailFragment"
             app:destination="@+id/fragmentDetail">
             <argument
-                android:name="myModelId"
-                app:argType="integer" />
-            <argument
-                android:name="myOwnerId"
-                app:argType="integer" />
+                android:name="mainModel"
+                app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
         </action>
     </fragment>
 
@@ -28,11 +25,8 @@
         android:label="DetailFragment"
         tools:layout="@layout/fragment_detail">
         <argument
-            android:name="myModelId"
-            app:argType="integer" />
-        <argument
-            android:name="myOwnerId"
-            app:argType="integer" />
+            android:name="mainModel"
+            app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
     </fragment>
 
 </navigation>

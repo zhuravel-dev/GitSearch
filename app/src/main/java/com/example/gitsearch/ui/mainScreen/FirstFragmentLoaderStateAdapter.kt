@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.firstFragment
+package com.example.gitsearch.ui.mainScreen
 
 import android.view.LayoutInflater
 import android.view.View

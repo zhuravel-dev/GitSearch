@@ -3,11 +3,11 @@ package com.example.gitsearch.data.repository
 import androidx.paging.*
 import com.example.gitsearch.data.local.db.DataDB
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.data.local.model.OwnerLocalModel
 import com.example.gitsearch.data.local.paging3.GithubPagingSource
 import com.example.gitsearch.data.local.paging3.PagingRemoteMediator
 import com.example.gitsearch.data.remote.api.ApiService
 import com.example.gitsearch.data.remote.model.Item
+import com.example.gitsearch.data.remote.model.ItemsResponse
 import com.example.gitsearch.domain.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -48,7 +48,7 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow.map {
             it.map {
                 it.apply {
-                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
+                    owner = database.getDataDao().getOwnersById(ownerId).firstOrNull()
                 }
             }
         }
@@ -71,18 +71,26 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow.map {
             it.map {
                 it.apply {
-                    owner = database.getDataDao().getOwnerById(ownerId).firstOrNull()
+                    owner = database.getDataDao().getOwnersById(ownerId).firstOrNull()
                 }
             }
         }
     }
 
     override suspend fun getModelById(id: Int): ItemLocalModel {
+        //return apiService.getRepository(id)
         return database.getDataDao().getItemById(id)
     }
 
-    override suspend fun getOneOwnerById(id: Int): OwnerLocalModel {
+  /*  override suspend fun getOneOwnerById(id: Int): Owner {
         return database.getDataDao().getOneOwnerById(id)
+    }*/
+
+    override suspend fun getMainModel(): ItemLocalModel {
+        return database.getDataDao().getMainModel()
     }
 
+    override suspend fun getResponse(q: String?): ItemsResponse {
+        return apiService.getRepositories(q)
+    }
 }

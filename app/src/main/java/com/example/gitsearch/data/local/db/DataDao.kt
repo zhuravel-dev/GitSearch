@@ -18,13 +18,16 @@ interface DataDao {
     fun getDataSortedByUpdate(): PagingSource<Int, ItemLocalModel>
 
     @Query("SELECT * FROM owner WHERE id=:id")
-    suspend fun getOwnerById(id: Int?): List<OwnerLocalModel>
+    suspend fun getOwnersById(id: Int?): List<OwnerLocalModel>
 
     @Query("SELECT * FROM owner WHERE id=:id")
     suspend fun getOneOwnerById(id: Int?): OwnerLocalModel
 
     @Query("SELECT * FROM items WHERE id=:id")
     suspend fun getItemById(id: Int?): ItemLocalModel
+
+    @Query("SELECT * FROM items")
+    suspend fun getMainModel(): ItemLocalModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(data: List<ItemLocalModel>)

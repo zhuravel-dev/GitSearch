@@ -1,4 +1,3 @@
-/*
 package com.example.gitsearch.ui.compose
 
 import android.annotation.SuppressLint
@@ -49,4 +48,4 @@ fun loadPicture(url: String, @DrawableRes defaultImage: Int): MutableState<Bitma
             }
         })
     return bitmapState
-}*/
+}

@@ -1,66 +1,49 @@
-/*
 package com.example.gitsearch.ui.detailFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
-import androidx.paging.ExperimentalPagingApi
-import com.example.gitsearch.R
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import androidx.compose.ui.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.paging.ExperimentalPagingApi
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.data.local.model.OwnerLocalModel
-import com.example.gitsearch.ui.compose.DEFAULT_AVATAR_IMAGE
-import com.example.gitsearch.ui.compose.loadPicture
+import com.example.gitsearch.ui.compose.theme.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 
 
-const val IMAGE_HEIGHT = 260
-
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(InternalCoroutinesApi::class)
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
 class DetailFragment : Fragment() {
 
     private val detailFragmentViewModel: DetailViewModel by viewModels()
     private val args: DetailFragmentArgs by navArgs()
-    private val modelId by lazy { args.myModelId }
-    private val ownerId by lazy { args.myOwnerId }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-*/
-/*lifecycleScope.launch {
-            detailFragmentViewModel.onIntent(DetailFragmentIntent.GetAllById(modelId, ownerId))
-        }*//*
-
-    }
+    private val model by lazy { args.mainModel }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,157 +52,157 @@ class DetailFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                val data = detailFragmentViewModel.onIntent(
-                    DetailFragmentIntent.GetAllById(
-                        modelId,
-                        ownerId
-                    )
-                )
-
-                */
-/*Box(modifier = Modifier.fillMaxSize()) {
-                    if (data == null) LoadingRecipeShimmer(imageHeight = IMAGE_HEIGHT.dp)
-                    else data.let {
-                        MyDetailScreen(model = it, ownerModel = it)
-                    }
-                }*//*
-
+                AppTheme() {
+                    setupUI(model = model)
+                }
             }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    fun MyDetailScreen(
-        model: ItemLocalModel,
-        ownerModel: OwnerLocalModel
-    ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = "Detail info") },
-                    backgroundColor = MaterialTheme.colors.primary,
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            Icon(Icons.Default.Back, "Back")
- }) {
-                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
+   /* @Composable
+    private fun launchDetailScreen(model: Item, viewModel: DetailViewModel) {
+        val viewState by viewModel.state.collectAsState()
+        LaunchedEffect(true) {
+            delay(1000)
+            viewModel.onIntent(DetailFragmentIntent.GetModel(model))
+        }
+        when (viewState) {
+            is DetailFragmentState.Idle -> {}
+            is DetailFragmentState.Loading -> {
+                CircularProgress(modifier = Modifier)
             }
-        ) {
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                stickyHeader {
-                    Box(
-                        Modifier
-                            .background(Color.Gray)
-                            .fillMaxWidth()
-                            .height(300.dp)
+            is DetailFragmentState.DataLoadedMainModel -> setupUI(model = model)
+            is DetailFragmentState.Error -> ErrorDialog(modifier = Modifier)
+            else -> {}
+        }
+    }*/
+
+
+    @OptIn(ExperimentalCoilApi::class)
+    @Composable
+    private fun setupUI(model: ItemLocalModel) {
+
+        ConstraintLayout(
+            modifier = Modifier
+                .background(Color.White)
+        )
+        {
+            val (topBar, image, textColumn) = createRefs()
+
+            TopAppBar(
+                modifier = Modifier
+                    .constrainAs(topBar) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                backgroundColor = MaterialTheme.colors.primary,
+                title = {
+                    Text(
+                        text = "Detail information",
+                        color = Color.White,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.h6
                     )
-                    val image = loadPicture(
-                        url = ownerModel.avatar_url,
-                        defaultImage = DEFAULT_AVATAR_IMAGE
-                    ).value
-                    image?.let { img ->
-                        Image(
-                            bitmap = img.asImageBitmap(),
-                            contentDescription = "Owner`s avatar",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IMAGE_HEIGHT.dp),
-                            contentScale = ContentScale.Crop
+                },
+                navigationIcon = {
+                    IconButton(onClick = { findNavController().popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back"
                         )
                     }
                 }
-                item {
-                    Column(
+            )
+
+            val painter = rememberImagePainter(data = model.owner?.avatar_url)
+
+            Image(
+                painter = painter,
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    //.background(Color.LightGray)
+                    .size(440.dp, 360.dp)
+                    .constrainAs(image) {
+                        top.linkTo(topBar.bottom)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(textColumn.top)
+                        end.linkTo(parent.end)
+                    },
+                alignment = Alignment.Center
+            )
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(textColumn) {
+                        top.linkTo(image.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(12.dp, 0.dp, 12.dp, 0.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                model.owner?.let {
+                    Text(
+                        text = it.login,
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.Start),
+                        style = MaterialTheme.typography.h5,
+                        maxLines = 1
+                    )
+                }
+                val nameOfRepository = "${model.name} repository"
+                Text(
+                    text = nameOfRepository,
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.h5,
+                    maxLines = 1
+                )
+                model.description?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1,
+                        maxLines = 2
+                    )
+                }
+                model.language?.let {
+                    Text(
+                        text = it,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 4.dp)
-                        ) {
-                            Text(
-                                text = ownerModel.login,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.Start),
-                                style = MaterialTheme.typography.h3
-                            )
-                            val nameOfRepository = "${model.name} repository"
-                            Text(
-                                text = nameOfRepository,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.Start),
-                                style = MaterialTheme.typography.h3
-                            )
-                            model.description?.let { description ->
-                                Text(
-                                    text = description,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentWidth(Alignment.Start),
-                                    style = MaterialTheme.typography.h3
-                                )
-                                model.language?.let { language ->
-                                    Text(
-                                        text = language,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentWidth(Alignment.Start),
-                                        style = MaterialTheme.typography.h3
-                                    )
-                                }
-                                val topics = model.topics.toString()
-                                    .substring(1, model.topics.toString().length - 1)
-                                Text(
-                                    text = topics,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentWidth(Alignment.Start),
-                                    style = MaterialTheme.typography.h3
-                                )
-                                val watchers = "${model.watchers.toString()} watchers"
-                                Text(
-                                    text = watchers,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentWidth(Alignment.Start),
-                                    style = MaterialTheme.typography.h3
-                                )
-                            }
-                        }
-                    }
+                            .wrapContentWidth(Alignment.Start),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.subtitle1
+                    )
                 }
+                val topics = model.topics.toString()
+                    .substring(1, model.topics.toString().length - 1)
+                Text(
+                    text = topics,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.subtitle1,
+                    maxLines = 1
+                )
+                val watchers = "${model.watchers} watchers"
+                Text(
+                    text = watchers,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.Start),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.subtitle1
+                )
             }
         }
     }
 }
-
-
-*/
-/*private fun observeViewModel() {
-        lifecycleScope.launch {
-            detailFragmentViewModel.state.collect {
-                when (it) {
-                    is DetailFragmentState.Idle -> {}
-                    is DetailFragmentState.Loading -> {
-                        viewBinding?.progressBar?.visibility = View.VISIBLE
-                    }
-                    is DetailFragmentState.DataLoadedAll -> {
-                        viewBinding?.progressBar?.visibility = View.GONE
-                        showModelInformation(it.model, it.ownerModel)
-                    }
-                    is DetailFragmentState.Error -> {
-                        viewBinding?.progressBar?.visibility = View.GONE
-                    }
-                }
-            }
-        }
-    }
- */

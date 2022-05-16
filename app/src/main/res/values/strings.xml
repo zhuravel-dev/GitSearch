@@ -4,5 +4,5 @@
     <string name="hint_search">Search GitHub</string>
     <string name="welcome_text">Hello! Find something!</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="detail_fragment">Detail information</string>
 </resources>
