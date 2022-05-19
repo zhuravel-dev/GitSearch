@@ -1,6 +1,5 @@
 package com.example.gitsearch.ui.compose
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,16 +8,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
+import androidx.constraintlayout.compose.ConstraintLayoutScope
 
 @Composable
-fun WelcomeText(modifier: Modifier) {
+fun ConstraintLayoutScope.WelcomeText(
+    welcomeText: ConstrainedLayoutReference,
+    topAppBar: ConstrainedLayoutReference)
+{
     Text(
         text = "Search something on GitHub!",
         textAlign = TextAlign.Center,
         fontSize = 24.sp,
         color = Color.Gray,
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 320.dp)
+            .constrainAs(welcomeText) {
+                top.linkTo(topAppBar.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+           .padding(top = 320.dp)
     )
 }
