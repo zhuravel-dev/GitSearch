@@ -3,12 +3,15 @@ package com.example.gitsearch.ui.mainScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
@@ -19,6 +22,8 @@ import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagingApi::class)
 @ExperimentalPagerApi
@@ -34,7 +39,6 @@ fun ConstraintLayoutScope.SetupPager(
 ) {
     HorizontalPager(state = pagerState,
         modifier = Modifier
-            .padding(0.dp, 132.dp, 0.dp, 0.dp,)
             .constrainAs(pager) {
                 top.linkTo(topAppBar.bottom)
                 start.linkTo(parent.start)
@@ -61,6 +65,39 @@ fun ConstraintLayoutScope.SetupPager(
                         onClick(it)
                     })
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun Tabs() {
+    val scope = rememberCoroutineScope()
+    val pages = remember { listOf("Sorting by stars", "Sorting by update") }
+    val pagerState = rememberPagerState(pageCount = pages.size)
+
+    TabRow(selectedTabIndex = pagerState.currentPage) {
+        TabPage.values().forEachIndexed { index, tabPage ->
+            Tab(
+                selected = pagerState.currentPage == index,
+                onClick = { scope.launch { pagerState.scrollToPage(index) } },
+                text = {
+                    Text(
+                        text = "Sorting by " + tabPage.name,
+                        style = MaterialTheme.typography.body1
+                    )
+                },
+                icon = {
+                    Icon(
+                        imageVector = tabPage.icon,
+                        contentDescription = null
+                    )
+                },
+                selectedContentColor = Color.White,
+                unselectedContentColor = MaterialTheme.colors.onSurface.copy(
+                    ContentAlpha.disabled
+                )
+            )
         }
     }
 }
