@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.mainScreen
+package com.example.gitsearch.ui.mainScreen.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -25,7 +25,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagingApi::class)
 @ExperimentalPagerApi
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

@@ -1,5 +1,6 @@
 package com.example.gitsearch.ui.compose.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
@@ -10,31 +11,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
+@SuppressLint("ConflictingOnColor")
 private val LightThemeColors = lightColors(
     primary = Blue600,
     primaryVariant = Blue400,
-    onPrimary = Black2,
+    onPrimary = DarkGrey,
     secondary = Color.White,
     secondaryVariant = Teal300,
     onSecondary = Color.Black,
     error = RedErrorDark,
     onError = RedErrorLight,
-    background = Grey1,
+    background = LightGray,
     onBackground = Color.Black,
     surface = Color.White,
-    onSurface = Black2,
+    onSurface = DarkGrey,
 )
 
 private val DarkThemeColors = darkColors(
     primary = Blue700,
     primaryVariant = Color.White,
     onPrimary = Color.White,
-    secondary = Black1,
+    secondary = Black,
     onSecondary = Color.White,
     error = RedErrorLight,
     background = Color.Black,
     onBackground = Color.White,
-    surface = Black1,
+    surface = Black,
     onSurface = Color.White,
 )
 

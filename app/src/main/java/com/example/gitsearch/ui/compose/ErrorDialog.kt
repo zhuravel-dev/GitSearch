@@ -7,12 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import com.example.gitsearch.R
+import kotlin.system.exitProcess
 
 @Composable
 fun ConstraintLayoutScope.ErrorDialog(
     error: ConstrainedLayoutReference,
 ) {
-
     AlertDialog(
         modifier = Modifier.constrainAs(error) {
             top.linkTo(parent.top)
@@ -21,10 +22,10 @@ fun ConstraintLayoutScope.ErrorDialog(
             bottom.linkTo(parent.bottom)
         },
         onDismissRequest = {},
-        title = { Text(text = "Loading error") },
-        text = { Text(text = "Please retry!") },
+        title = { R.string.loading_error },
+        text = { R.string.retry },
         confirmButton = {
-            Button(onClick = { System.exit(0) }) { Text(text = "OK") }
+            Button(onClick = { exitProcess(0) }) { Text(text = "OK") }
         }
     )
 }

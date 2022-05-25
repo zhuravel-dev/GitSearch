@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">GitSearch</string>
-    <string name="symbol">&#9734;</string>
     <string name="hint_search">Search GitHub</string>
-    <string name="welcome_text">Hello! Find something!</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="welcome_text">Search something on GitHub!</string>
     <string name="detail_fragment">Detail information</string>
+    <string name="loading_error">Loading error</string>
+    <string name="retry">Please retry!</string>
 </resources>

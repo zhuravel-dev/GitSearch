@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.mainScreen
+package com.example.gitsearch.ui.mainScreen.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -16,23 +16,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.ui.compose.parseDate
+import com.example.gitsearch.ui.compose.theme.Black
+import com.example.gitsearch.ui.compose.theme.Gray
+import com.example.gitsearch.ui.compose.theme.White
+import com.example.gitsearch.ui.extensions.parseDate
 
-@SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalCoilApi::class, androidx.compose.material.ExperimentalMaterialApi::class)
-@ExperimentalPagingApi
+@OptIn(androidx.compose.material.ExperimentalMaterialApi::class,
+    coil.annotation.ExperimentalCoilApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ListOfResultSortedByStarsUI(
@@ -49,7 +48,7 @@ fun ListOfResultSortedByStarsUI(
                     .fillMaxWidth()
                     .padding(8.dp),
                 elevation = 4.dp,
-                backgroundColor = Color.White,
+                backgroundColor = White,
                 shape = RoundedCornerShape(corner = CornerSize(8.dp)),
                 onClick = { item?.let { onClick(it) } }
             ) {
@@ -78,8 +77,7 @@ fun ListOfResultSortedByStarsUI(
                                 bottom.linkTo(parent.bottom)
                                 end.linkTo(column.start)
                             },
-                        alignment = Alignment.Center
-                    )
+                        alignment = Alignment.Center)
 
                     Column(
                         modifier = Modifier
@@ -125,13 +123,13 @@ fun ListOfResultSortedByStarsUI(
                         Row {
                             Text(
                                 text = login.value?.text + "/",
-                                color = Color.Black,
+                                color = Black,
                                 fontSize = 20.sp
                             )
                             name.value?.let {
                                 Text(
                                     text = it.text,
-                                    color = Color.Black,
+                                    color = Black,
                                     fontSize = 20.sp
                                 )
                             }
@@ -139,27 +137,27 @@ fun ListOfResultSortedByStarsUI(
                         description.value?.let {
                             Text(
                                 text = it.text,
-                                color = Color.Gray,
+                                color = Gray,
                                 maxLines = 1
                             )
                         }
-                        Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
+                        Text(text = topics.value.text, color = Gray, maxLines = 1)
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Text(
                                 text = stars.value.text + "  ",
-                                color = Color.Gray,
+                                color = Gray,
                                 maxLines = 1
                             )
                             Text(
                                 text = lang.value?.text + "  ",
-                                color = Color.Gray,
+                                color = Gray,
                                 maxLines = 1
                             )
                             Text(
                                 text = date.value.text,
-                                color = Color.Gray,
+                                color = Gray,
                                 maxLines = 1
                             )
                         }

@@ -2,14 +2,10 @@ package com.example.gitsearch.ui.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.databinding.ActivityMainBinding
 import com.example.gitsearch.ui.extensions.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@OptIn(ExperimentalPagingApi::class)
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

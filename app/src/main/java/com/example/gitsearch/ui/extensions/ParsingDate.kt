@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.compose
+package com.example.gitsearch.ui.extensions
 
 import android.os.Build
 import androidx.annotation.RequiresApi

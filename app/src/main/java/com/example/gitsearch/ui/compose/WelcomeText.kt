@@ -14,8 +14,8 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 @Composable
 fun ConstraintLayoutScope.WelcomeText(
     welcomeText: ConstrainedLayoutReference,
-    topAppBar: ConstrainedLayoutReference)
-{
+    topAppBar: ConstrainedLayoutReference
+) {
     Text(
         text = "Search something on GitHub!",
         textAlign = TextAlign.Center,
@@ -27,6 +27,6 @@ fun ConstraintLayoutScope.WelcomeText(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-           .padding(top = 240.dp)
+            .padding(top = 240.dp)
     )
 }

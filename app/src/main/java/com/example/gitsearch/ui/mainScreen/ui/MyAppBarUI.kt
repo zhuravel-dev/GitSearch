@@ -1,4 +1,4 @@
-package com.example.gitsearch.ui.mainScreen
+package com.example.gitsearch.ui.mainScreen.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -17,13 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.paging.ExperimentalPagingApi
+import com.example.gitsearch.ui.mainScreen.MainIntent
+import com.example.gitsearch.ui.mainScreen.MainViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(
-    ExperimentalPagingApi::class,
-    com.google.accompanist.pager.ExperimentalPagerApi::class,
-    kotlinx.coroutines.ExperimentalCoroutinesApi::class
-)
+@OptIn(ExperimentalPagingApi::class)
 @Composable
 fun MyAppBar(
     viewModel: MainViewModel,
@@ -75,6 +73,4 @@ fun MyAppBar(
             )
         }
     )
-
-
 }
