@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayoutScope
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.LazyPagingItems
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.google.accompanist.pager.ExperimentalPagerApi

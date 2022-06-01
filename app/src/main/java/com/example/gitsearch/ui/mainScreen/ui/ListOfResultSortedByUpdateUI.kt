@@ -1,6 +1,5 @@
 package com.example.gitsearch.ui.mainScreen.ui
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
