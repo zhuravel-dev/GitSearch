@@ -2,18 +2,16 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.WelcomeText
+import com.example.gitsearch.ui.mainScreen.MainIntent
 import com.example.gitsearch.ui.mainScreen.MainState
 import com.example.gitsearch.ui.mainScreen.MainViewModel
 import com.example.gitsearch.ui.mainScreen.ui.SetupPager
@@ -29,11 +27,12 @@ fun MainFragmentWithPagerUI(viewModel: MainViewModel, onClick: (ItemLocalModel) 
     val resultState by viewModel.state.collectAsState()
     val pages = remember { listOf("Sorting by stars", "Sorting by update") }
     val pagerState = rememberPagerState(pageCount = pages.size)
+    val textState = remember { mutableStateOf("") }
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFEAECEC))
+            .background(MaterialTheme.colors.background)
     ) {
         val (topAppBar, pager, welcomeText, progress, error) = createRefs()
 
@@ -65,7 +64,7 @@ fun MainFragmentWithPagerUI(viewModel: MainViewModel, onClick: (ItemLocalModel) 
                         onClick(it)
                     })
             }
-            is MainState.Error -> ErrorDialog(error)
+            is MainState.Error -> ErrorDialog(error, onRetry = { viewModel.onIntent(MainIntent.SearchGitList(textState.value)) })
         }
     }
 }

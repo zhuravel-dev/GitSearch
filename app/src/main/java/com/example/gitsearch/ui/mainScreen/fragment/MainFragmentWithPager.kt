@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import com.example.gitsearch.ui.compose.theme.AppTheme
 import com.example.gitsearch.ui.mainScreen.MainViewModel
 import com.example.gitsearch.ui.mainScreen.ui.MyAppBar
 import com.example.gitsearch.ui.mainScreen.ui.Tabs
@@ -27,6 +30,7 @@ class MainFragmentWithPager() : Fragment() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
+    @OptIn(ExperimentalMaterialApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,22 +39,24 @@ class MainFragmentWithPager() : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                Surface(color = MaterialTheme.colors.background) {
-                    Scaffold(
-                        topBar = {
-                            Column() {
-                                MyAppBar(viewModel = mainViewModel)
-                                Tabs()
+                AppTheme(darkTheme = isSystemInDarkTheme()) {
+                    Surface(color = MaterialTheme.colors.background) {
+                        Scaffold(
+                            topBar = {
+                                Column {
+                                    MyAppBar(viewModel = mainViewModel)
+                                    Tabs()
+                                }
                             }
+                        ) {
+                            MainFragmentWithPagerUI(
+                                viewModel = mainViewModel,
+                                onClick = {
+                                    findNavController().navigate(
+                                        MainFragmentWithPagerDirections.actionToDetailFragment(it)
+                                    )
+                                })
                         }
-                    ) {
-                        MainFragmentWithPagerUI(
-                            viewModel = mainViewModel,
-                            onClick = {
-                                findNavController().navigate(
-                                    MainFragmentWithPagerDirections.actionToDetailFragment(it)
-                                )
-                            })
                     }
                 }
             }

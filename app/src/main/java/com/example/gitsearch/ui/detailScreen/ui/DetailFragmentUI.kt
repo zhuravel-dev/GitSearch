@@ -17,15 +17,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.ui.compose.theme.Gray
-import com.example.gitsearch.ui.compose.theme.White
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
     ConstraintLayout(
         modifier = Modifier
-            .background(White)
+            .background(MaterialTheme.colors.background)
     )
     {
         val (topBar, image, login, nameOfRepository,
@@ -42,7 +40,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
             title = {
                 Text(
                     text = "Detail information",
-                    color = White,
+                    color = MaterialTheme.colors.onPrimary,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.h6
@@ -83,6 +81,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                     }
                     .padding(8.dp, 0.dp, 8.dp, 0.dp),
                 text = it.login,
+                color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.h5,
                 maxLines = 1,
                 textAlign = TextAlign.Center
@@ -98,7 +97,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                     end.linkTo(parent.end)
                 }
                 .padding(8.dp, 0.dp, 8.dp, 0.dp),
-            color = Gray,
+            color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.h5,
             maxLines = 1,
             textAlign = TextAlign.Center)
@@ -113,7 +112,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                         end.linkTo(parent.end)
                     }
                     .padding(8.dp, 0.dp, 8.dp, 0.dp),
-                color = Gray,
+                color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 2,
                 textAlign = TextAlign.Center)
@@ -129,7 +128,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                         end.linkTo(parent.end)
                     }
                     .padding(8.dp, 0.dp, 8.dp, 0.dp),
-                color = Gray,
+                color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center)
         }
@@ -144,7 +143,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                     end.linkTo(parent.end)
                 }
                 .padding(8.dp, 0.dp, 8.dp, 0.dp),
-            color = Gray,
+            color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.subtitle1,
             maxLines = 1,
             textAlign = TextAlign.Center)
@@ -158,7 +157,7 @@ fun DetailFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                     end.linkTo(parent.end)
                 }
                 .padding(8.dp, 0.dp, 8.dp, 0.dp),
-            color = Gray,
+            color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.subtitle1,
             textAlign = TextAlign.Center)
     }

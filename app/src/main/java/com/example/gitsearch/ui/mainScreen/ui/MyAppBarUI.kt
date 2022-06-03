@@ -40,7 +40,7 @@ fun MyAppBar(
                 value = textState.value,
                 onValueChange = { text ->
                     textState.value = text
-                    if (textState.value.length >= 3) {
+                    if (textState.value.length >= 2) {
                         viewModel.onIntent(MainIntent.SearchGitList(textState.value))
                     }
                 },

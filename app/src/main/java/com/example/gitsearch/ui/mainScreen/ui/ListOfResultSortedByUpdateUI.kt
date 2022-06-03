@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,8 +27,6 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.theme.Black
-import com.example.gitsearch.ui.compose.theme.Gray
-import com.example.gitsearch.ui.compose.theme.White
 import com.example.gitsearch.ui.extensions.parseDate
 
 @OptIn(ExperimentalCoilApi::class, androidx.compose.material.ExperimentalMaterialApi::class)
@@ -47,7 +46,7 @@ fun ListOfResultSortedByUpdateUI(
                     .fillMaxWidth()
                     .padding(8.dp),
                 elevation = 4.dp,
-                backgroundColor = White,
+                backgroundColor = MaterialTheme.colors.secondary,
                 shape = RoundedCornerShape(corner = CornerSize(8.dp)),
                 onClick = { item?.let { onClick(it) } }
             ) {
@@ -69,7 +68,7 @@ fun ListOfResultSortedByUpdateUI(
                         contentDescription = "User Avatar",
                         modifier = Modifier
                             .size(140.dp, 100.dp)
-                            .padding(44.dp, 4.dp, 4.dp, 4.dp)
+                            .padding(60.dp, 4.dp, 4.dp, 4.dp)
                             .constrainAs(image) {
                                 top.linkTo(parent.top)
                                 start.linkTo(parent.start)
@@ -137,27 +136,27 @@ fun ListOfResultSortedByUpdateUI(
                         description.value?.let {
                             Text(
                                 text = it.text,
-                                color = Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                         }
-                        Text(text = topics.value.text, color = Gray, maxLines = 1)
+                        Text(text = topics.value.text, color = MaterialTheme.colors.onBackground, maxLines = 1)
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Text(
                                 text = stars.value.text + "  ",
-                                color = Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                             Text(
                                 text = lang.value?.text + "  ",
-                                color = Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                             Text(
                                 text = date.value.text,
-                                color = Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                         }

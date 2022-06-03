@@ -12,7 +12,8 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 
 @Composable
 fun ConstraintLayoutScope.ErrorDialog(
-    error: ConstrainedLayoutReference
+    error: ConstrainedLayoutReference,
+    onRetry: () -> Unit
 ) {
     val openDialog = remember { mutableStateOf(true)  }
 
@@ -27,7 +28,7 @@ fun ConstraintLayoutScope.ErrorDialog(
             onDismissRequest = {  openDialog.value = false },
             confirmButton = {
                 TextButton(onClick = {  openDialog.value = false; })
-                { Text(text = "OK") }
+                { Text(text = "Retry") }
             },
             title = { Text(text = "Loading error") },
             text = { Text(text = "Please retry") }

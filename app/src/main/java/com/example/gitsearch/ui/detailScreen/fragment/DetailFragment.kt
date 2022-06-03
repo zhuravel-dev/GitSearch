@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
@@ -27,7 +28,7 @@ class DetailFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                AppTheme() {
+                AppTheme(darkTheme = isSystemInDarkTheme()) {
                     DetailFragmentUI(
                         model = model,
                         onClick = { findNavController().popBackStack() })
