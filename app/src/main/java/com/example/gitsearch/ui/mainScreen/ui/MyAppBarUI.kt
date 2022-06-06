@@ -1,7 +1,5 @@
 package com.example.gitsearch.ui.mainScreen.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -20,7 +18,6 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.ui.mainScreen.MainIntent
 import com.example.gitsearch.ui.mainScreen.MainViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPagingApi::class)
 @Composable
 fun MyAppBar(

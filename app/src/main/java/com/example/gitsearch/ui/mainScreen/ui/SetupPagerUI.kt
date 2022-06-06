@@ -1,7 +1,5 @@
 package com.example.gitsearch.ui.mainScreen.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -24,7 +22,6 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
 @ExperimentalPagerApi
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ConstraintLayoutScope.SetupPager(
     topAppBar: ConstrainedLayoutReference,

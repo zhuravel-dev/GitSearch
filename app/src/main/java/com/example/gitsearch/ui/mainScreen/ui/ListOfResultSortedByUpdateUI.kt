@@ -1,7 +1,5 @@
 package com.example.gitsearch.ui.mainScreen.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,10 +25,9 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.theme.Black
-import com.example.gitsearch.ui.extensions.parseDate
+import com.example.gitsearch.ui.extensions.parseData
 
 @OptIn(ExperimentalCoilApi::class, androidx.compose.material.ExperimentalMaterialApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ListOfResultSortedByUpdateUI(
     modifier: Modifier,
@@ -115,7 +112,7 @@ fun ListOfResultSortedByUpdateUI(
                         val date = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = "upd.${item?.updated_at?.let { parseDate(it) }}"
+                                    text = "upd.${item?.updated_at?.let { parseData(it) }}"
                                 )
                             )
                         }

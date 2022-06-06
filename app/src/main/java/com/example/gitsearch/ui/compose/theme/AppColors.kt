@@ -2,7 +2,7 @@ package com.example.gitsearch.ui.compose.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary Light
+// Light
 val Blue200 = Color(0xFF83D9FE)
 val Blue300 = Color(0xFF51C9FC)
 val Blue400 = Color(0xFF03B1FC)
@@ -11,7 +11,7 @@ val Blue600 = Color(0xFF0885EB)
 val Blue700 = Color(0xFF0973D7)
 val Blue800 = Color(0xFF0863C5)
 
-// Primary Dark
+// Dark
 val Gray300 = Color(0xFFDFE0E1)
 val Gray400 = Color(0xFFBCBDBE)
 val Gray500 = Color(0xFF9D9E9F)

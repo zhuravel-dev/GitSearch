@@ -1,5 +1,3 @@
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -20,7 +18,6 @@ import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class, androidx.paging.ExperimentalPagingApi::class,
     kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainFragmentWithPagerUI(viewModel: MainViewModel, onClick: (ItemLocalModel) -> Unit) {
 

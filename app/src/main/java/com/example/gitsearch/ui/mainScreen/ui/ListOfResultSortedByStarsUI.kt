@@ -1,7 +1,5 @@
 package com.example.gitsearch.ui.mainScreen.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,11 +24,12 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.theme.Black
-import com.example.gitsearch.ui.extensions.parseDate
+import com.example.gitsearch.ui.extensions.parseData
 
-@OptIn(androidx.compose.material.ExperimentalMaterialApi::class,
-    coil.annotation.ExperimentalCoilApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(
+    androidx.compose.material.ExperimentalMaterialApi::class,
+    coil.annotation.ExperimentalCoilApi::class
+)
 @Composable
 fun ListOfResultSortedByStarsUI(
     modifier: Modifier,
@@ -75,7 +74,8 @@ fun ListOfResultSortedByStarsUI(
                                 bottom.linkTo(parent.bottom)
                                 end.linkTo(column.start)
                             },
-                        alignment = Alignment.Center)
+                        alignment = Alignment.Center
+                    )
 
                     Column(
                         modifier = Modifier
@@ -114,7 +114,7 @@ fun ListOfResultSortedByStarsUI(
                         val date = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = "upd.${item?.updated_at?.let { parseDate(it) }}"
+                                    text = "upd.${item?.updated_at?.let { parseData(it) }}"
                                 )
                             )
                         }
@@ -139,7 +139,11 @@ fun ListOfResultSortedByStarsUI(
                                 maxLines = 1
                             )
                         }
-                        Text(text = topics.value.text, color = MaterialTheme.colors.onBackground, maxLines = 1)
+                        Text(
+                            text = topics.value.text,
+                            color = MaterialTheme.colors.onBackground,
+                            maxLines = 1
+                        )
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
