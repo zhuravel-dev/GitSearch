@@ -31,7 +31,11 @@ class DetailFragment : Fragment() {
                 AppTheme(darkTheme = isSystemInDarkTheme()) {
                     DetailFragmentUI(
                         model = model,
-                        onClick = { findNavController().popBackStack() })
+                        onClick = {
+                            findNavController().navigate(
+                                DetailFragmentDirections.actionToAuthorFragment(model)
+                            )
+                        })
                 }
             }
         }

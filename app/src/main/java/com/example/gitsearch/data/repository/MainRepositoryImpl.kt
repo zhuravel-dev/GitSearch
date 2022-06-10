@@ -3,6 +3,7 @@ package com.example.gitsearch.data.repository
 import androidx.paging.*
 import com.example.gitsearch.data.local.db.DataDB
 import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.data.local.model.OwnerLocalModel
 import com.example.gitsearch.data.local.paging3.GithubPagingSource
 import com.example.gitsearch.data.local.paging3.PagingRemoteMediator
 import com.example.gitsearch.data.remote.api.ApiService
@@ -82,9 +83,9 @@ data class MainRepositoryImpl @Inject constructor(
         return database.getDataDao().getItemById(id)
     }
 
-  /*  override suspend fun getOneOwnerById(id: Int): Owner {
+    override suspend fun getOneOwnerById(id: Int): OwnerLocalModel {
         return database.getDataDao().getOneOwnerById(id)
-    }*/
+    }
 
     override suspend fun getMainModel(): ItemLocalModel {
         return database.getDataDao().getMainModel()

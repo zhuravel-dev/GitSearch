@@ -1,3 +1,4 @@
+/*
 package com.example.gitsearch.ui.detailScreen
 
 import androidx.lifecycle.ViewModel
@@ -35,4 +36,4 @@ class DetailViewModel
             _state.value = DetailFragmentState.DataLoadedAll(model, owner!!)
         }
     }
-}
+}*/
