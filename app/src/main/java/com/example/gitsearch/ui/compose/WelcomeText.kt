@@ -27,6 +27,6 @@ fun ConstraintLayoutScope.WelcomeText(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-            .padding(top = 240.dp)
+            .padding(top = 280.dp)
     )
 }

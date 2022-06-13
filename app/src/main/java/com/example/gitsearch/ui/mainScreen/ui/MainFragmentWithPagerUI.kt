@@ -31,7 +31,7 @@ fun MainFragmentWithPagerUI(viewModel: MainViewModel, onClick: (ItemLocalModel) 
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        val (topAppBar, pager, welcomeText, progress, error) = createRefs()
+        val (topAppBar, tabs, pager, welcomeText, progress, error) = createRefs()
 
         when (resultState) {
             is MainState.Idle -> {
@@ -53,6 +53,7 @@ fun MainFragmentWithPagerUI(viewModel: MainViewModel, onClick: (ItemLocalModel) 
 
                 this@ConstraintLayout.SetupPager(
                     topAppBar,
+                    tabs,
                     pager,
                     pagerState = pagerState,
                     userListByStars = listStars,
