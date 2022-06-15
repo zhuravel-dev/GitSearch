@@ -6,14 +6,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.annotation.ExperimentalCoilApi
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.theme.Black
+import com.example.gitsearch.ui.compose.theme.White
+import com.example.gitsearch.ui.extensions.shareAuthorInfo
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -23,6 +27,7 @@ fun AuthorFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
             .background(MaterialTheme.colors.background)
     )
     {
+        val context = LocalContext.current
         val (topBar, login,
             followers, following, repositories, organization, gists) = createRefs()
 
@@ -49,6 +54,13 @@ fun AuthorFragmentUI(model: ItemLocalModel, onClick: () -> Unit) {
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
+                }
+            },
+            actions = {
+                IconButton(onClick = {
+                    context.startActivity(shareAuthorInfo(model)) })
+                {
+                    Icon(Icons.Default.Share, "share author`s info", tint = White)
                 }
             }
         )

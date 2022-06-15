@@ -60,6 +60,7 @@ class PagingRemoteMediator(
                                     id,
                                     login,
                                     avatar_url,
+                                    url,
                                     followers_url,
                                     following_url,
                                     gists_url,

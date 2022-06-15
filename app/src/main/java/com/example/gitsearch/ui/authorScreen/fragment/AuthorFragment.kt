@@ -23,7 +23,6 @@ import com.example.gitsearch.ui.authorScreen.AuthorViewModel
 import com.example.gitsearch.ui.authorScreen.ui.AuthorFragmentUI
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 @OptIn(ExperimentalPagingApi::class)
@@ -53,7 +52,7 @@ class AuthorFragment : Fragment() {
         val viewState by viewModel.state.collectAsState()
 
         LaunchedEffect(true) {
-            delay(1000)
+            //delay(1000)
             viewModel.onIntent(AuthorFragmentIntent.GetOwnerById(model.ownerId))
         }
 
@@ -67,7 +66,5 @@ class AuthorFragment : Fragment() {
             else -> {}
         }
     }
-
-
 }
 

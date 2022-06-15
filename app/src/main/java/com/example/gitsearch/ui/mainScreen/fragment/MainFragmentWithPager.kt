@@ -21,7 +21,6 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import com.example.gitsearch.ui.mainScreen.MainViewModel
 import com.example.gitsearch.ui.mainScreen.ui.MyAppBar
-import com.example.gitsearch.ui.mainScreen.ui.Tabs
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalPagingApi
@@ -45,7 +44,6 @@ class MainFragmentWithPager() : Fragment() {
                             topBar = {
                                 Column {
                                     MyAppBar(viewModel = mainViewModel)
-                                    Tabs()
                                 }
                             }
                         ) {
