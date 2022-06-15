@@ -38,7 +38,8 @@ class PagingRemoteMediator(
         }
 
         try {
-            val response = api.getRepositories(query = query, page = page, pageSize = state.config.pageSize)
+            val response =
+                api.getRepositories(query = query, page = page, pageSize = state.config.pageSize)
             val isEndOfList = response.items.isEmpty()
             dataBase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -54,11 +55,24 @@ class PagingRemoteMediator(
                 dataBase.getDataDao().let { dao ->
                     dao.insertData(response.items.map {
                         it.owner.run {
-                            dao.insertOwner(OwnerLocalModel(
-                                id,
-                                login,
-                                avatar_url
-                            ))
+                            dao.insertOwner(
+                                OwnerLocalModel(
+                                    id,
+                                    login,
+                                    avatar_url,
+                                    url,
+                                    followers_url,
+                                    following_url,
+                                    gists_url,
+                                    starred_url,
+                                    subscriptions_url,
+                                    organizations_url,
+                                    repos_url,
+                                    events_url,
+                                    received_events_url,
+                                    type
+                                )
+                            )
                         }
                         it.run {
                             ItemLocalModel(

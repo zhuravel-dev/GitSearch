@@ -1,8 +1,5 @@
-package com.example.gitsearch.ui.mainScreen
+package com.example.gitsearch.ui.mainScreen.ui
 
-import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,30 +7,29 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.ui.compose.parseDate
+import com.example.gitsearch.ui.compose.theme.Black
+import com.example.gitsearch.ui.extensions.parseData
 
-@SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalCoilApi::class, androidx.compose.material.ExperimentalMaterialApi::class)
-@ExperimentalPagingApi
-@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(
+    androidx.compose.material.ExperimentalMaterialApi::class,
+    coil.annotation.ExperimentalCoilApi::class
+)
 @Composable
 fun ListOfResultSortedByStarsUI(
     modifier: Modifier,
@@ -49,7 +45,7 @@ fun ListOfResultSortedByStarsUI(
                     .fillMaxWidth()
                     .padding(8.dp),
                 elevation = 4.dp,
-                backgroundColor = Color.White,
+                backgroundColor = MaterialTheme.colors.secondary,
                 shape = RoundedCornerShape(corner = CornerSize(8.dp)),
                 onClick = { item?.let { onClick(it) } }
             ) {
@@ -71,7 +67,7 @@ fun ListOfResultSortedByStarsUI(
                         contentDescription = "User Avatar",
                         modifier = Modifier
                             .size(140.dp, 100.dp)
-                            .padding(44.dp, 4.dp, 4.dp, 4.dp)
+                            .padding(60.dp, 4.dp, 4.dp, 4.dp)
                             .constrainAs(image) {
                                 top.linkTo(parent.top)
                                 start.linkTo(parent.start)
@@ -118,20 +114,20 @@ fun ListOfResultSortedByStarsUI(
                         val date = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = "upd.${item?.updated_at?.let { parseDate(it) }}"
+                                    text = "upd.${item?.updated_at?.let { parseData(it) }}"
                                 )
                             )
                         }
                         Row {
                             Text(
                                 text = login.value?.text + "/",
-                                color = Color.Black,
+                                color = Black,
                                 fontSize = 20.sp
                             )
                             name.value?.let {
                                 Text(
                                     text = it.text,
-                                    color = Color.Black,
+                                    color = Black,
                                     fontSize = 20.sp
                                 )
                             }
@@ -139,27 +135,31 @@ fun ListOfResultSortedByStarsUI(
                         description.value?.let {
                             Text(
                                 text = it.text,
-                                color = Color.Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                         }
-                        Text(text = topics.value.text, color = Color.Gray, maxLines = 1)
+                        Text(
+                            text = topics.value.text,
+                            color = MaterialTheme.colors.onBackground,
+                            maxLines = 1
+                        )
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Text(
                                 text = stars.value.text + "  ",
-                                color = Color.Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                             Text(
                                 text = lang.value?.text + "  ",
-                                color = Color.Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                             Text(
                                 text = date.value.text,
-                                color = Color.Gray,
+                                color = MaterialTheme.colors.onBackground,
                                 maxLines = 1
                             )
                         }

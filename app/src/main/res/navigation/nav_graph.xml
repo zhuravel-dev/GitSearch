@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainPagerFragment"
-        android:name="com.example.gitsearch.ui.mainScreen.MainFragmentWithPager"
+        android:name="com.example.gitsearch.ui.mainScreen.fragment.MainFragmentWithPager"
         android:label="MainPagerFragment"
         tools:layout="@layout/fragment_main_pager">
         <action
@@ -21,9 +21,27 @@
 
     <fragment
         android:id="@+id/fragmentDetail"
-        android:name="com.example.gitsearch.ui.detailFragment.DetailFragment"
+        android:name="com.example.gitsearch.ui.detailScreen.fragment.DetailFragment"
         android:label="DetailFragment"
         tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="mainModel"
+            app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
+
+        <action
+            android:id="@+id/action_to_authorFragment"
+            app:destination="@+id/fragmentAuthor">
+            <argument
+                android:name="mainModel"
+                app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentAuthor"
+        android:name="com.example.gitsearch.ui.authorScreen.fragment.AuthorFragment"
+        android:label="AuthorFragment">
+
         <argument
             android:name="mainModel"
             app:argType="com.example.gitsearch.data.local.model.ItemLocalModel" />
