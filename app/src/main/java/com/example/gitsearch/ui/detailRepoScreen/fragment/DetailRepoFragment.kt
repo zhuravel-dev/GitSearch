@@ -1,4 +1,5 @@
-package com.example.gitsearch.ui.detailScreen.fragment
+/*
+package com.example.gitsearch.ui.detailRepoScreen.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,14 +12,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitsearch.ui.compose.theme.AppTheme
-import com.example.gitsearch.ui.detailScreen.ui.DetailFragmentUI
+import com.example.gitsearch.ui.detailRepoScreen.ui.DetailRepoUI
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 @ExperimentalMaterialApi
-class DetailFragment : Fragment() {
+class DetailRepoFragment : Fragment() {
 
-    private val args: DetailFragmentArgs by navArgs()
+    private val args: DetailRepoFragmentArgs by navArgs()
     private val model by lazy { args.mainModel }
 
     override fun onCreateView(
@@ -29,16 +30,16 @@ class DetailFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme(darkTheme = isSystemInDarkTheme()) {
-                    DetailFragmentUI(
+                    DetailRepoUI(
                         model = model,
-                        onClickBack = { findNavController().popBackStack() },
-                        onClickToNextScreen = {
-                            findNavController().navigate(
-                                DetailFragmentDirections.actionToAuthorFragment(model)
-                            )
-                        })
+                        onClickBack = { findNavController().popBackStack() }
+                    ) {
+                        findNavController().navigate(
+                            DetailRepoFragmentDirections.actionToAuthorFragment(model)
+                        )
+                    }
                 }
             }
         }
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.example.gitsearch.ui.authorScreen.fragment
 
 import android.os.Bundle
@@ -20,7 +21,7 @@ import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.authorScreen.AuthorFragmentIntent
 import com.example.gitsearch.ui.authorScreen.AuthorFragmentState
 import com.example.gitsearch.ui.authorScreen.AuthorViewModel
-import com.example.gitsearch.ui.authorScreen.ui.AuthorFragmentUI
+import com.example.gitsearch.ui.authorScreen.ui.AuthorScreenUI
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,10 +62,11 @@ class AuthorFragment : Fragment() {
             is AuthorFragmentState.Loading -> {
                 //CircularProgress(modifier = Modifier)
             }
-            is AuthorFragmentState.DataLoaded -> AuthorFragmentUI(model = model, onClick = { findNavController().popBackStack() })
+            is AuthorFragmentState.DataLoaded -> AuthorScreenUI(model = model) { findNavController().popBackStack() }
             is AuthorFragmentState.Error -> {}//ErrorDialog(modifier = Modifier)
             else -> {}
         }
     }
 }
 
+*/

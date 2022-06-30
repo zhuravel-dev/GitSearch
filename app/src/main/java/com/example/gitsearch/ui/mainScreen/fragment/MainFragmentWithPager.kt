@@ -1,6 +1,7 @@
+/*
 package com.example.gitsearch.ui.mainScreen.fragment
 
-import MainFragmentWithPagerUI
+import MainScreenWithPagerUI
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -47,7 +48,7 @@ class MainFragmentWithPager() : Fragment() {
                                 }
                             }
                         ) {
-                            MainFragmentWithPagerUI(
+                            MainScreenWithPagerUI(
                                 viewModel = mainViewModel,
                                 onClick = {
                                     findNavController().navigate(
@@ -60,4 +61,4 @@ class MainFragmentWithPager() : Fragment() {
             }
         }
     }
-}
+}*/

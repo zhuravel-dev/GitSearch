@@ -18,11 +18,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.ui.compose.navigation.toJsonString
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.extensions.parseData
 
@@ -32,9 +35,9 @@ import com.example.gitsearch.ui.extensions.parseData
 )
 @Composable
 fun ListOfResultSortedByStarsUI(
+    navController: NavController,
     modifier: Modifier,
-    userList: LazyPagingItems<ItemLocalModel>,
-    onClick: (ItemLocalModel) -> Unit
+    userList: LazyPagingItems<ItemLocalModel>
 ) {
     val listState = rememberLazyListState()
 
@@ -47,7 +50,11 @@ fun ListOfResultSortedByStarsUI(
                 elevation = 4.dp,
                 backgroundColor = MaterialTheme.colors.secondary,
                 shape = RoundedCornerShape(corner = CornerSize(8.dp)),
-                onClick = { item?.let { onClick(it) } }
+                onClick = {
+                    item?.let {
+                        navController.navigate("detail_repo_screen/id=${it.id}")
+                    }
+                }
             ) {
                 ConstraintLayout(
                     modifier = Modifier,

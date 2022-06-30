@@ -6,6 +6,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @SuppressLint("ConflictingOnColor")
 private val LightThemeColors = lightColors(
@@ -45,6 +46,16 @@ fun AppTheme(
     MaterialTheme(
         colors = if (darkTheme) DarkThemeColors else LightThemeColors
     ) {
+        val systemUiController = rememberSystemUiController()
+        if(darkTheme){
+            systemUiController.setSystemBarsColor(
+                color = Gray900
+            )
+        }else{
+            systemUiController.setSystemBarsColor(
+                color = Blue600
+            )
+        }
         content()
     }
 }
