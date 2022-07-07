@@ -49,7 +49,7 @@ fun Navigation() {
         }
 
         composable(
-            route = "detail_author_screen/{id}",
+            route = "detail_author_screen/id={id}",
             arguments = listOf(
                 navArgument("id") {
                     type = NavType.IntType
@@ -58,8 +58,9 @@ fun Navigation() {
         ) { entry ->
             entry.arguments?.getInt("id")?.let {
                 AuthorScreenUI(
+                    id = it,
                     navController,
-                    it
+
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.example.gitsearch.ui.authorScreen.ui
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,34 +11,68 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.example.gitsearch.ui.compose.navigation.fromJsonToModel
+import com.example.gitsearch.data.local.model.OwnerLocalModel
+import com.example.gitsearch.ui.authorScreen.AuthorFragmentIntent
+import com.example.gitsearch.ui.authorScreen.AuthorFragmentState
+import com.example.gitsearch.ui.authorScreen.AuthorViewModel
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.compose.theme.White
 import com.example.gitsearch.ui.extensions.shareAuthorInfo
 
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, androidx.paging.ExperimentalPagingApi::class)
 @Composable
-fun AuthorScreenUI(navController: NavController, id: Int) {
+fun AuthorScreenUI(
+    id: Int,
+    navController: NavController
+) {
+
+    val context = LocalContext.current
+
+    val viewModel = hiltViewModel<AuthorViewModel>()
+    viewModel.onIntent(AuthorFragmentIntent.GetOwnerById(id))
+
+    val state by viewModel.state.collectAsState()
+
+    when (state) {
+        AuthorFragmentState.Idle -> {}
+        AuthorFragmentState.Loading -> {}
+        is AuthorFragmentState.DataLoaded -> {
+            AuthorScreenUI(
+                model = (state as AuthorFragmentState.DataLoaded).ownerModel,
+                navController = navController,
+                context = context
+            )
+        }
+        is AuthorFragmentState.Error -> {}
+    }
+}
+
+
+@OptIn(ExperimentalCoilApi::class, androidx.paging.ExperimentalPagingApi::class)
+@Composable
+fun AuthorScreenUI(
+    model: OwnerLocalModel,
+    navController: NavController,
+    context: Context
+) {
     ConstraintLayout(
         modifier = Modifier
             .background(MaterialTheme.colors.background)
     )
     {
-        val context = LocalContext.current
-        val model = "".fromJsonToModel()
-
-
-        val (topBar, image, login,
-            followers, following, repositories, organization, gists) = createRefs()
+        val (topBar, image, login, type) = createRefs()
 
         TopAppBar(
             modifier = Modifier
@@ -66,14 +101,15 @@ fun AuthorScreenUI(navController: NavController, id: Int) {
             },
             actions = {
                 IconButton(onClick = {
-                    context.startActivity(shareAuthorInfo(model)) })
+                    context.startActivity(shareAuthorInfo(model))
+                })
                 {
                     Icon(Icons.Default.Share, "share author`s info", tint = White)
                 }
             }
         )
 
-        val painter = rememberImagePainter(data = model.owner?.avatar_url)
+        val painter = rememberImagePainter(data = model.avatar_url)
         Image(
             painter = painter,
             contentDescription = "User Avatar",
@@ -88,20 +124,31 @@ fun AuthorScreenUI(navController: NavController, id: Int) {
             alignment = Alignment.Center
         )
 
-        model.owner?.let {
-            Text(
-                modifier = Modifier
-                    .constrainAs(login) {
-                        top.linkTo(image.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .padding(8.dp, 0.dp, 8.dp, 0.dp),
-                text = "Login: ${it.login}",
-                color = Black,
-                style = MaterialTheme.typography.h5,
-                maxLines = 1,
-                textAlign = TextAlign.Center)
-        }
+        Text(
+            modifier = Modifier
+                .constrainAs(login) {
+                    top.linkTo(image.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .padding(8.dp, 0.dp, 8.dp, 0.dp),
+            text = "Login: ${model.login}",
+            color = Black,
+            style = MaterialTheme.typography.h5,
+            maxLines = 1,
+            textAlign = TextAlign.Center)
+
+        Text(modifier = Modifier
+            .constrainAs(type) {
+                top.linkTo(login.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+            .padding(8.dp, 0.dp, 8.dp, 0.dp),
+            text = model.type,
+            color = Black,
+            style = MaterialTheme.typography.h5,
+            maxLines = 1,
+            textAlign = TextAlign.Center)
     }
 }

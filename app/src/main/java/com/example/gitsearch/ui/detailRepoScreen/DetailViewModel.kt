@@ -25,7 +25,7 @@ class DetailViewModel
 
     fun onIntent(event: DetailFragmentIntent) {
         when (event) {
-            is DetailFragmentIntent.GetAllById -> getAllById(event.modelId)
+            is DetailFragmentIntent.GetModelById -> getAllById(event.modelId)
         }
     }
 

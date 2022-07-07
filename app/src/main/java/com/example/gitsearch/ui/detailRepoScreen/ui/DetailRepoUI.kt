@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdsClick
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,8 +27,6 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.ui.compose.navigation.Screens
-import com.example.gitsearch.ui.compose.navigation.fromJsonToModel
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.compose.theme.White
 import com.example.gitsearch.ui.detailRepoScreen.DetailFragmentIntent
@@ -44,7 +43,7 @@ fun DetailRepoUI(
     val context = LocalContext.current
 
     val viewModel = hiltViewModel<DetailViewModel>()
-    viewModel.onIntent(DetailFragmentIntent.GetAllById(id))
+    viewModel.onIntent(DetailFragmentIntent.GetModelById(id))
 
     val state by viewModel.state.collectAsState()
 
@@ -60,6 +59,7 @@ fun DetailRepoUI(
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun DetailRepoUI(
     model: ItemLocalModel,
@@ -91,14 +91,14 @@ fun DetailRepoUI(
                     style = MaterialTheme.typography.h6
                 )
             },
-            /*navigationIcon = {
-                IconButton(onClick = { onClickBack() }) {
+           navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
-            },*/
+            },
             actions = {
                 IconButton(onClick = {
                     context.startActivity(shareRepoInfo(model))
@@ -136,7 +136,7 @@ fun DetailRepoUI(
                     modifier = Modifier
                         .padding(8.dp, 0.dp, 8.dp, 0.dp)
                         .clickable {
-                            navController.navigate("detail_author_screen")
+                            navController.navigate("detail_author_screen/id=${it.id}")
                         },
                     text = it.login,
                     color = Black,
