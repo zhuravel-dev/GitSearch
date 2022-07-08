@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.google.accompanist.pager.ExperimentalPagerApi

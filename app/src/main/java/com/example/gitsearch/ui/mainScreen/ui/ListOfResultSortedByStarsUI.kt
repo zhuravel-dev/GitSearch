@@ -19,13 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.ui.compose.navigation.toJsonString
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.extensions.parseData
 

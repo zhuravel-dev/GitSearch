@@ -1,12 +1,11 @@
-package com.example.gitsearch.ui.detailScreen
+package com.example.gitsearch.ui.detailRepoScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.domain.repository.MainRepository
-import com.example.gitsearch.ui.detailRepoScreen.DetailFragmentIntent
-import com.example.gitsearch.ui.detailRepoScreen.DetailFragmentState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,22 +18,23 @@ class DetailViewModel
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<DetailFragmentState>(DetailFragmentState.Idle)
-    val state: StateFlow<DetailFragmentState>
+    private val _state = MutableStateFlow<DetailState>(DetailState.Idle)
+    val state: StateFlow<DetailState>
         get() = _state
 
-    fun onIntent(event: DetailFragmentIntent) {
+    fun onIntent(event: DetailIntent) {
         when (event) {
-            is DetailFragmentIntent.GetModelById -> getAllById(event.modelId)
+            is DetailIntent.GetModelById -> getAllById(event.modelId)
         }
     }
 
     private fun getAllById(modelId: Int) {
         viewModelScope.launch {
-            _state.value = DetailFragmentState.Loading
+            _state.value = DetailState.Loading
             val model = repository.getModelById(modelId)
             model.owner = repository.getOneOwnerById(model.ownerId)
-            _state.value = DetailFragmentState.DataLoadedAll(model)
+            delay(600)
+            _state.value = DetailState.DataLoadedAll(model)
         }
     }
 }

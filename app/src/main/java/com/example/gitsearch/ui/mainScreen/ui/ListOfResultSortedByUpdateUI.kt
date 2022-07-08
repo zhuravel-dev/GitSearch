@@ -25,7 +25,6 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
-import com.example.gitsearch.ui.compose.navigation.toJsonString
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.extensions.parseData
 

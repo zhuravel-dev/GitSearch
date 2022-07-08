@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
-import androidx.navigation.compose.rememberNavController
 import com.example.gitsearch.ui.compose.navigation.Navigation
 import com.example.gitsearch.ui.compose.theme.AppTheme
 import com.example.gitsearch.ui.mainScreen.MainViewModel

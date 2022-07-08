@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdsClick
@@ -27,11 +24,13 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.local.model.ItemLocalModel
+import com.example.gitsearch.ui.compose.CircularProgress
+import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.compose.theme.White
-import com.example.gitsearch.ui.detailRepoScreen.DetailFragmentIntent
-import com.example.gitsearch.ui.detailRepoScreen.DetailFragmentState
-import com.example.gitsearch.ui.detailScreen.DetailViewModel
+import com.example.gitsearch.ui.detailRepoScreen.DetailIntent
+import com.example.gitsearch.ui.detailRepoScreen.DetailState
+import com.example.gitsearch.ui.detailRepoScreen.DetailViewModel
 import com.example.gitsearch.ui.extensions.shareRepoInfo
 
 @OptIn(ExperimentalCoilApi::class, androidx.paging.ExperimentalPagingApi::class)
@@ -43,19 +42,30 @@ fun DetailRepoUI(
     val context = LocalContext.current
 
     val viewModel = hiltViewModel<DetailViewModel>()
-    viewModel.onIntent(DetailFragmentIntent.GetModelById(id))
+    viewModel.onIntent(DetailIntent.GetModelById(id))
 
     val state by viewModel.state.collectAsState()
 
     when (state) {
-        DetailFragmentState.Idle -> {}
-        DetailFragmentState.Loading -> {}
-        is DetailFragmentState.DataLoadedAll -> {
-            DetailRepoUI(model = (state as DetailFragmentState.DataLoadedAll).model,
-                navController = navController,
-                context = context)
+        DetailState.Idle -> {}
+        DetailState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgress(modifier = Modifier)
+            }
         }
-        is DetailFragmentState.Error -> {}
+        is DetailState.DataLoadedAll -> {
+            DetailRepoUI(
+                model = (state as DetailState.DataLoadedAll).model,
+                navController = navController,
+                context = context
+            )
+        }
+        is DetailState.Error -> {
+            ErrorDialog(modifier = Modifier, onRetry = {})
+        }
     }
 }
 
@@ -91,7 +101,7 @@ fun DetailRepoUI(
                     style = MaterialTheme.typography.h6
                 )
             },
-           navigationIcon = {
+            navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,

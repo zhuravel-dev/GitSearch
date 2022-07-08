@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.WelcomeText
@@ -43,7 +42,12 @@ fun MainScreenWithPagerUI(navController: NavController, viewModel: MainViewModel
             }
 
             is MainState.Loading -> {
-                CircularProgress(progress)
+                CircularProgress(modifier = Modifier.constrainAs(progress) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                })
             }
 
             is MainState.DataLoaded -> {
@@ -59,13 +63,16 @@ fun MainScreenWithPagerUI(navController: NavController, viewModel: MainViewModel
                     pager,
                     pagerState = pagerState,
                     userListByStars = listStars,
-                    userListByUpdate = listUpdate,
-                    /*onClick = {
-                        navController.navigate(Screens.RepoDetailScreen.route)
-                    }*/
+                    userListByUpdate = listUpdate
                 )
             }
-            is MainState.Error -> ErrorDialog(error, onRetry = { viewModel.onIntent(MainIntent.SearchGitList(textState.value)) })
+            is MainState.Error -> ErrorDialog(modifier = Modifier
+                .constrainAs(error) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            }, onRetry = { viewModel.onIntent(MainIntent.SearchGitList(textState.value)) })
         }
     }
 }
