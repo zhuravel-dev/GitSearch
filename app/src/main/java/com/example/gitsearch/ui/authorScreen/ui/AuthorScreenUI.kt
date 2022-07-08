@@ -3,9 +3,7 @@ package com.example.gitsearch.ui.authorScreen.ui
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,9 +22,11 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.local.model.OwnerLocalModel
-import com.example.gitsearch.ui.authorScreen.AuthorFragmentIntent
-import com.example.gitsearch.ui.authorScreen.AuthorFragmentState
+import com.example.gitsearch.ui.authorScreen.AuthorIntent
+import com.example.gitsearch.ui.authorScreen.AuthoState
 import com.example.gitsearch.ui.authorScreen.AuthorViewModel
+import com.example.gitsearch.ui.compose.CircularProgress
+import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.theme.Black
 import com.example.gitsearch.ui.compose.theme.White
 import com.example.gitsearch.ui.extensions.shareAuthorInfo
@@ -37,25 +37,31 @@ fun AuthorScreenUI(
     id: Int,
     navController: NavController
 ) {
-
     val context = LocalContext.current
 
     val viewModel = hiltViewModel<AuthorViewModel>()
-    viewModel.onIntent(AuthorFragmentIntent.GetOwnerById(id))
+    viewModel.onIntent(AuthorIntent.GetOwnerById(id))
 
     val state by viewModel.state.collectAsState()
 
     when (state) {
-        AuthorFragmentState.Idle -> {}
-        AuthorFragmentState.Loading -> {}
-        is AuthorFragmentState.DataLoaded -> {
+        AuthoState.Idle -> {}
+        AuthoState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgress(modifier = Modifier)
+            }
+        }
+        is AuthoState.DataLoaded -> {
             AuthorScreenUI(
-                model = (state as AuthorFragmentState.DataLoaded).ownerModel,
+                model = (state as AuthoState.DataLoaded).ownerModel,
                 navController = navController,
                 context = context
             )
         }
-        is AuthorFragmentState.Error -> {}
+        is AuthoState.Error -> { ErrorDialog(modifier = Modifier, onRetry = {}) }
     }
 }
 

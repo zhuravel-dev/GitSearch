@@ -29,8 +29,7 @@ import com.example.gitsearch.ui.extensions.parseData
 
 @OptIn(
     androidx.compose.material.ExperimentalMaterialApi::class,
-    coil.annotation.ExperimentalCoilApi::class
-)
+    coil.annotation.ExperimentalCoilApi::class)
 @Composable
 fun ListOfResultSortedByStarsUI(
     navController: NavController,

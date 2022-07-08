@@ -32,7 +32,6 @@ fun ConstraintLayoutScope.SetupPager(
     pagerState: PagerState
 ) {
     val scope = rememberCoroutineScope()
-    //val navController = rememberNavController()
 
     TabRow(modifier = Modifier
         .constrainAs(tabs) {

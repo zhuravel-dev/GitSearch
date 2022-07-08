@@ -17,21 +17,21 @@ class AuthorViewModel
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<AuthorFragmentState>(AuthorFragmentState.Idle)
-    val state: StateFlow<AuthorFragmentState>
+    private val _state = MutableStateFlow<AuthoState>(AuthoState.Idle)
+    val state: StateFlow<AuthoState>
         get() = _state
 
-    fun onIntent(event: AuthorFragmentIntent) {
+    fun onIntent(event: AuthorIntent) {
         when (event) {
-            is AuthorFragmentIntent.GetOwnerById -> getAllById(event.ownerId)
+            is AuthorIntent.GetOwnerById -> getAllById(event.ownerId)
         }
     }
 
     private fun getAllById(ownerId: Int) {
         viewModelScope.launch {
-            _state.value = AuthorFragmentState.Loading
+            _state.value = AuthoState.Loading
             val owner = repository.getOneOwnerById(ownerId)
-            _state.value = AuthorFragmentState.DataLoaded(owner)
+            _state.value = AuthoState.DataLoaded(owner)
         }
     }
 }
