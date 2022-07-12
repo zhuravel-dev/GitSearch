@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,7 +24,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.gitsearch.data.local.model.OwnerLocalModel
 import com.example.gitsearch.ui.authorScreen.AuthorIntent
-import com.example.gitsearch.ui.authorScreen.AuthoState
+import com.example.gitsearch.ui.authorScreen.AuthorState
 import com.example.gitsearch.ui.authorScreen.AuthorViewModel
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
@@ -38,15 +39,16 @@ fun AuthorScreenUI(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val authorViewModel = hiltViewModel<AuthorViewModel>()
+    val state by authorViewModel.state.collectAsState()
 
-    val viewModel = hiltViewModel<AuthorViewModel>()
-    viewModel.onIntent(AuthorIntent.GetOwnerById(id))
-
-    val state by viewModel.state.collectAsState()
+    LaunchedEffect(true) {
+        authorViewModel.onIntent(AuthorIntent.GetOwnerById(id))
+    }
 
     when (state) {
-        AuthoState.Idle -> {}
-        AuthoState.Loading -> {
+        AuthorState.Idle -> {}
+        AuthorState.Loading -> {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
@@ -54,14 +56,14 @@ fun AuthorScreenUI(
                 CircularProgress(modifier = Modifier)
             }
         }
-        is AuthoState.DataLoaded -> {
+        is AuthorState.DataLoaded -> {
             AuthorScreenUI(
-                model = (state as AuthoState.DataLoaded).ownerModel,
+                model = (state as AuthorState.DataLoaded).ownerModel,
                 navController = navController,
                 context = context
             )
         }
-        is AuthoState.Error -> { ErrorDialog(modifier = Modifier, onRetry = {}) }
+        is AuthorState.Error -> { ErrorDialog(modifier = Modifier, onRetry = {}) }
     }
 }
 

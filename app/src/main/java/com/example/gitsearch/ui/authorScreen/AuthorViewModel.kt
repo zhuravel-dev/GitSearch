@@ -17,8 +17,8 @@ class AuthorViewModel
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<AuthoState>(AuthoState.Idle)
-    val state: StateFlow<AuthoState>
+    private val _state = MutableStateFlow<AuthorState>(AuthorState.Idle)
+    val state: StateFlow<AuthorState>
         get() = _state
 
     fun onIntent(event: AuthorIntent) {
@@ -29,9 +29,9 @@ class AuthorViewModel
 
     private fun getAllById(ownerId: Int) {
         viewModelScope.launch {
-            _state.value = AuthoState.Loading
+            _state.value = AuthorState.Loading
             val owner = repository.getOneOwnerById(ownerId)
-            _state.value = AuthoState.DataLoaded(owner)
+            _state.value = AuthorState.DataLoaded(owner)
         }
     }
 }

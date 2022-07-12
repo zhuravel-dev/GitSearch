@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,14 +38,15 @@ import com.example.gitsearch.ui.extensions.shareRepoInfo
 @Composable
 fun DetailRepoUI(
     id: Int,
-    navController: NavController,
+    navController: NavController
 ) {
     val context = LocalContext.current
+    val detailViewModel = hiltViewModel<DetailViewModel>()
+    val state by detailViewModel.state.collectAsState()
 
-    val viewModel = hiltViewModel<DetailViewModel>()
-    viewModel.onIntent(DetailIntent.GetModelById(id))
-
-    val state by viewModel.state.collectAsState()
+    LaunchedEffect(true) {
+        detailViewModel.onIntent(DetailIntent.GetModelById(id))
+    }
 
     when (state) {
         DetailState.Idle -> {}

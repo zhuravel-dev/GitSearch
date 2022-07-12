@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import com.example.gitsearch.domain.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,7 +32,6 @@ class DetailViewModel
             _state.value = DetailState.Loading
             val model = repository.getModelById(modelId)
             model.owner = repository.getOneOwnerById(model.ownerId)
-            delay(600)
             _state.value = DetailState.DataLoadedAll(model)
         }
     }
