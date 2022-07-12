@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.detailScreen.fragment.DetailFragment">
+    tools:context=".ui.detailRepoScreen.fragment.DetailRepoFragment">
 
     <include
         android:id="@+id/toolbar"

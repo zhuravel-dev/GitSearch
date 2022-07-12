@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/fragmentDetail"
-        android:name="com.example.gitsearch.ui.detailScreen.fragment.DetailFragment"
+        android:name="com.example.gitsearch.ui.detailRepoScreen.fragment.DetailRepoFragment"
         android:label="DetailFragment"
         tools:layout="@layout/fragment_detail">
         <argument

@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import com.example.gitsearch.data.local.model.ItemLocalModel
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -22,13 +23,13 @@ import kotlinx.coroutines.launch
 @ExperimentalPagerApi
 @Composable
 fun ConstraintLayoutScope.SetupPager(
+    navController: NavController,
     topAppBar: ConstrainedLayoutReference,
     tabs: ConstrainedLayoutReference,
     pager: ConstrainedLayoutReference,
     userListByStars: LazyPagingItems<ItemLocalModel>? = null,
     userListByUpdate: LazyPagingItems<ItemLocalModel>? = null,
-    pagerState: PagerState,
-    onClick: (ItemLocalModel) -> Unit
+    pagerState: PagerState
 ) {
     val scope = rememberCoroutineScope()
 
@@ -73,22 +74,19 @@ fun ConstraintLayoutScope.SetupPager(
         when (index) {
             0 -> userListByStars?.let {
                 ListOfResultSortedByStarsUI(
+                    navController,
                     modifier = Modifier
                         .height(648.dp),
-                    userList = it,
-                    onClick = {
-                        onClick(it)
-                    }
+                    userList = it
                 )
             }
             1 -> userListByUpdate?.let {
                 ListOfResultSortedByUpdateUI(
+                    navController,
                     modifier = Modifier
                         .height(648.dp),
-                    userList = it,
-                    onClick = {
-                        onClick(it)
-                    })
+                    userList = it
+                )
             }
         }
     }

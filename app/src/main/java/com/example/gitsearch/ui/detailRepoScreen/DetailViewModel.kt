@@ -1,5 +1,4 @@
-/*
-package com.example.gitsearch.ui.detailScreen
+package com.example.gitsearch.ui.detailRepoScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,22 +17,22 @@ class DetailViewModel
     private val repository: MainRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<DetailFragmentState>(DetailFragmentState.Idle)
-    val state: StateFlow<DetailFragmentState>
+    private val _state = MutableStateFlow<DetailState>(DetailState.Idle)
+    val state: StateFlow<DetailState>
         get() = _state
 
-    fun onIntent(event: DetailFragmentIntent) {
+    fun onIntent(event: DetailIntent) {
         when (event) {
-            is DetailFragmentIntent.GetAllById -> getAllById(event.modelId, event.ownerId)
+            is DetailIntent.GetModelById -> getAllById(event.modelId)
         }
     }
 
-    private fun getAllById(modelId: Int, ownerId: Int) {
+    private fun getAllById(modelId: Int) {
         viewModelScope.launch {
-            _state.value = DetailFragmentState.Loading
+            _state.value = DetailState.Loading
             val model = repository.getModelById(modelId)
-            val owner = model.owner
-            _state.value = DetailFragmentState.DataLoadedAll(model, owner!!)
+            model.owner = repository.getOneOwnerById(model.ownerId)
+            _state.value = DetailState.DataLoadedAll(model)
         }
     }
-}*/
+}
