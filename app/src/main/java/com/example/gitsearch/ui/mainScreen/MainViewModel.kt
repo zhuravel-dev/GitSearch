@@ -34,9 +34,8 @@ class MainViewModel @Inject constructor(
         }
         viewModelScope.launch(handler) {
             _state.value = MainState.Loading
-            val dataByStars = repository.getDataFromMediatorSortedByStars(q)
-            val dataByUpdate = repository.getDataFromMediatorSortedByUpdate(q)
-            _state.value = MainState.DataLoaded(dataByStars, dataByUpdate)
+            val data = repository.getDataFromNetworkNoPaging(q)
+            _state.value = MainState.DataLoadedNoPaging(data, data)
         }
     }
 }

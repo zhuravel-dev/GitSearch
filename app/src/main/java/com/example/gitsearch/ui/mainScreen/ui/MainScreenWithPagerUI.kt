@@ -5,7 +5,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.WelcomeText
@@ -50,11 +49,11 @@ fun MainScreenWithPagerUI(navController: NavController, viewModel: MainViewModel
                 })
             }
 
-            is MainState.DataLoaded -> {
+            is MainState.DataLoadedNoPaging -> {
                 val listStars =
-                    (resultState as MainState.DataLoaded).dataSortedByStars.collectAsLazyPagingItems()
+                    (resultState as MainState.DataLoadedNoPaging).dataSortedByStars
                 val listUpdate =
-                    (resultState as MainState.DataLoaded).dataSortedByUpdate.collectAsLazyPagingItems()
+                    (resultState as MainState.DataLoadedNoPaging).dataSortedByUpdate
 
                 this@ConstraintLayout.SetupPager(
                     navController,

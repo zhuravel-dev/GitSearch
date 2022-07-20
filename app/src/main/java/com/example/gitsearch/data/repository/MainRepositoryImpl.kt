@@ -32,6 +32,21 @@ data class MainRepositoryImpl @Inject constructor(
         ).flow
     }
 
+    override suspend fun getDataFromNetworkNoPaging(q: String): List<ItemLocalModel> =
+        apiService.getRepositories(q, 1, 5).items.map { it.run {
+            ItemLocalModel(
+                id,
+                name,
+                ownerId = owner.id,
+                description,
+                url,
+                updated_at,
+                stargazers_count,
+                language,
+                topics,
+                watchers
+            ) }}
+
     override suspend fun getDataFromMediatorSortedByStars(q: String): Flow<PagingData<ItemLocalModel>> {
         val pagingSourceFactory = { database.getDataDao().getDataSortedByStars() }
 

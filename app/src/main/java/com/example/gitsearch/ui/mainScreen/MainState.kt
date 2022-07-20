@@ -8,5 +8,6 @@ sealed class MainState {
     object Idle : MainState()
     object Loading : MainState()
     data class DataLoaded(val dataSortedByStars: Flow<PagingData<ItemLocalModel>>, val dataSortedByUpdate: Flow<PagingData<ItemLocalModel>>) : MainState()
+    data class DataLoadedNoPaging(val dataSortedByStars: List<ItemLocalModel>, val dataSortedByUpdate: List<ItemLocalModel>) : MainState()
     data class Error(val error: String?) : MainState()
 }
