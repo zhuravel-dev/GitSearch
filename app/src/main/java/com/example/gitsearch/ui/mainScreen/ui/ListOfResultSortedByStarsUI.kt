@@ -91,12 +91,12 @@ fun ListOfResultSortedByStarsUI(
                             },
                     ) {
                         val login =
-                            remember { mutableStateOf(item?.owner?.let { TextFieldValue(text = it.login) }) }
+                            remember { mutableStateOf(item.owner?.let { TextFieldValue(text = it.login) }) }
                         val name =
-                            remember { mutableStateOf(item?.name?.let { TextFieldValue(text = it) }) }
+                            remember { mutableStateOf(item.name.let { TextFieldValue(text = it) }) }
                         val description =
                             remember {
-                                mutableStateOf(item?.description?.let {
+                                mutableStateOf(item.description?.let {
                                     TextFieldValue(
                                         text = it
                                     )
@@ -105,19 +105,19 @@ fun ListOfResultSortedByStarsUI(
                         val topics = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = item?.topics.toString()
-                                        .substring(1, item?.topics.toString().length - 1)
+                                    text = item.topics.toString()
+                                        .substring(1, item.topics.toString().length - 1)
                                 )
                             )
                         }
                         val stars =
-                            remember { mutableStateOf(TextFieldValue(text = "\u2606${item?.stargazers_count}")) }
+                            remember { mutableStateOf(TextFieldValue(text = "\u2606${item.stargazers_count}")) }
                         val lang =
-                            remember { mutableStateOf(item?.language?.let { TextFieldValue(text = it) }) }
+                            remember { mutableStateOf(item.language?.let { TextFieldValue(text = it) }) }
                         val date = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = "upd.${item?.updated_at?.let { parseData(it) }}"
+                                    text = "upd.${parseData(item.updated_at)}"
                                 )
                             )
                         }
@@ -127,7 +127,7 @@ fun ListOfResultSortedByStarsUI(
                                 color = Black,
                                 fontSize = 20.sp
                             )
-                            name.value?.let {
+                            name.value.let {
                                 Text(
                                     text = it.text,
                                     color = Black,

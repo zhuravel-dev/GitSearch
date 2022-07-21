@@ -1,7 +1,9 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
@@ -41,12 +43,19 @@ fun MainScreenWithPagerUI(navController: NavController, viewModel: MainViewModel
             }
 
             is MainState.Loading -> {
-                CircularProgress(modifier = Modifier.constrainAs(progress) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                })
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .constrainAs(progress) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                ) {
+                    CircularProgress(modifier = Modifier)
+                }
             }
 
             is MainState.DataLoadedNoPaging -> {
