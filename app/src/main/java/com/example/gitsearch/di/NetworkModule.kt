@@ -11,6 +11,8 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -23,27 +25,40 @@ const val BASE_URL = "https://api.github.com/"
 @InstallIn(SingletonComponent::class)
 open class NetworkModule {
 
-   /* @Singleton
+    @Singleton
     @Provides
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-    }*/
+    }
+
+    @Singleton
+    @Provides
+    fun onlineInterceptor(): Interceptor {
+        return Interceptor { chain ->
+            val response = chain.proceed(chain.request())
+            val maxAge = 60 // read from cache for 60 seconds even if there is internet connection
+            response.newBuilder()
+                .header("Cache-Control", "public, max-age=$maxAge")
+                .removeHeader("Pragma")
+                .build()
+        }
+    }
 
     @Singleton
     @OfflineCacheInterceptor
     @Provides
-    fun provideOfflineCacheInterceptor(@ApplicationContext context: Context): Interceptor {
+    fun offlineInterceptor(@ApplicationContext context: Context): Interceptor {
         return Interceptor { chain ->
-            var request = chain.request()
-            request = if (isNetworkAvailable(context))
-                request.newBuilder().header("Cache-Control", "public, max-age=" + 5).build()
-            else
-                request.newBuilder().header(
-                    "Cache-Control",
-                    "public, only-if-cached, max-stale=" + 60
-                ).build()
+            var request: Request = chain.request()
+            if (!isNetworkAvailable(context)) {
+                val maxStale = 60 * 60 * 24 * 30 // Offline cache available for 30 days
+                request = request.newBuilder()
+                    .header("Cache-Control", "public, only-if-cached, max-stale=$maxStale")
+                    .removeHeader("Pragma")
+                    .build()
+            }
             chain.proceed(request)
         }
     }
@@ -51,19 +66,15 @@ open class NetworkModule {
     @Singleton
     @Provides
     fun providesOkHttpClient(
-        /*httpLoggingInterceptor: HttpLoggingInterceptor*/
         @ApplicationContext context: Context,
-        @OfflineCacheInterceptor offlineCacheInterceptor: Interceptor
     ): OkHttpClient {
         val httpCacheDirectory = File(context.cacheDir, "offlineCache")
-        val cacheSize = (10 * 1024 * 1024).toLong()
-        val cache = Cache(httpCacheDirectory, cacheSize)
+        val cache = Cache(httpCacheDirectory, 10 * 1024 * 1024)
 
-        return OkHttpClient
-            .Builder()
+        return OkHttpClient.Builder()
+            .addInterceptor(offlineInterceptor(context))
+            .addNetworkInterceptor(onlineInterceptor())
             .cache(cache)
-            .addInterceptor(offlineCacheInterceptor)
-           // .addInterceptor(httpLoggingInterceptor)
             .build()
     }
 
@@ -77,10 +88,6 @@ open class NetworkModule {
             .build().create(ApiService::class.java)
     }
 }
-
-@Retention(AnnotationRetention.BINARY)
-@Qualifier
-annotation class CacheInterceptor
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
