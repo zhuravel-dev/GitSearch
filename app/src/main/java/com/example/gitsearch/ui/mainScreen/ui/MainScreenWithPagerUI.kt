@@ -1,12 +1,11 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.gitsearch.ui.compose.CircularProgress
 import com.example.gitsearch.ui.compose.ErrorDialog
 import com.example.gitsearch.ui.compose.WelcomeText
@@ -43,26 +42,19 @@ fun MainScreenWithPagerUI(navController: NavController, viewModel: MainViewModel
             }
 
             is MainState.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .constrainAs(progress) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
-                        }
-                ) {
-                    CircularProgress(modifier = Modifier)
-                }
+                CircularProgress(modifier = Modifier.constrainAs(progress) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                })
             }
 
-            is MainState.DataLoadedNoPaging -> {
+            is MainState.DataLoaded -> {
                 val listStars =
-                    (resultState as MainState.DataLoadedNoPaging).dataSortedByStars
+                    (resultState as MainState.DataLoaded).dataSortedByStars.collectAsLazyPagingItems()
                 val listUpdate =
-                    (resultState as MainState.DataLoadedNoPaging).dataSortedByUpdate
+                    (resultState as MainState.DataLoaded).dataSortedByUpdate.collectAsLazyPagingItems()
 
                 this@ConstraintLayout.SetupPager(
                     navController,
@@ -76,11 +68,11 @@ fun MainScreenWithPagerUI(navController: NavController, viewModel: MainViewModel
             }
             is MainState.Error -> ErrorDialog(modifier = Modifier
                 .constrainAs(error) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            }, onRetry = { viewModel.onIntent(MainIntent.SearchGitList(textState.value)) })
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                }, onRetry = { viewModel.onIntent(MainIntent.SearchGitList(textState.value)) })
         }
     }
 }

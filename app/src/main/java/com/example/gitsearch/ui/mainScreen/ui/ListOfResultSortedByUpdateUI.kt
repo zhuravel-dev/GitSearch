@@ -3,7 +3,6 @@ package com.example.gitsearch.ui.mainScreen.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
@@ -32,11 +33,11 @@ import com.example.gitsearch.ui.extensions.parseData
 fun ListOfResultSortedByUpdateUI(
     navController: NavController,
     modifier: Modifier,
-    userList: List<ItemLocalModel>
+    userList: LazyPagingItems<ItemLocalModel>
 ) {
     val listState = rememberLazyListState()
     LazyColumn(state = listState, modifier = modifier) {
-        this.items(userList) { item ->
+        itemsIndexed(userList) { index, item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -3,7 +3,6 @@ package com.example.gitsearch.ui.mainScreen.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.gitsearch.data.local.model.ItemLocalModel
@@ -33,12 +34,12 @@ import com.example.gitsearch.ui.extensions.parseData
 fun ListOfResultSortedByStarsUI(
     navController: NavController,
     modifier: Modifier,
-    userList: List<ItemLocalModel>
+    userList: LazyPagingItems<ItemLocalModel>
 ) {
     val listState = rememberLazyListState()
 
     LazyColumn(state = listState, modifier = modifier) {
-        this.items(userList) { item ->
+        itemsIndexed(userList) { index, item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,12 +92,12 @@ fun ListOfResultSortedByStarsUI(
                             },
                     ) {
                         val login =
-                            remember { mutableStateOf(item.owner?.let { TextFieldValue(text = it.login) }) }
+                            remember { mutableStateOf(item?.owner?.let { TextFieldValue(text = it.login) }) }
                         val name =
-                            remember { mutableStateOf(item.name.let { TextFieldValue(text = it) }) }
+                            remember { mutableStateOf(item?.name?.let { TextFieldValue(text = it) }) }
                         val description =
                             remember {
-                                mutableStateOf(item.description?.let {
+                                mutableStateOf(item?.description?.let {
                                     TextFieldValue(
                                         text = it
                                     )
@@ -105,19 +106,19 @@ fun ListOfResultSortedByStarsUI(
                         val topics = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = item.topics.toString()
-                                        .substring(1, item.topics.toString().length - 1)
+                                    text = item?.topics.toString()
+                                        .substring(1, item?.topics.toString().length - 1)
                                 )
                             )
                         }
                         val stars =
-                            remember { mutableStateOf(TextFieldValue(text = "\u2606${item.stargazers_count}")) }
+                            remember { mutableStateOf(TextFieldValue(text = "\u2606${item?.stargazers_count}")) }
                         val lang =
-                            remember { mutableStateOf(item.language?.let { TextFieldValue(text = it) }) }
+                            remember { mutableStateOf(item?.language?.let { TextFieldValue(text = it) }) }
                         val date = remember {
                             mutableStateOf(
                                 TextFieldValue(
-                                    text = "upd.${parseData(item.updated_at)}"
+                                    text = "upd.${item?.updated_at?.let { parseData(it) }}"
                                 )
                             )
                         }
@@ -127,7 +128,7 @@ fun ListOfResultSortedByStarsUI(
                                 color = Black,
                                 fontSize = 20.sp
                             )
-                            name.value.let {
+                            name.value?.let {
                                 Text(
                                     text = it.text,
                                     color = Black,
